@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class JsonStorageResource {
     @Timed
     public Response get(@PathParam("key") @DefaultValue("") String key) {
 	if (key.equals("")) {
-	    return null;
+	    return Response.status(Status.BAD_REQUEST).build();
 	}
 
 	try {
@@ -55,11 +56,12 @@ public class JsonStorageResource {
     public Response post(@PathParam("key") @DefaultValue("") String key,
 	    InputStream is) {
 	if (key.equals("")) {
-	    return Response.noContent().build();
+	    return Response.status(Status.BAD_REQUEST).build();
 	}
 
 	try {
 	    fs.putJson(key, IOUtils.toString(is));
+	    
 	    return Response.ok().build();
 	} catch (IOException e) {
 	    logger.error("Problem putting key: " + key, e);

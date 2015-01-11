@@ -21,6 +21,7 @@ public class StorageServerMain extends Application<StorageServerConfiguration> {
     
     @Override
     public void initialize(Bootstrap<StorageServerConfiguration> bootstrap) {
+	
     }
 
     @Override
