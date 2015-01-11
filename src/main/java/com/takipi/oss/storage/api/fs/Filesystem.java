@@ -3,9 +3,35 @@ package com.takipi.oss.storage.api.fs;
 import java.io.IOException;
 
 public interface Filesystem {
-    void putBytes(String folder, String key, byte[] bytes) throws IOException;
-    byte[] getBytes(String folder, String key) throws IOException;
+    /**
+     * Put bytes (binary)
+     * @param key - the key acts as the name 
+     * @param bytes - the byte array to save
+     * @throws IOException - if there's an error
+     */
+    void putBytes(String key, byte[] bytes) throws IOException;
     
-    void putJson(String folder, String key, String string) throws IOException;
-    String getJson(String folder, String key) throws IOException;
+    /**
+     * Get bytes
+     * @param key - the key acts as the name
+     * @return the byte array 
+     * @throws IOException - if there's an error
+     */
+    byte[] getBytes(String key) throws IOException;
+    
+    /**
+     * Put String (json)
+     * @param key - the key acts as the name 
+     * @param bytes - the string to save
+     * @throws IOException - if there's an error
+     */
+    void putJson(String key, String string) throws IOException;
+    
+    /**
+     * Get string
+     * @param key - the key acts as the name
+     * @return the string  
+     * @throws IOException - if there's an error
+     */
+    String getJson(String key) throws IOException;
 }

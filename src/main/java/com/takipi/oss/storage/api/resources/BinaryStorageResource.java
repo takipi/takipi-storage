@@ -20,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.api.fs.Filesystem;
 
 @Path("/storage/v1/binary/{key}")
@@ -35,24 +36,17 @@ public class BinaryStorageResource {
     }
 
     @GET
+    @Timed
     public Response get(@PathParam("key") @DefaultValue("") String key) {
-	logger.debug("get {}", key);
-
 	if (key.equals("")) {
 	    return null;
 	}
 
 	try {
-	    final byte[] bytes = fs.getBytes("", key);
+	    final byte[] bytes = fs.getBytes(key);
 
-	    StreamingOutput stream = new StreamingOutput() {
-		@Override
-		public void write(OutputStream os) throws IOException, WebApplicationException {
-		    os.write(bytes);
-		    os.flush();
-		}
-	    };
-
+	    StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
+	    
 	    return Response.ok(stream).build();
 	} catch (IOException e) {
 	    logger.error("Problem getting key: " + key, e);
@@ -62,21 +56,34 @@ public class BinaryStorageResource {
     }
 
     @POST
+    @Timed
     public Response post(@PathParam("key") @DefaultValue("") String key,
 	    InputStream is) {
-	logger.debug("post {}", key);
-
 	if (key.equals("")) {
 	    return Response.noContent().build();
 	}
 
 	try {
-	    fs.putBytes("", key, IOUtils.toByteArray(is));
+	    fs.putBytes(key, IOUtils.toByteArray(is));
 	    return Response.ok().build();
 	} catch (IOException e) {
 	    logger.error("Problem putting key: " + key, e);
 	}
 
 	return Response.serverError().build();
+    }
+
+    protected class ByteArrayStreamingOutput implements StreamingOutput {
+	private final byte[] bytes;
+
+	protected ByteArrayStreamingOutput(byte[] bytes) {
+	    this.bytes = bytes;
+	}
+
+	@Override
+	public void write(OutputStream os) throws IOException, WebApplicationException {
+	    os.write(bytes);
+	    os.flush();
+	}
     }
 }

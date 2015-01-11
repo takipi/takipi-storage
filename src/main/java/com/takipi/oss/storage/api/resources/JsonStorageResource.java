@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.api.fs.Filesystem;
 
 @Path("/storage/v1/json/{key}")
@@ -32,15 +33,14 @@ public class JsonStorageResource {
     }
 
     @GET
+    @Timed
     public Response get(@PathParam("key") @DefaultValue("") String key) {
-	logger.debug("get {}", key);
-
 	if (key.equals("")) {
 	    return null;
 	}
 
 	try {
-	    final String json = fs.getJson("", key);
+	    final String json = fs.getJson(key);
 
 	    return Response.ok(json).build();
 	} catch (IOException e) {
@@ -51,16 +51,15 @@ public class JsonStorageResource {
     }
 
     @POST
+    @Timed
     public Response post(@PathParam("key") @DefaultValue("") String key,
 	    InputStream is) {
-	logger.debug("post {}", key);
-
 	if (key.equals("")) {
 	    return Response.noContent().build();
 	}
 
 	try {
-	    fs.putJson("", key, IOUtils.toString(is));
+	    fs.putJson(key, IOUtils.toString(is));
 	    return Response.ok().build();
 	} catch (IOException e) {
 	    logger.error("Problem putting key: " + key, e);

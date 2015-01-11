@@ -25,8 +25,7 @@ public class StorageServerMain extends Application<StorageServerConfiguration> {
 
     @Override
     public void run(StorageServerConfiguration configuration, Environment environment) {
-	Filesystem fs = new FolderFilesystem(
-		"/Users/chenharel/sparktale/temp/storage-server");
+	Filesystem fs = new FolderFilesystem(configuration.getFolderPath());
 
 	environment.jersey().register(new BinaryStorageResource(fs));
 	environment.jersey().register(new JsonStorageResource(fs));

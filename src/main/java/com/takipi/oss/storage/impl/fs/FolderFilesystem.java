@@ -20,34 +20,34 @@ public class FolderFilesystem implements Filesystem {
     }
     
     @Override
-    public byte[] getBytes(String folder, String key) throws IOException {
-	File file = new File(buildPath(folder, key));
+    public byte[] getBytes(String key) throws IOException {
+	File file = new File(buildPath(key));
 	
 	return FileUtils.readFileToByteArray(file);
     }
     
     @Override
-    public void putBytes(String folder, String key, byte[] bytes) throws IOException {
-	File file = new File(buildPath(folder, key));
+    public void putBytes(String key, byte[] bytes) throws IOException {
+	File file = new File(buildPath(key));
 	
 	FileUtils.writeByteArrayToFile(file, bytes);
     }
     
     @Override
-    public String getJson(String folder, String key) throws IOException {
-	File file = new File(buildPath(folder, key));
+    public String getJson(String key) throws IOException {
+	File file = new File(buildPath(key));
 	
 	return FileUtils.readFileToString(file);
     }
     
     @Override
-    public void putJson(String folder, String key, String string) throws IOException {
-	File file = new File(buildPath(folder, key));
+    public void putJson(String key, String string) throws IOException {
+	File file = new File(buildPath(key));
 	
 	FileUtils.writeStringToFile(file, string);
     }
     
-    private String buildPath(String folder, String key) {
-	return root.getPath() + File.separator + folder + File.separator + key;
+    private String buildPath(String key) {
+	return root.getPath() + File.separator + key;
     }
 }
