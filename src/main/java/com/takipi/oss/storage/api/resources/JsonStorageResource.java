@@ -48,7 +48,7 @@ public class JsonStorageResource {
 	    logger.error("Problem getting key: " + key, e);
 	}
 
-	return Response.serverError().build();
+	return Response.serverError().entity("Problem getting key " + key).build();
     }
 
     @POST
@@ -67,6 +67,6 @@ public class JsonStorageResource {
 	    logger.error("Problem putting key: " + key, e);
 	}
 
-	return Response.serverError().build();
+	return Response.serverError().entity("Problem putting key " + key).build();
     }
 }
