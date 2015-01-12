@@ -30,43 +30,42 @@ public class JsonStorageResource {
     private Filesystem fs;
 
     public JsonStorageResource(Filesystem fs) {
-	this.fs = fs;
+        this.fs = fs;
     }
 
     @GET
     @Timed
     public Response get(@PathParam("key") @DefaultValue("") String key) {
-	if (key.equals("")) {
-	    return Response.status(Status.BAD_REQUEST).build();
-	}
+        if (key.equals("")) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
 
-	try {
-	    final String json = fs.getJson(key);
+        try {
+            final String json = fs.getJson(key);
 
-	    return Response.ok(json).build();
-	} catch (IOException e) {
-	    logger.error("Problem getting key: " + key, e);
-	}
+            return Response.ok(json).build();
+        } catch (IOException e) {
+            logger.error("Problem getting key: " + key, e);
+        }
 
-	return Response.serverError().entity("Problem getting key " + key).build();
+        return Response.serverError().entity("Problem getting key " + key).build();
     }
 
     @POST
     @Timed
-    public Response post(@PathParam("key") @DefaultValue("") String key,
-	    InputStream is) {
-	if (key.equals("")) {
-	    return Response.status(Status.BAD_REQUEST).build();
-	}
+    public Response post(@PathParam("key") @DefaultValue("") String key, InputStream is) {
+        if (key.equals("")) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
 
-	try {
-	    fs.putJson(key, IOUtils.toString(is));
-	    
-	    return Response.ok().build();
-	} catch (IOException e) {
-	    logger.error("Problem putting key: " + key, e);
-	}
+        try {
+            fs.putJson(key, IOUtils.toString(is));
 
-	return Response.serverError().entity("Problem putting key " + key).build();
+            return Response.ok().build();
+        } catch (IOException e) {
+            logger.error("Problem putting key: " + key, e);
+        }
+
+        return Response.serverError().entity("Problem putting key " + key).build();
     }
 }

@@ -33,58 +33,57 @@ public class BinaryStorageResource {
     private Filesystem fs;
 
     public BinaryStorageResource(Filesystem fs) {
-	this.fs = fs;
+        this.fs = fs;
     }
 
     @GET
     @Timed
     public Response get(@PathParam("key") @DefaultValue("") String key) {
-	if (key.equals("")) {
-	    return Response.status(Status.BAD_REQUEST).build();
-	}
+        if (key.equals("")) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
 
-	try {
-	    final byte[] bytes = fs.getBytes(key);
+        try {
+            final byte[] bytes = fs.getBytes(key);
 
-	    StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
-	    
-	    return Response.ok(stream).build();
-	} catch (IOException e) {
-	    logger.error("Problem getting key: " + key, e);
-	}
+            StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
 
-	return Response.serverError().entity("Problem getting key " + key).build();
+            return Response.ok(stream).build();
+        } catch (IOException e) {
+            logger.error("Problem getting key: " + key, e);
+        }
+
+        return Response.serverError().entity("Problem getting key " + key).build();
     }
 
     @POST
     @Timed
-    public Response post(@PathParam("key") @DefaultValue("") String key,
-	    InputStream is) {
-	if (key.equals("")) {
-	    return Response.status(Status.BAD_REQUEST).build();
-	}
+    public Response post(@PathParam("key") @DefaultValue("") String key, InputStream is) {
+        if (key.equals("")) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
 
-	try {
-	    fs.putBytes(key, IOUtils.toByteArray(is));
-	    return Response.ok().build();
-	} catch (IOException e) {
-	    logger.error("Problem putting key: " + key, e);
-	}
+        try {
+            fs.putBytes(key, IOUtils.toByteArray(is));
+            return Response.ok().build();
+        } catch (IOException e) {
+            logger.error("Problem putting key: " + key, e);
+        }
 
-	return Response.serverError().entity("Problem putting key " + key).build();
+        return Response.serverError().entity("Problem putting key " + key).build();
     }
 
     protected class ByteArrayStreamingOutput implements StreamingOutput {
-	private final byte[] bytes;
+        private final byte[] bytes;
 
-	protected ByteArrayStreamingOutput(byte[] bytes) {
-	    this.bytes = bytes;
-	}
+        protected ByteArrayStreamingOutput(byte[] bytes) {
+            this.bytes = bytes;
+        }
 
-	@Override
-	public void write(OutputStream os) throws IOException, WebApplicationException {
-	    os.write(bytes);
-	    os.flush();
-	}
+        @Override
+        public void write(OutputStream os) throws IOException, WebApplicationException {
+            os.write(bytes);
+            os.flush();
+        }
     }
 }

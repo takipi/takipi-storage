@@ -9,7 +9,7 @@ import io.dropwizard.Configuration;
 public class StorageServerConfiguration extends Configuration {
     @NotEmpty
     private String folderPath;
-    
+
     @JsonProperty
     public String getFolderPath() {
         return folderPath;
