@@ -10,11 +10,11 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 public class FolderFilesystem implements Filesystem {
     private final File root;
     private final double maxUsedStoragePercentage;
-    
+
     public FolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
         this.root = new File(rootFolder);
         this.maxUsedStoragePercentage = maxUsedStoragePercentage;
-        
+
         if (!healthy()) {
             throw new IllegalStateException("Problem with path " + rootFolder);
         }
@@ -22,11 +22,8 @@ public class FolderFilesystem implements Filesystem {
 
     @Override
     public boolean healthy() {
-        if ((!this.root.canRead()) || (!this.root.canWrite())) {
-            return false;
-        }
-
-        return ((this.root.getUsableSpace() / this.root.getTotalSpace()) < maxUsedStoragePercentage);
+        return ((this.root.canRead()) && (this.root.canWrite()) && 
+                ((this.root.getUsableSpace() / this.root.getTotalSpace()) <= maxUsedStoragePercentage));
     }
 
     @Override
