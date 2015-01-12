@@ -2,15 +2,12 @@ package com.takipi.oss.storage.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,19 +42,5 @@ public class BinaryStorageResource extends StorageResource {
         fs.putRecord(record, is);
 
         return Response.ok().build();
-    }
-
-    protected class ByteArrayStreamingOutput implements StreamingOutput {
-        private final byte[] bytes;
-
-        protected ByteArrayStreamingOutput(byte[] bytes) {
-            this.bytes = bytes;
-        }
-
-        @Override
-        public void write(OutputStream os) throws IOException, WebApplicationException {
-            os.write(bytes);
-            os.flush();
-        }
     }
 }
