@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.dropwizard.Configuration;
 
-public class StorageServerConfiguration extends Configuration {
+public class TakipiStorageConfiguration extends Configuration {
     @NotEmpty
     private String folderPath;
 

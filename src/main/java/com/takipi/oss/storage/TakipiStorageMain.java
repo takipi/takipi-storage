@@ -17,23 +17,23 @@ import io.dropwizard.setup.Environment;
 
 import java.util.EnumSet;
 
-public class StorageServerMain extends Application<StorageServerConfiguration> {
+public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     public static void main(String[] args) throws Exception {
-        new StorageServerMain().run(args);
+        new TakipiStorageMain().run(args);
     }
 
     @Override
     public String getName() {
-        return "storage-server";
+        return "takipi-storage";
     }
 
     @Override
-    public void initialize(Bootstrap<StorageServerConfiguration> bootstrap) {
+    public void initialize(Bootstrap<TakipiStorageConfiguration> bootstrap) {
 
     }
 
     @Override
-    public void run(StorageServerConfiguration configuration, Environment environment) {
+    public void run(TakipiStorageConfiguration configuration, Environment environment) {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
         }
@@ -47,7 +47,7 @@ public class StorageServerMain extends Application<StorageServerConfiguration> {
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
     }
 
-    private void enableCors(StorageServerConfiguration configuration, Environment environment) {
+    private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {
         FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
         cors.setInitParameter("allowedOrigins", configuration.getCorsOrigins());
