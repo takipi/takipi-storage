@@ -74,29 +74,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>com.jamierf.dropwizard</groupId>
-				<artifactId>dropwizard-debpkg-maven-plugin</artifactId>
-				<version>${dropwizard-debpkg-maven-plugin.version}</version>
-				<configuration>
-					<configTemplate>${basedir}/settings.yml</configTemplate>
-					<jvm>
-						<memory>2g</memory>
-					</jvm>
-					<dropwizard>
-						<httpPort>8080</httpPort>
-						<httpAdminPort>8081</httpAdminPort>
-					</dropwizard>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>dwpackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 </project>
