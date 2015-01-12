@@ -30,6 +30,8 @@ public class FolderFilesystem implements Filesystem {
     public void putBytes(String key, byte[] bytes) throws IOException {
 	File file = new File(buildPath(key));
 	
+	beforePut(file);
+	
 	FileUtils.writeByteArrayToFile(file, bytes);
     }
     
@@ -44,10 +46,21 @@ public class FolderFilesystem implements Filesystem {
     public void putJson(String key, String string) throws IOException {
 	File file = new File(buildPath(key));
 	
+	beforePut(file);
+	
 	FileUtils.writeStringToFile(file, string);
     }
     
-    private String buildPath(String key) {
-	return root.getPath() + File.separator + key;
+    protected String buildPath(String key) {
+	StringBuilder sb = new StringBuilder();
+	sb.append(root);
+	sb.append(File.separator);
+	sb.append(key);
+	
+	return sb.toString();
+    }
+    
+    protected void beforePut(@SuppressWarnings("unused") File file) {
+	
     }
 }
