@@ -38,7 +38,7 @@ public class JsonStorageResource  extends StorageResource {
     }
 
     @Override
-    protected Response internalPost(String key, InputStream is) throws IOException {
+    protected Response internalPut(String key, InputStream is) throws IOException {
         fs.putJson(key, IOUtils.toString(is));
 
         return Response.ok().build();

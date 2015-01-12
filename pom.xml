@@ -5,8 +5,15 @@
 
 	<groupId>com.takipi</groupId>
 	<artifactId>storage-server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 
+	<properties>
+		<!-- use UTF-8 for everything -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<dropwizard.version>0.7.1</dropwizard.version>
+		<dropwizard-debpkg-maven-plugin.version>0.7</dropwizard-debpkg-maven-plugin.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>io.dropwizard</groupId>
@@ -19,24 +26,15 @@
 			<version>2.4</version>
 		</dependency>
 	</dependencies>
-
-	<properties>
-		<!-- use UTF-8 for everything -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<dropwizard.version>0.7.1</dropwizard.version>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
-				<!-- compile for Java 1.7 -->
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.6</source>
+					<target>1.6</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -73,6 +71,29 @@
 								</transformer>
 							</transformers>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.jamierf.dropwizard</groupId>
+				<artifactId>dropwizard-debpkg-maven-plugin</artifactId>
+				<version>${dropwizard-debpkg-maven-plugin.version}</version>
+				<configuration>
+					<configTemplate>${basedir}/settings.yml</configTemplate>
+					<jvm>
+						<memory>2g</memory>
+					</jvm>
+					<dropwizard>
+						<httpPort>8080</httpPort>
+						<httpAdminPort>8081</httpAdminPort>
+					</dropwizard>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>dwpackage</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

@@ -43,8 +43,9 @@ public class BinaryStorageResource extends StorageResource {
     }
 
     @Override
-    protected Response internalPost(String key, InputStream is) throws IOException {
+    protected Response internalPut(String key, InputStream is) throws IOException {
         fs.putBytes(key, IOUtils.toByteArray(is));
+
         return Response.ok().build();
     }
 
