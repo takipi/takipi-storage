@@ -1,11 +1,16 @@
 package com.takipi.oss.storage.fs.folder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
@@ -25,24 +30,28 @@ public class FolderFilesystem implements Filesystem {
 
     @Override
     public boolean healthy() {
-        return ((this.root.canRead()) && (this.root.canWrite()) && 
-                ((this.root.getUsableSpace() / this.root.getTotalSpace()) <= maxUsedStoragePercentage));
+        return ((this.root.canRead()) && (this.root.canWrite()) && ((this.root.getUsableSpace() / this.root
+                .getTotalSpace()) <= maxUsedStoragePercentage));
     }
 
     @Override
-    public byte[] getBytes(Record record) throws IOException {
+    public InputStream getRecord(Record record) throws IOException {
         File file = new File(buildPath(record));
 
-        return FileUtils.readFileToByteArray(file);
+        return new FileInputStream(file);
     }
 
     @Override
-    public void putBytes(Record record, byte[] bytes) throws IOException {
+    public void putRecord(Record record, InputStream is) throws IOException {
         File file = new File(buildPath(record));
 
         beforePut(file);
 
-        FileUtils.writeByteArrayToFile(file, bytes);
+        OutputStream os = new FileOutputStream(file);
+
+        IOUtils.copy(is, os);
+
+        os.flush();
     }
 
     @Override
@@ -73,7 +82,7 @@ public class FolderFilesystem implements Filesystem {
 
         return recordPath.toString();
     }
-    
+
     protected String buildPath(String key) {
         Path recordPath = Paths.get(root.getPath(), key);
 

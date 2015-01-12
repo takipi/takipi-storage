@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,16 +35,14 @@ public class BinaryStorageResource extends StorageResource {
 
     @Override
     protected Response internalGet(Record record) throws IOException {
-        final byte[] bytes = fs.getBytes(record);
+        InputStream is = fs.getRecord(record);
 
-        StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
-
-        return Response.ok(stream).build();
+        return Response.ok(is).build();
     }
 
     @Override
     protected Response internalPut(Record record, InputStream is) throws IOException {
-        fs.putBytes(record, IOUtils.toByteArray(is));
+        fs.putRecord(record, is);
 
         return Response.ok().build();
     }

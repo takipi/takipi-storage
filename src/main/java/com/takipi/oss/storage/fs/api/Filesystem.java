@@ -1,32 +1,33 @@
 package com.takipi.oss.storage.fs.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.takipi.oss.storage.fs.Record;
 
 public interface Filesystem {
     /**
-     * Put bytes (binary)
+     * Put record 
      * 
      * @param record
-     *            - the record to put bytes to
+     *            - the record to save the input stream to
      * @param bytes
      *            - the byte array to save
      * @throws IOException
      *             - if there's an error
      */
-    void putBytes(Record record, byte[] bytes) throws IOException;
+    void putRecord(Record record, InputStream is) throws IOException;
 
     /**
-     * Get bytes
+     * Get record 
      * 
      * @param record
      *            - the record to get
-     * @return the byte array
+     * @return the input stream of the record
      * @throws IOException
      *             - if there's an error
      */
-    byte[] getBytes(Record record) throws IOException;
+    InputStream getRecord(Record record) throws IOException;
 
     /**
      * Put String (json)
