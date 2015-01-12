@@ -58,4 +58,10 @@ public interface Filesystem {
      *             - if there's an error
      */
     void delete(String key) throws IOException;
+    
+    /**
+     * Checks if the filesystem is healthy. This will be called during health check 
+     * @return true iff the filesystem is healthy
+     */
+    boolean healthy();
 }

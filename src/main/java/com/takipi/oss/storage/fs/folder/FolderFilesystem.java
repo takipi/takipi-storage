@@ -13,9 +13,14 @@ public class FolderFilesystem implements Filesystem {
     public FolderFilesystem(String rootFolder) {
         this.root = new File(rootFolder);
 
-        if (!this.root.canRead() || !this.root.canWrite()) {
+        if (!healthy()) {
             throw new IllegalStateException("Problem with path " + rootFolder);
         }
+    }
+
+    @Override
+    public boolean healthy() {
+        return ((this.root.canRead()) && (this.root.canWrite()));
     }
 
     @Override
