@@ -2,29 +2,31 @@ package com.takipi.oss.storage.fs.api;
 
 import java.io.IOException;
 
+import com.takipi.oss.storage.fs.Record;
+
 public interface Filesystem {
     /**
      * Put bytes (binary)
      * 
-     * @param key
-     *            - the key acts as the name
+     * @param record
+     *            - the record to put bytes to
      * @param bytes
      *            - the byte array to save
      * @throws IOException
      *             - if there's an error
      */
-    void putBytes(String key, byte[] bytes) throws IOException;
+    void putBytes(Record record, byte[] bytes) throws IOException;
 
     /**
      * Get bytes
      * 
-     * @param key
-     *            - the key acts as the name
+     * @param record
+     *            - the record to get
      * @return the byte array
      * @throws IOException
      *             - if there's an error
      */
-    byte[] getBytes(String key) throws IOException;
+    byte[] getBytes(Record record) throws IOException;
 
     /**
      * Put String (json)
@@ -52,15 +54,17 @@ public interface Filesystem {
     /**
      * Removes key from filesystem
      * 
-     * @param key
-     *            - the name of the element to remove
+     * @param record
+     *            - the name of the record to remove
      * @throws IOException
      *             - if there's an error
      */
-    void delete(String key) throws IOException;
-    
+    void delete(Record record) throws IOException;
+
     /**
-     * Checks if the filesystem is healthy. This will be called during health check 
+     * Checks if the filesystem is healthy. This will be called during health
+     * check
+     * 
      * @return true iff the filesystem is healthy
      */
     boolean healthy();

@@ -16,9 +16,10 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
-@Path("/storage/v1/binary/{key}")
+@Path("/storage/v1/binary/{serviceId}/{type}/{key}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
 public class BinaryStorageResource extends StorageResource {
@@ -34,8 +35,8 @@ public class BinaryStorageResource extends StorageResource {
     }
 
     @Override
-    protected Response internalGet(String key) throws IOException {
-        final byte[] bytes = fs.getBytes(key);
+    protected Response internalGet(Record record) throws IOException {
+        final byte[] bytes = fs.getBytes(record);
 
         StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
 
@@ -43,8 +44,8 @@ public class BinaryStorageResource extends StorageResource {
     }
 
     @Override
-    protected Response internalPut(String key, InputStream is) throws IOException {
-        fs.putBytes(key, IOUtils.toByteArray(is));
+    protected Response internalPut(Record record, InputStream is) throws IOException {
+        fs.putBytes(record, IOUtils.toByteArray(is));
 
         return Response.ok().build();
     }

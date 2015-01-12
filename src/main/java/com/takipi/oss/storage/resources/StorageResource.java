@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 
 import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
 public abstract class StorageResource {
@@ -25,13 +26,14 @@ public abstract class StorageResource {
 
     @GET
     @Timed
-    public Response get(@PathParam("key") @DefaultValue("") String key) {
-        if (key.equals("")) {
+    public Response get(@PathParam("serviceId") @DefaultValue("") String serviceId,
+            @PathParam("type") @DefaultValue("") String type, @PathParam("key") @DefaultValue("") String key) {
+        if (serviceId.equals("") || type.equals("") || key.equals("")) {
             return Response.status(Status.BAD_REQUEST).build();
         }
 
         try {
-            return internalGet(key);
+            return internalGet(Record.newRecord(serviceId, type, key));
         } catch (IOException e) {
             getLogger().error("Problem getting key: " + key, e);
         }
@@ -41,13 +43,15 @@ public abstract class StorageResource {
 
     @PUT
     @Timed
-    public Response put(@PathParam("key") @DefaultValue("") String key, InputStream is) {
-        if (key.equals("")) {
+    public Response put(@PathParam("serviceId") @DefaultValue("") String serviceId,
+            @PathParam("type") @DefaultValue("") String type, @PathParam("key") @DefaultValue("") String key,
+            InputStream is) {
+        if (serviceId.equals("") || type.equals("") || key.equals("")) {
             return Response.status(Status.BAD_REQUEST).build();
         }
 
         try {
-            return internalPut(key, is);
+            return internalPut(Record.newRecord(serviceId, type, key), is);
         } catch (IOException e) {
             getLogger().error("Problem putting key: " + key, e);
         }
@@ -57,13 +61,14 @@ public abstract class StorageResource {
 
     @DELETE
     @Timed
-    public Response delete(@PathParam("key") @DefaultValue("") String key) {
-        if (key.equals("")) {
+    public Response delete(@PathParam("serviceId") @DefaultValue("") String serviceId,
+            @PathParam("type") @DefaultValue("") String type, @PathParam("key") @DefaultValue("") String key) {
+        if (serviceId.equals("") || type.equals("") || key.equals("")) {
             return Response.status(Status.BAD_REQUEST).build();
         }
 
         try {
-            fs.delete(key);
+            fs.delete(Record.newRecord(serviceId, type, key));
             return Response.ok().build();
         } catch (IOException e) {
             getLogger().error("Problem deleting key: " + key, e);
@@ -72,9 +77,10 @@ public abstract class StorageResource {
         return Response.serverError().entity("Problem deleting key " + key).build();
     }
 
-    protected abstract Response internalGet(String key) throws IOException;
+    protected abstract Response internalGet(Record record) throws IOException;
 
-    protected abstract Response internalPut(String key, InputStream is) throws IOException;
+    protected abstract Response internalPut(Record record, InputStream is) throws IOException;
 
     protected abstract Logger getLogger();
+
 }

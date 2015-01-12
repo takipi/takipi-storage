@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
 @Path("/storage/v1/json/{key}")
@@ -31,15 +32,15 @@ public class JsonStorageResource  extends StorageResource {
     }
     
     @Override
-    protected Response internalGet(String key) throws IOException {
-        final String json = fs.getJson(key);
+    protected Response internalGet(Record record) throws IOException {
+        final String json = fs.getJson(record.getKey());
 
         return Response.ok(json).build();
     }
 
     @Override
-    protected Response internalPut(String key, InputStream is) throws IOException {
-        fs.putJson(key, IOUtils.toString(is));
+    protected Response internalPut(Record record, InputStream is) throws IOException {
+        fs.putJson(record.getKey(), IOUtils.toString(is));
 
         return Response.ok().build();
     }

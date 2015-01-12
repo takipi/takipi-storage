@@ -2,9 +2,12 @@ package com.takipi.oss.storage.fs.folder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 
+import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
 public class FolderFilesystem implements Filesystem {
@@ -27,15 +30,15 @@ public class FolderFilesystem implements Filesystem {
     }
 
     @Override
-    public byte[] getBytes(String key) throws IOException {
-        File file = new File(buildPath(key));
+    public byte[] getBytes(Record record) throws IOException {
+        File file = new File(buildPath(record));
 
         return FileUtils.readFileToByteArray(file);
     }
 
     @Override
-    public void putBytes(String key, byte[] bytes) throws IOException {
-        File file = new File(buildPath(key));
+    public void putBytes(Record record, byte[] bytes) throws IOException {
+        File file = new File(buildPath(record));
 
         beforePut(file);
 
@@ -59,19 +62,22 @@ public class FolderFilesystem implements Filesystem {
     }
 
     @Override
-    public void delete(String key) throws IOException {
-        File file = new File(buildPath(key));
+    public void delete(Record record) throws IOException {
+        File file = new File(buildPath(record));
 
         file.delete();
     }
 
-    protected String buildPath(String key) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(root);
-        sb.append(File.separator);
-        sb.append(key);
+    protected String buildPath(Record record) {
+        Path recordPath = Paths.get(root.getPath(), record.getServiceId(), record.getType(), record.getServiceId());
 
-        return sb.toString();
+        return recordPath.toString();
+    }
+    
+    protected String buildPath(String key) {
+        Path recordPath = Paths.get(root.getPath(), key);
+
+        return recordPath.toString();
     }
 
     protected void beforePut(@SuppressWarnings("unused") File file) {

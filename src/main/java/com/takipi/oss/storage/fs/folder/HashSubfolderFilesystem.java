@@ -1,10 +1,13 @@
 package com.takipi.oss.storage.fs.folder;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.takipi.oss.storage.fs.Record;
 
 public class HashSubfolderFilesystem extends FolderFilesystem {
     private HashFunction func;
@@ -16,21 +19,16 @@ public class HashSubfolderFilesystem extends FolderFilesystem {
     }
 
     @Override
-    protected String buildPath(String key) {
-        String hashKey = hashKey(key);
-
+    protected String buildPath(Record record) {
+        String key = record.getKey();
         String path = super.buildPath(key);
-
         File pathParent = new File(path).getParentFile();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(pathParent);
-        sb.append(File.separator);
-        sb.append(hashKey);
-        sb.append(File.separator);
-        sb.append(key);
+        String hashKey = hashKey(key);
 
-        return sb.toString();
+        Path recordPath = Paths.get(pathParent.getPath(), record.getServiceId(), record.getType(), hashKey, key);
+
+        return recordPath.toString();
     }
 
     @Override
@@ -41,16 +39,11 @@ public class HashSubfolderFilesystem extends FolderFilesystem {
     private String hashKey(String key) {
         byte[] hashBytes = func.newHasher().putString(key, Charsets.UTF_8).hash().asBytes();
 
-        StringBuilder sbResp = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        sb.append(Math.abs(hashBytes[0]));
+        sb.append(File.separator);
+        sb.append(Math.abs(hashBytes[2]));
 
-        sbResp.append(Math.abs(hashBytes[0]));
-        sbResp.append(File.separator);
-        sbResp.append(Math.abs(hashBytes[1]));
-        sbResp.append(File.separator);
-        sbResp.append(Math.abs(hashBytes[2]));
-        sbResp.append(File.separator);
-        sbResp.append(Math.abs(hashBytes[3]));
-
-        return sbResp.toString();
+        return sb.toString();
     }
 }
