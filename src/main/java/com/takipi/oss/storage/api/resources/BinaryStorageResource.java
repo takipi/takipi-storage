@@ -5,90 +5,47 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.api.fs.Filesystem;
 
 @Path("/storage/v1/binary/{key}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
-public class BinaryStorageResource {
+public class BinaryStorageResource extends StorageResource {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
 
-    private Filesystem fs;
-
     public BinaryStorageResource(Filesystem fs) {
-        this.fs = fs;
+        super(fs);
     }
 
-    @GET
-    @Timed
-    public Response get(@PathParam("key") @DefaultValue("") String key) {
-        if (key.equals("")) {
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-
-        try {
-            final byte[] bytes = fs.getBytes(key);
-
-            StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
-
-            return Response.ok(stream).build();
-        } catch (IOException e) {
-            logger.error("Problem getting key: " + key, e);
-        }
-
-        return Response.serverError().entity("Problem getting key " + key).build();
+    @Override
+    protected Logger getLogger() {
+        return logger;
     }
 
-    @POST
-    @Timed
-    public Response post(@PathParam("key") @DefaultValue("") String key, InputStream is) {
-        if (key.equals("")) {
-            return Response.status(Status.BAD_REQUEST).build();
-        }
+    @Override
+    protected Response internalGet(String key) throws IOException {
+        final byte[] bytes = fs.getBytes(key);
 
-        try {
-            fs.putBytes(key, IOUtils.toByteArray(is));
-            return Response.ok().build();
-        } catch (IOException e) {
-            logger.error("Problem putting key: " + key, e);
-        }
+        StreamingOutput stream = new ByteArrayStreamingOutput(bytes);
 
-        return Response.serverError().entity("Problem putting key " + key).build();
+        return Response.ok(stream).build();
     }
-    
-    @DELETE
-    @Timed
-    public Response delete(@PathParam("key") @DefaultValue("") String key) {
-        if (key.equals("")) {
-            return Response.status(Status.BAD_REQUEST).build();
-        }
 
-        try {
-            fs.delete(key);
-            return Response.ok().build();
-        } catch (IOException e) {
-            logger.error("Problem deleting key: " + key, e);
-        }
-
-        return Response.serverError().entity("Problem deleting key " + key).build();
+    @Override
+    protected Response internalPost(String key, InputStream is) throws IOException {
+        fs.putBytes(key, IOUtils.toByteArray(is));
+        return Response.ok().build();
     }
 
     protected class ByteArrayStreamingOutput implements StreamingOutput {
