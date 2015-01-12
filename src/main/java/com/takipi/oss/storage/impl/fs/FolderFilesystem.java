@@ -50,6 +50,13 @@ public class FolderFilesystem implements Filesystem {
         FileUtils.writeStringToFile(file, string);
     }
 
+    @Override
+    public void delete(String key) throws IOException {
+        File file = new File(buildPath(key));
+
+        file.delete();
+    }
+
     protected String buildPath(String key) {
         StringBuilder sb = new StringBuilder();
         sb.append(root);

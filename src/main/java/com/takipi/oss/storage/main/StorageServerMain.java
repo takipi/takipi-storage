@@ -33,7 +33,9 @@ public class StorageServerMain extends Application<StorageServerConfiguration> {
 
     @Override
     public void run(StorageServerConfiguration configuration, Environment environment) {
-        enableCors(environment);
+        if (configuration.isEnableCors()) {
+            enableCors(configuration, environment);
+        }
 
         Filesystem fs = new HashSubfolderFilesystem(configuration.getFolderPath());
 
@@ -41,16 +43,13 @@ public class StorageServerMain extends Application<StorageServerConfiguration> {
         environment.jersey().register(new JsonStorageResource(fs));
     }
 
-    private void enableCors(Environment environment) {
-        // Enable CORS headers
-        final FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
-
-        // Configure CORS parameters
-        cors.setInitParameter("allowedOrigins", "*");
+    private void enableCors(StorageServerConfiguration configuration, Environment environment) {
+        FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+        
+        cors.setInitParameter("allowedOrigins", configuration.getCorsOrigins());
         cors.setInitParameter("allowedHeaders", "X-Requested-With,Content-Type,Accept,Origin");
         cors.setInitParameter("allowedMethods", "OPTIONS,GET,PUT,POST,DELETE,HEAD");
-
-        // Add URL mapping
+        
         cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
     }
 }

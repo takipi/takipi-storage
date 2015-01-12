@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -67,5 +68,22 @@ public class JsonStorageResource {
         }
 
         return Response.serverError().entity("Problem putting key " + key).build();
+    }
+    
+    @DELETE
+    @Timed
+    public Response delete(@PathParam("key") @DefaultValue("") String key) {
+        if (key.equals("")) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        try {
+            fs.delete(key);
+            return Response.ok().build();
+        } catch (IOException e) {
+            logger.error("Problem deleting key: " + key, e);
+        }
+
+        return Response.serverError().entity("Problem deleting key " + key).build();
     }
 }

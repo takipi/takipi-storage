@@ -48,4 +48,14 @@ public interface Filesystem {
      *             - if there's an error
      */
     String getJson(String key) throws IOException;
+
+    /**
+     * Removes key from filesystem
+     * 
+     * @param key
+     *            - the name of the element to remove
+     * @throws IOException
+     *             - if there's an error
+     */
+    void delete(String key) throws IOException;
 }

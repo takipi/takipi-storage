@@ -1,4 +1,6 @@
 folderPath: /Users/chenharel/sparktale/temp/storage-server
+enableCors: true
+corsOrigins: "*"
 
 # use the simple server factory if you only want to run on a single port
 #server:
@@ -15,6 +17,9 @@ server:
       port: 8080
     - type: https
       port: 8443
+      useServerHeader: true
+      useDateHeader: true
+      useForwardedHeaders: true
       keyStorePath: example.keystore
       keyStorePassword: example
       validateCerts: false
@@ -37,15 +42,12 @@ server:
 logging:
 
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
-  level: INFO
+  level: TRACE
 
   # Logger-specific levels.
   loggers:
 
-    # Sets the level for 'com.example.app' to DEBUG.
-    com.example.app: DEBUG
-
-    org.hibernate.SQL: ALL
+    com.takipi: DEBUG
 
   appenders:
     - type: console

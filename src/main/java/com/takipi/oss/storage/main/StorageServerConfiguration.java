@@ -10,6 +10,31 @@ public class StorageServerConfiguration extends Configuration {
     @NotEmpty
     private String folderPath;
 
+    private boolean enableCors;
+    
+    @NotEmpty
+    private String corsOrigins;
+
+    @JsonProperty
+    public boolean isEnableCors() {
+        return enableCors;
+    }
+
+    @JsonProperty
+    public void setEnableCors(boolean enableCors) {
+        this.enableCors = enableCors;
+    }
+    
+    @JsonProperty
+    public String getCorsOrigins() {
+        return corsOrigins;
+    }
+
+    @JsonProperty
+    public void setCorsOrigins(String corsOrigins) {
+        this.corsOrigins = corsOrigins;
+    }
+
     @JsonProperty
     public String getFolderPath() {
         return folderPath;
