@@ -38,7 +38,8 @@ public class StorageServerMain extends Application<StorageServerConfiguration> {
             enableCors(configuration, environment);
         }
 
-        Filesystem fs = new HashSubfolderFilesystem(configuration.getFolderPath());
+        Filesystem fs = new HashSubfolderFilesystem(configuration.getFolderPath(),
+                configuration.getMaxUsedStoragePercentage());
 
         environment.jersey().register(new BinaryStorageResource(fs));
         environment.jersey().register(new JsonStorageResource(fs));

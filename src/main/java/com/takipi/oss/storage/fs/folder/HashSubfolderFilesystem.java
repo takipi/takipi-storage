@@ -9,8 +9,8 @@ import com.google.common.hash.Hashing;
 public class HashSubfolderFilesystem extends FolderFilesystem {
     private HashFunction func;
 
-    public HashSubfolderFilesystem(String rootFolder) {
-        super(rootFolder);
+    public HashSubfolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
+        super(rootFolder, maxUsedStoragePercentage);
 
         func = Hashing.murmur3_32();
     }

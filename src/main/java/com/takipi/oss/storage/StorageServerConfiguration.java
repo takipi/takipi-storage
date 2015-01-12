@@ -1,5 +1,8 @@
 package com.takipi.oss.storage;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,8 +13,12 @@ public class StorageServerConfiguration extends Configuration {
     @NotEmpty
     private String folderPath;
 
+    @Min(0)
+    @Max(1)
+    private double maxUsedStoragePercentage = 0.9;
+
     private boolean enableCors;
-    
+
     @NotEmpty
     private String corsOrigins;
 
@@ -24,7 +31,17 @@ public class StorageServerConfiguration extends Configuration {
     public void setEnableCors(boolean enableCors) {
         this.enableCors = enableCors;
     }
-    
+
+    @JsonProperty
+    public double getMaxUsedStoragePercentage() {
+        return maxUsedStoragePercentage;
+    }
+
+    @JsonProperty
+    public void setMaxUsedStoragePercentage(double maxUsedStoragePercentage) {
+        this.maxUsedStoragePercentage = maxUsedStoragePercentage;
+    }
+
     @JsonProperty
     public String getCorsOrigins() {
         return corsOrigins;

@@ -1,4 +1,5 @@
 folderPath: /Users/chenharel/sparktale/temp/storage-server
+maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
 
