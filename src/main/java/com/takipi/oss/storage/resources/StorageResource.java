@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.api.resources;
+package com.takipi.oss.storage.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 
 import com.codahale.metrics.annotation.Timed;
-import com.takipi.oss.storage.api.fs.Filesystem;
+import com.takipi.oss.storage.fs.api.Filesystem;
 
 public abstract class StorageResource {
     protected Filesystem fs;

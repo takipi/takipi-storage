@@ -1,11 +1,11 @@
-package com.takipi.oss.storage.impl.fs;
+package com.takipi.oss.storage.fs.folder;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-import com.takipi.oss.storage.api.fs.Filesystem;
+import com.takipi.oss.storage.fs.api.Filesystem;
 
 public class FolderFilesystem implements Filesystem {
     private final File root;

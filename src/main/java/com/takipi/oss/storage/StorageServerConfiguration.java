@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.main;
+package com.takipi.oss.storage;
 
 import org.hibernate.validator.constraints.NotEmpty;
 

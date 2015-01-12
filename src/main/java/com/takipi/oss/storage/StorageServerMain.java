@@ -1,14 +1,14 @@
-package com.takipi.oss.storage.main;
+package com.takipi.oss.storage;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
-import com.takipi.oss.storage.api.fs.Filesystem;
-import com.takipi.oss.storage.api.resources.BinaryStorageResource;
-import com.takipi.oss.storage.api.resources.JsonStorageResource;
-import com.takipi.oss.storage.impl.fs.HashSubfolderFilesystem;
+import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.folder.HashSubfolderFilesystem;
+import com.takipi.oss.storage.resources.BinaryStorageResource;
+import com.takipi.oss.storage.resources.JsonStorageResource;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;

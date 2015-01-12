@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.api.fs;
+package com.takipi.oss.storage.fs.api;
 
 import java.io.IOException;
 

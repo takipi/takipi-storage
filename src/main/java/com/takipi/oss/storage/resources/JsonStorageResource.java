@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.api.resources;
+package com.takipi.oss.storage.resources;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.takipi.oss.storage.api.fs.Filesystem;
+import com.takipi.oss.storage.fs.api.Filesystem;
 
 @Path("/storage/v1/json/{key}")
 @Consumes(MediaType.APPLICATION_JSON)
