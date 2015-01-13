@@ -26,7 +26,7 @@ public class Record {
     public String getKey() {
         return key;
     }
-
+    
     @Override
     public String toString() {
         return "service: " + serviceId + ". type: " + type + ". key: " + key + ".";

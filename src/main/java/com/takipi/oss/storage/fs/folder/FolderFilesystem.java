@@ -78,18 +78,23 @@ public class FolderFilesystem implements Filesystem {
     }
 
     protected String buildPath(Record record) {
-        Path recordPath = Paths.get(root.getPath(), record.getServiceId(), record.getType(), record.getServiceId());
+        Path recordPath = Paths.get(root.getPath(), escape(record.getServiceId()), escape(record.getType()),
+                escape(record.getServiceId()));
 
         return recordPath.toString();
     }
 
     protected String buildPath(String key) {
-        Path recordPath = Paths.get(root.getPath(), key);
+        Path recordPath = Paths.get(root.getPath(), escape(key));
 
         return recordPath.toString();
     }
 
     protected void beforePut(@SuppressWarnings("unused") File file) {
 
+    }
+
+    protected String escape(String value) {
+        return value.replace("..", "__").replace("/", "-").replace("\\", "-");
     }
 }

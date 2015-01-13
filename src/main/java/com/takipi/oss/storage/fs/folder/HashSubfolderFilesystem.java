@@ -26,7 +26,8 @@ public class HashSubfolderFilesystem extends FolderFilesystem {
 
         String hashKey = hashKey(key);
 
-        Path recordPath = Paths.get(pathParent.getPath(), record.getServiceId(), record.getType(), hashKey, key);
+        Path recordPath = Paths.get(pathParent.getPath(), escape(record.getServiceId()), escape(record.getType()),
+                hashKey, escape(key));
 
         return recordPath.toString();
     }
