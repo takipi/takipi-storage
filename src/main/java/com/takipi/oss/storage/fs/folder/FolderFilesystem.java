@@ -82,7 +82,9 @@ public class FolderFilesystem implements Filesystem {
     public void delete(Record record) throws IOException {
         File file = new File(buildPath(record));
 
-        file.delete();
+        if (!file.delete()) {
+            throw new IOException("File not exist " + file);
+        }
     }
 
     protected String buildPath(Record record) {

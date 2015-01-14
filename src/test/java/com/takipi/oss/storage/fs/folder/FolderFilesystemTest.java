@@ -6,7 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -79,25 +80,40 @@ public class FolderFilesystemTest {
     @Test
     public void testPutGetRecord() {
         try {
-            Filesystem fs = newValidFolderFilesystem();
-            byte[] bytes = newTestBytes();
-            InputStream is = new ByteArrayInputStream(bytes);
-
-            Record record = newStubRecord();
-
-            fs.putRecord(record, is);
-
-            InputStream respIs = fs.getRecord(newStubRecord());
-
-            byte[] respBytes = IOUtils.toByteArray(respIs);
-
-            assertArrayEquals(bytes, respBytes);
+            boolean pass = putGetRecord(newStubBytes());
+            assertTrue(pass);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
         }
     }
 
+    @Test
+    public void testPutGetEmptyBytesRecord() {
+        try {
+            boolean pass = putGetRecord(newEmptyBytes());
+            assertTrue(pass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
+    private boolean putGetRecord(byte[] bytes) throws IOException {
+        Filesystem fs = newValidFolderFilesystem();
+        InputStream is = new ByteArrayInputStream(bytes);
+
+        Record record = newStubRecord();
+
+        fs.putRecord(record, is);
+
+        InputStream respIs = fs.getRecord(record);
+        
+        byte[] respBytes = IOUtils.toByteArray(respIs);
+
+        return Arrays.equals(bytes, respBytes);
+    }
+    
     @Test
     public void testGetNonexistsRecord() {
         try {
@@ -109,6 +125,33 @@ public class FolderFilesystemTest {
         } catch (Exception e) {
         }
     }
+    
+    @Test
+    public void testDeleteRecord() {
+        try {
+            Filesystem fs = newValidFolderFilesystem();
+            
+            Record record = newStubRecord();
+            
+            fs.putRecord(record, new ByteArrayInputStream(newStubBytes()));
+            fs.delete(record);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testDeleteNonexistRecord() {
+        try {
+            Filesystem fs = newValidFolderFilesystem();
+            
+            Record record = newStubRecord();
+            
+            fs.delete(record);
+            fail();
+        } catch (Exception e) {
+        }
+    }
 
     private File newTempFolderFile() {
         File file = Files.createTempDir();
@@ -116,7 +159,7 @@ public class FolderFilesystemTest {
         return file;
     }
 
-    private Filesystem newValidFolderFilesystem() throws IOException {
+    private Filesystem newValidFolderFilesystem() {
         File temp = newTempFolderFile();
         return new FolderFilesystem(temp.getPath(), 0.99);
     }
@@ -125,14 +168,11 @@ public class FolderFilesystemTest {
         return new Record("temp", "temp", "temp");
     }
 
-    private byte[] newTestBytes() {
-        byte[] bytes = new byte[5];
-        bytes[0] = 100;
-        bytes[1] = 101;
-        bytes[2] = 1;
-        bytes[3] = -42;
-        bytes[4] = 0;
-
-        return bytes;
+    private byte[] newStubBytes() {
+        return "STUB".getBytes(Charset.forName("UTF-8"));
+    }
+    
+    private byte[] newEmptyBytes() {
+        return new byte[0];
     }
 }
