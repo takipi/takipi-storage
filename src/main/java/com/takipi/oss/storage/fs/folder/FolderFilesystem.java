@@ -30,7 +30,15 @@ public class FolderFilesystem implements Filesystem {
 
     @Override
     public boolean healthy() {
-        return ((this.root.canRead()) && (this.root.canWrite()) && ((this.root.getUsableSpace() / this.root
+        return (folderCheck() && maxUsedStorageCheck());
+    }
+
+    private boolean folderCheck() {
+        return ((this.root.canRead()) && (this.root.canWrite()));
+    }
+
+    private boolean maxUsedStorageCheck() {
+        return ((maxUsedStoragePercentage >= 0) && (maxUsedStoragePercentage < 1) && ((this.root.getUsableSpace() / this.root
                 .getTotalSpace()) <= maxUsedStoragePercentage));
     }
 
@@ -90,8 +98,8 @@ public class FolderFilesystem implements Filesystem {
         return recordPath.toString();
     }
 
-    protected void beforePut(@SuppressWarnings("unused") File file) {
-
+    protected void beforePut(File file) {
+        file.getParentFile().mkdirs();
     }
 
     protected String escape(String value) {

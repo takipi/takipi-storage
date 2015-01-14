@@ -10,7 +10,7 @@ public class Record {
         this.type = type;
         this.key = key;
     }
-    
+
     public static Record newRecord(String serviceId, String type, String key) {
         return new Record(serviceId, type, key);
     }
@@ -26,7 +26,7 @@ public class Record {
     public String getKey() {
         return key;
     }
-    
+
     @Override
     public String toString() {
         return "service: " + serviceId + ". type: " + type + ". key: " + key + ".";

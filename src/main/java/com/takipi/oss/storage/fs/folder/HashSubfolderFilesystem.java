@@ -32,11 +32,6 @@ public class HashSubfolderFilesystem extends FolderFilesystem {
         return recordPath.toString();
     }
 
-    @Override
-    protected void beforePut(File file) {
-        file.getParentFile().mkdirs();
-    }
-
     private String hashKey(String key) {
         byte[] hashBytes = func.newHasher().putString(key, Charsets.UTF_8).hash().asBytes();
 
