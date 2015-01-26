@@ -1,14 +1,7 @@
-folderPath: /Users/chenharel/sparktale/temp/storage-server
+folderPath: /opt/takipi-storage/storage
 maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
-
-# use the simple server factory if you only want to run on a single port
-#server:
-#  type: simple
-#  connector:
-#    type: http
-#    port: 8080
 
 server:
 #  softNofileLimit: 1000
