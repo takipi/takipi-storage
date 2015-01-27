@@ -2,6 +2,7 @@ package com.takipi.oss.storage.fs.folder;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +10,6 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.takipi.oss.storage.fs.Record;
@@ -43,14 +43,14 @@ public class FolderFilesystem implements Filesystem {
     }
 
     @Override
-    public InputStream getRecord(Record record) throws IOException {
+    public InputStream get(Record record) throws IOException {
         File file = new File(buildPath(record));
 
         return new FileInputStream(file);
     }
 
     @Override
-    public void putRecord(Record record, InputStream is) throws IOException {
+    public void put(Record record, InputStream is) throws IOException {
         File file = new File(buildPath(record));
 
         beforePut(file);
@@ -63,28 +63,29 @@ public class FolderFilesystem implements Filesystem {
     }
 
     @Override
-    public String getJson(String key) throws IOException {
-        File file = new File(buildPath(key));
-
-        return FileUtils.readFileToString(file);
-    }
-
-    @Override
-    public void putJson(String key, String string) throws IOException {
-        File file = new File(buildPath(key));
-
-        beforePut(file);
-
-        FileUtils.writeStringToFile(file, string);
-    }
-
-    @Override
     public void delete(Record record) throws IOException {
         File file = new File(buildPath(record));
 
-        if (!file.delete()) {
-            throw new IOException("File not exist " + file);
+        if (file.exists() && file.canWrite()) {
+            if (!file.delete()) {
+                throw new IOException("Problem deleting file " + file);
+            }
+
+            return;
         }
+
+        throw new FileNotFoundException("File not exist " + file);
+    }
+
+    @Override
+    public boolean exists(Record record) throws IOException {
+        File file = new File(buildPath(record));
+
+        if (file.exists() && file.canRead()) {
+            return true;
+        }
+
+        throw new FileNotFoundException();
     }
 
     protected String buildPath(Record record) {

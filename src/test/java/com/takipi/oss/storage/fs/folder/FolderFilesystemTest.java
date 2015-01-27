@@ -105,9 +105,9 @@ public class FolderFilesystemTest {
 
         Record record = newStubRecord();
 
-        fs.putRecord(record, is);
+        fs.put(record, is);
 
-        InputStream respIs = fs.getRecord(record);
+        InputStream respIs = fs.get(record);
 
         byte[] respBytes = IOUtils.toByteArray(respIs);
 
@@ -119,7 +119,7 @@ public class FolderFilesystemTest {
         try {
             Filesystem fs = newValidFolderFilesystem();
 
-            fs.getRecord(newStubRecord());
+            fs.get(newStubRecord());
 
             fail();
         } catch (Exception e) {
@@ -133,7 +133,7 @@ public class FolderFilesystemTest {
 
             Record record = newStubRecord();
 
-            fs.putRecord(record, new ByteArrayInputStream(newStubBytes()));
+            fs.put(record, new ByteArrayInputStream(newStubBytes()));
             fs.delete(record);
         } catch (Exception e) {
             fail();
@@ -148,6 +148,32 @@ public class FolderFilesystemTest {
             Record record = newStubRecord();
 
             fs.delete(record);
+            fail();
+        } catch (Exception e) {
+        }
+    }
+    
+    @Test
+    public void testContainsRecord() {
+        try {
+            Filesystem fs = newValidFolderFilesystem();
+
+            Record record = newStubRecord();
+            fs.put(record, new ByteArrayInputStream(newStubBytes()));
+            fs.exists(record);
+        } catch (Exception e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testContainsNonexistRecord() {
+        try {
+            Filesystem fs = newValidFolderFilesystem();
+
+            Record record = newStubRecord();
+
+            fs.exists(record);
             fail();
         } catch (Exception e) {
         }

@@ -1,5 +1,11 @@
 package com.takipi.oss.storage;
 
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+
+import java.util.EnumSet;
+
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
@@ -9,13 +15,6 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.folder.HashSubfolderFilesystem;
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.BinaryStorageResource;
-import com.takipi.oss.storage.resources.JsonStorageResource;
-
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-
-import java.util.EnumSet;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -42,7 +41,6 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
                 configuration.getMaxUsedStoragePercentage());
 
         environment.jersey().register(new BinaryStorageResource(fs));
-        environment.jersey().register(new JsonStorageResource(fs));
 
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
     }

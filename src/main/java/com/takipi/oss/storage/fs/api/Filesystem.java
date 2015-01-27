@@ -7,7 +7,7 @@ import com.takipi.oss.storage.fs.Record;
 
 public interface Filesystem {
     /**
-     * Put record 
+     * Put record
      * 
      * @param record
      *            - the record to save the input stream to
@@ -16,10 +16,10 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    void putRecord(Record record, InputStream is) throws IOException;
+    void put(Record record, InputStream is) throws IOException;
 
     /**
-     * Get record 
+     * Get record
      * 
      * @param record
      *            - the record to get
@@ -27,33 +27,10 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    InputStream getRecord(Record record) throws IOException;
+    InputStream get(Record record) throws IOException;
 
     /**
-     * Put String (json)
-     * 
-     * @param key
-     *            - the key acts as the name
-     * @param bytes
-     *            - the string to save
-     * @throws IOException
-     *             - if there's an error
-     */
-    void putJson(String key, String string) throws IOException;
-
-    /**
-     * Get string
-     * 
-     * @param key
-     *            - the key acts as the name
-     * @return the string
-     * @throws IOException
-     *             - if there's an error
-     */
-    String getJson(String key) throws IOException;
-
-    /**
-     * Removes key from filesystem
+     * Removes record from filesystem
      * 
      * @param record
      *            - the name of the record to remove
@@ -61,6 +38,16 @@ public interface Filesystem {
      *             - if there's an error
      */
     void delete(Record record) throws IOException;
+
+    /**
+     * True if record exists in filesystem
+     * 
+     * @param record
+     *            - the name of the record to remove
+     * @throws IOException
+     *             - if there's an error
+     */
+    boolean exists(Record record) throws IOException;
 
     /**
      * Checks if the filesystem is healthy. This will be called during health
