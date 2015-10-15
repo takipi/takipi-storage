@@ -37,9 +37,9 @@ public class JsonMultiStorageResource {
 
     @POST
     @Timed
-    public Response post(MutliRequest keys) {
+    public Response post(MutliRequest request) {
         try {
-            MultiResponse response = handleResponse(keys);
+            MultiResponse response = handleResponse(request);
 
             return Response.ok(response).build();
         } catch (Exception e) {
