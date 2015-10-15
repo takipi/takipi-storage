@@ -23,7 +23,7 @@ import com.takipi.oss.storage.data.MutliRequest;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
-@Path("/storage/v1/json/multi")
+@Path("/storage/v1/json/multifetch")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonMultiStorageResource {
