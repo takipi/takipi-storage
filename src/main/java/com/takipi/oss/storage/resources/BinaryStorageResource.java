@@ -116,7 +116,7 @@ public class BinaryStorageResource {
 
     protected Response internalGet(Record record) throws IOException {
         InputStream is = fs.get(record);
-
+        
         return Response.ok(is).build();
     }
 
