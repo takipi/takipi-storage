@@ -1,7 +1,7 @@
 package com.takipi.oss.storage.resources;
 
 import java.io.InputStream;
-import java.util.Map;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -15,11 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import com.takipi.oss.storage.data.EncodingType;
 import com.takipi.oss.storage.data.MultiResponse;
 import com.takipi.oss.storage.data.MutliRequest;
+import com.takipi.oss.storage.data.RecordWithData;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
@@ -48,30 +48,21 @@ public class JsonMultiStorageResource {
     }
 
     private MultiResponse handleResponse(MutliRequest request) {
-        Map<Record, String> records = Maps.newHashMap();
+        List<RecordWithData> records = Lists.newArrayList();
 
         for (Record record : request.records) {
             try {
                 InputStream is = fs.get(record);
-                records.put(record, encode(request.encodingType, is));
+                
+                String value = encode(request.encodingType, is);
+                
+                records.add(RecordWithData.of(record, value));
             } catch (Exception e) {
                 logger.error("Problem with record " + record, e);
             }
         }
 
-        MultiResponse response = new MultiResponse();
-        ObjectMapper mapper = new ObjectMapper(); // Jackson doesn't like Map<Object, ..> keys and it does toString rather then serialization
-
-        for (Map.Entry<Record, String> entry : records.entrySet()) {
-            Record record = entry.getKey();
-            String value = entry.getValue();
-
-            try {
-                response.records.put(mapper.writeValueAsString(record), value);
-            } catch (Exception e) {
-                logger.error("Problem with json for record " + record, e);
-            }
-        }
+        MultiResponse response = new MultiResponse(records);
 
         return response;
     }

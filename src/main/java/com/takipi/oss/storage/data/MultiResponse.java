@@ -1,13 +1,15 @@
 package com.takipi.oss.storage.data;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
+import java.util.List;
 
 public class MultiResponse {
-    public Map<String, String> records;
-
-    public MultiResponse() {
-        records = Maps.newHashMap();
+    List<RecordWithData> records;
+    
+    public MultiResponse(List<RecordWithData> records) {
+        this.records = records;
+    }
+    
+    public List<RecordWithData> getRecords() {
+        return records;
     }
 }
