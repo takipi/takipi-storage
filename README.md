@@ -5,7 +5,7 @@ Build and run:
 - clone the repo
 - `cd takipi-storage`
 - `mvn compile package`
-- `java -jar target/takipi-storage-1.1.0.jar server settings.yml`
+- `java -jar target/takipi-storage-1.2.0.jar server settings.yml`
 
 Deploy:
 - `wget https://s3.amazonaws.com/app-takipi-com/deploy/takipi-storage/takipi-storage-1.2.0.tar.gz`
