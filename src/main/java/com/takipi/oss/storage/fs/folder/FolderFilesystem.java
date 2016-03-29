@@ -60,6 +60,7 @@ public class FolderFilesystem implements Filesystem {
         IOUtils.copy(is, os);
 
         os.flush();
+        os.close();
     }
 
     @Override

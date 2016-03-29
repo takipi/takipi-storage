@@ -57,6 +57,8 @@ public class JsonMultiStorageResource {
                 String value = encode(request.encodingType, is);
                 
                 records.add(RecordWithData.of(record, value));
+                
+                is.close();
             } catch (Exception e) {
                 logger.error("Problem with record " + record, e);
             }
