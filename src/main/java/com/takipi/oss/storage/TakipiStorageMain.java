@@ -17,6 +17,7 @@ import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.BinaryStorageResource;
 import com.takipi.oss.storage.resources.JsonMultiStorageResource;
 import com.takipi.oss.storage.resources.PingStorageResource;
+import com.takipi.oss.storage.resources.StatusStorageResource;
 import com.takipi.oss.storage.resources.TreeStorageResource;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
@@ -47,9 +48,9 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         environment.jersey().register(new BinaryStorageResource(fs));
         environment.jersey().register(new JsonMultiStorageResource(fs));
-
         environment.jersey().register(new PingStorageResource());
         environment.jersey().register(new TreeStorageResource(folderPath));
+        environment.jersey().register(new StatusStorageResource(folderPath));
     
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
     }
