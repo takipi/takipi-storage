@@ -15,6 +15,7 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.folder.HashSubfolderFilesystem;
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.BinaryStorageResource;
+import com.takipi.oss.storage.resources.JsonMultiDeleteStorageResource;
 import com.takipi.oss.storage.resources.JsonMultiFetchStorageResource;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
@@ -43,6 +44,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         environment.jersey().register(new BinaryStorageResource(fs));
         environment.jersey().register(new JsonMultiFetchStorageResource(fs));
+        environment.jersey().register(new JsonMultiDeleteStorageResource(fs));
 
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
     }
