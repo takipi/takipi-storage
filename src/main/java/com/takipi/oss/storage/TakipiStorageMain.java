@@ -17,6 +17,7 @@ import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.BinaryStorageResource;
 import com.takipi.oss.storage.resources.JsonMultiStorageResource;
 import com.takipi.oss.storage.resources.PingStorageResource;
+import com.takipi.oss.storage.resources.TreeStorageResource;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -38,14 +39,18 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
         }
+        
+        String folderPath = configuration.getFolderPath();
 
-        Filesystem fs = new HashSubfolderFilesystem(configuration.getFolderPath(),
+        Filesystem fs = new HashSubfolderFilesystem(folderPath,
                 configuration.getMaxUsedStoragePercentage());
 
         environment.jersey().register(new BinaryStorageResource(fs));
         environment.jersey().register(new JsonMultiStorageResource(fs));
 
         environment.jersey().register(new PingStorageResource());
+        environment.jersey().register(new TreeStorageResource(folderPath));
+    
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
     }
 
