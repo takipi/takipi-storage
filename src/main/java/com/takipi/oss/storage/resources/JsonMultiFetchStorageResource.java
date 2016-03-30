@@ -17,29 +17,29 @@ import org.slf4j.LoggerFactory;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Lists;
 import com.takipi.oss.storage.data.EncodingType;
-import com.takipi.oss.storage.data.MultiResponse;
-import com.takipi.oss.storage.data.MutliRequest;
 import com.takipi.oss.storage.data.RecordWithData;
+import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
+import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
 @Path("/storage/v1/json/multifetch")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonMultiStorageResource {
-    private static final Logger logger = LoggerFactory.getLogger(JsonMultiStorageResource.class);
+public class JsonMultiFetchStorageResource {
+    private static final Logger logger = LoggerFactory.getLogger(JsonMultiFetchStorageResource.class);
 
     protected Filesystem fs;
 
-    public JsonMultiStorageResource(Filesystem fs) {
+    public JsonMultiFetchStorageResource(Filesystem fs) {
         this.fs = fs;
     }
 
     @POST
     @Timed
-    public Response post(MutliRequest request) {
+    public Response post(MultiFetchRequest request) {
         try {
-            MultiResponse response = handleResponse(request);
+            MultiFetchResponse response = handleResponse(request);
 
             return Response.ok(response).build();
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class JsonMultiStorageResource {
         }
     }
 
-    private MultiResponse handleResponse(MutliRequest request) {
+    private MultiFetchResponse handleResponse(MultiFetchRequest request) {
         List<RecordWithData> records = Lists.newArrayList();
 
         for (Record record : request.records) {
@@ -64,7 +64,7 @@ public class JsonMultiStorageResource {
             }
         }
 
-        MultiResponse response = new MultiResponse(records);
+        MultiFetchResponse response = new MultiFetchResponse(records);
 
         return response;
     }
