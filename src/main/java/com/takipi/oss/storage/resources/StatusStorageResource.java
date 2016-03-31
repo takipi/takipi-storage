@@ -2,6 +2,7 @@ package com.takipi.oss.storage.resources;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -56,7 +57,7 @@ public class StatusStorageResource {
 	
 	private void collectDataInfo(StringBuilder sb) {
 		File directory = new File(folderPath);
-		HashMap<String, Long> mappedData = traverseTreeForData(directory);
+		Map<String, Long> mappedData = traverseTreeForData(directory);
 		
 		StatusUtil.appendInfoMessage(sb, "------------------ Data Info ------------------", "");
 		StatusUtil.appendInfoMessage(sb, hitsSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(hitsSizeName)));
@@ -70,8 +71,8 @@ public class StatusStorageResource {
 		StatusUtil.appendInfoMessage(sb, "Total free space left: ", StatusUtil.bytesToMbString(directory.getFreeSpace()));
 	}
 	
-	private HashMap<String, Long> traverseTreeForData(File directory) {
-		HashMap<String, Long> map = initializeMapForData();
+	private Map<String, Long> traverseTreeForData(File directory) {
+		Map<String, Long> map = initializeMapForData();
 		
 		if (directory.isDirectory()) {
 			traverseTreeForData(directory, map);
@@ -83,7 +84,7 @@ public class StatusStorageResource {
 	// Traverse into the directory and it's subdirectories,
 	// avoiding any hidden or visible files until finding
 	// the suitable directory (hits/namers/source-code).
-	private void traverseTreeForData(File directory, HashMap<String, Long> map) {
+	private void traverseTreeForData(File directory, Map<String, Long> map) {
 		for(File file : directory.listFiles()) {
 			if (file.isHidden() || !file.isDirectory()) {
 				continue;
@@ -95,7 +96,7 @@ public class StatusStorageResource {
 	
 	// Direct hits/namers/source-code directory to it's handler
 	// or keep traversing.
-	private void directoryHandler(HashMap<String, Long> map, File directory) {
+	private void directoryHandler(Map<String, Long> map, File directory) {
 		switch (directory.getName()) {
 			case hitsDirectoryName : {
 				handleSpecialDirectory(directory, hitsSizeName, hitsCountName, map);
@@ -116,7 +117,7 @@ public class StatusStorageResource {
 	}
 	
 	// Extract data of visible files.
-	private void handleSpecialDirectory(File directory, String sizeName, String countName, HashMap<String, Long> map) {
+	private void handleSpecialDirectory(File directory, String sizeName, String countName, Map<String, Long> map) {
 		for(File file : directory.listFiles()) {
 			if (file.isHidden()) {
 				continue;
@@ -142,8 +143,8 @@ public class StatusStorageResource {
 		}
 	}
 	
-	private HashMap<String, Long> initializeMapForData() {
-		HashMap<String, Long> result = new HashMap<>();
+	private Map<String, Long> initializeMapForData() {
+		Map<String, Long> result = new HashMap<>();
 		
 		result.put(hitsSizeName, 0l);
 		result.put(hitsCountName, 0l);

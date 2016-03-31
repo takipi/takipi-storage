@@ -1,7 +1,6 @@
 package com.takipi.oss.storage.resources;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -63,7 +62,6 @@ public class TreeStorageResource {
 	
 	private void traverseDirectory(File folder, int indent, StringBuilder sb) {
 		appendDirectoryInfo(folder, indent, sb);
-		indent++;
 		
 		for (File file : folder.listFiles()) {
 			if (file.isHidden()) {
@@ -71,9 +69,9 @@ public class TreeStorageResource {
 			}
 			
 			if (file.isDirectory()) {
-				traverseDirectory(file, indent, sb);
+				traverseDirectory(file, indent + 1, sb);
 			} else {
-				appendFileInfo(file, indent, sb);
+				appendFileInfo(file, indent + 1, sb);
 			}
 		}
 	}
@@ -105,7 +103,7 @@ public class TreeStorageResource {
 			String fileSize = (FileUtils.sizeOf(file) / 1024) + "Kb";
 			
 			return "\t" + permissions + "\t" + modifiedDate + "\t" + fileSize;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.warn("Failed getting file info.", e);
 			return "";
 		}
