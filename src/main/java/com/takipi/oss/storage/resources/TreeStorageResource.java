@@ -116,6 +116,6 @@ public class TreeStorageResource {
 			sb.append("|  ");
 		}
 		
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 }
