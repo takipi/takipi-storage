@@ -29,8 +29,8 @@ public class StatusStorageResource {
 	private static final String namersSizeName 			= "namers size";
 	private static final String namersCountName 		= "namers count";
 	private static final String namersDirectoryName	 	= "silver-namer";
-	private static final String sourceCodesSizeName 	= "sourcecodes size";
-	private static final String sourceCodesCountName 	= "sourcecodes count";
+	private static final String sourceCodesSizeName 	= "sources size";
+	private static final String sourceCodesCountName 	= "sources count";
 	private static final String sourceCodeDirectoryName	= "source-code";
 	
 	protected final String folderPath;
