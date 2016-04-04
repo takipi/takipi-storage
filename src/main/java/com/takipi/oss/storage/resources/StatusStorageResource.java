@@ -23,14 +23,14 @@ import com.takipi.oss.storage.helper.StatusUtil;
 @Produces(MediaType.TEXT_PLAIN)
 public class StatusStorageResource {
 	private static final Logger logger = LoggerFactory.getLogger(StatusStorageResource.class);
-	private static final String hitsSizeName 			= "HitsSize";
-	private static final String hitsCountName 			= "HitsCount";
+	private static final String hitsSizeName 			= "hits size";
+	private static final String hitsCountName 			= "hits count";
 	private static final String hitsDirectoryName	 	= "hits";
-	private static final String namersSizeName 			= "namersSize";
-	private static final String namersCountName 		= "namersCount";
+	private static final String namersSizeName 			= "namers size";
+	private static final String namersCountName 		= "namers count";
 	private static final String namersDirectoryName	 	= "silver-namer";
-	private static final String sourceCodesSizeName 	= "sourceCodesSize";
-	private static final String sourceCodesCountName 	= "sourceCodesCount";
+	private static final String sourceCodesSizeName 	= "sourcecodes size";
+	private static final String sourceCodesCountName 	= "sourcecodes count";
 	private static final String sourceCodeDirectoryName	= "source-code";
 	
 	protected final String folderPath;
@@ -62,11 +62,9 @@ public class StatusStorageResource {
 		StatusUtil.appendInfoMessage(sb, "------------------ Data Info ------------------", "");
 		StatusUtil.appendInfoMessage(sb, hitsSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(hitsSizeName)));
 		StatusUtil.appendInfoMessage(sb, hitsCountName + ": ", mappedData.get(hitsCountName));
-		StatusUtil.appendInfoMessage(
-				sb, namersSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(namersSizeName)));
+		StatusUtil.appendInfoMessage(sb, namersSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(namersSizeName)));
 		StatusUtil.appendInfoMessage(sb, namersCountName + ": ", mappedData.get(namersCountName));
-		StatusUtil.appendInfoMessage(
-				sb, sourceCodesSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(sourceCodesSizeName)));
+		StatusUtil.appendInfoMessage(sb, sourceCodesSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(sourceCodesSizeName)));
 		StatusUtil.appendInfoMessage(sb, sourceCodesCountName + ": ", mappedData.get(sourceCodesCountName));
 		StatusUtil.appendInfoMessage(sb, "Total free space left: ", StatusUtil.bytesToMbString(directory.getFreeSpace()));
 	}
