@@ -4,7 +4,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.RuntimeMXBean;
-import java.sql.Time;
 
 import com.google.common.base.Strings;
 import com.sun.management.OperatingSystemMXBean;
@@ -12,7 +11,8 @@ import com.sun.management.OperatingSystemMXBean;
 public class StatusUtil {
 	private static final String permGenStringJava7 	= "Perm Gen";
 	private static final String permGenStringJava8 	= "Metaspace";
-	private static final String defaultFailureValue = "N/A";
+	private static final String defaultFailureStringValue = "N/A";
+	private static final int defaultFailureNumberValue = -1;
 	private static String processName;
 	private static String processId;
 	private static String machineName;
@@ -42,81 +42,81 @@ public class StatusUtil {
 		return processId;
 	}
 	
-	public static String getJvmUpTime() {
+	public static long getJvmUpTimeInMilli() {
 		RuntimeMXBean rmxb = getRMXB();
 		
 		if (rmxb != null) {
-			return MilliToTime(rmxb.getUptime());
+			return rmxb.getUptime();
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
-	public static String getAvailableProcessors() {
+	public static int getAvailableProcessors() {
 		OperatingSystemMXBean osmxb = getOSMXB();
 		
 		if (osmxb != null) {
-			return String.valueOf(osmxb.getAvailableProcessors());
+			return osmxb.getAvailableProcessors();
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
-	public static String getLoadAvg() {
+	public static double getLoadAvg() {
 		OperatingSystemMXBean osmxb = getOSMXB();
 		
 		if (osmxb != null) {
 			double loadAvg = osmxb.getSystemLoadAverage();
 			
-			return loadAvg > 0 ? percisionOfTwo(loadAvg) : defaultFailureValue;
+			return (loadAvg > 0) ? precisionOfTwo(loadAvg) : defaultFailureNumberValue;
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
-	public static String getProcessCpuLoad() {
+	public static double getProcessCpuLoad() {
 		OperatingSystemMXBean osmxb = getOSMXB();
 		
 		if (osmxb != null) {
-			return percisionOfTwo(osmxb.getProcessCpuLoad());
+			return precisionOfTwo(osmxb.getProcessCpuLoad());
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
-	public static String getRamTotal() {
+	public static long getTotalRamInBytes() {
 		OperatingSystemMXBean osmxb = getOSMXB();
 		
 		if (osmxb != null) {
-			return bytesToMbString(osmxb.getTotalPhysicalMemorySize());
+			return osmxb.getTotalPhysicalMemorySize();
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
-	public static String getRamUsed() {
+	public static long getUsedRamInBytes() {
 		OperatingSystemMXBean osmxb = getOSMXB();
 		
 		if (osmxb != null) {
-			return bytesToMbString(osmxb.getTotalPhysicalMemorySize() - osmxb.getFreePhysicalMemorySize());
+			return osmxb.getTotalPhysicalMemorySize() - osmxb.getFreePhysicalMemorySize();
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
-	public static String getHeapSize() {
+	public static long getHeapSizeInBytes() {
 		Runtime runtime = Runtime.getRuntime();
 		
-		return bytesToMbString(runtime.totalMemory() - runtime.freeMemory());
+		return runtime.totalMemory() - runtime.freeMemory();
 	}
 	
-	public static String getPermGenSize() {
+	public static long getPermGenSizeInBytes() {
 		MemoryUsage memUsage = getPermGenMemoryUsage();
 		
 		if (memUsage != null) {
-			return bytesToMbString(memUsage.getUsed());
+			return memUsage.getUsed();
 		} else {
-			return defaultFailureValue;
+			return defaultFailureNumberValue;
 		}
 	}
 	
@@ -151,7 +151,7 @@ public class StatusUtil {
 		try {
 			return processName.split("@")[1];
 		} catch (Exception e) {
-			return defaultFailureValue;
+			return defaultFailureStringValue;
 		}
 	}
 	
@@ -159,42 +159,12 @@ public class StatusUtil {
 		try {
 			return processName.split("@")[0];
 		} catch (Exception e) {
-			return defaultFailureValue;
+			return defaultFailureStringValue;
 		}
 	}
 	
-	private static String MilliToTime(long time) {
-		try {
-			return new Time(time).toString();
-		} catch (Exception e) {
-			return defaultFailureValue;
-		}
-	}
-	
-	private static String bytesConversion(long bytes, int amount) {
-		if (bytes == 0) {
-			return "0";
-		}
-		
-		double result = bytes;
-		
-		for (int i = 0; i < amount; i++) {
-			result = result / 1024;
-		}
-		
-		return percisionOfTwo(result);
-	}
-	
-	private static String percisionOfTwo(double value) {
-		return String.valueOf(Math.floor(value * 100) / 100);
-	}
-	
-	public static String bytesToMbString(long bytes) {
-		return bytesConversion(bytes, 2) + "Mb";
-	}
-	
-	public static String bytesToKbString(long bytes) {
-		return bytesConversion(bytes, 1) + "Kb";
+	private static double precisionOfTwo(double value) {
+		return Math.floor(value * 100) / 100;
 	}
 	
 	public static void appendInfoMessage(StringBuilder sb, String header, String value) {
