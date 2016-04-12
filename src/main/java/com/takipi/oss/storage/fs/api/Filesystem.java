@@ -49,6 +49,16 @@ public interface Filesystem {
      */
     boolean exists(Record record) throws IOException;
 
+     /**
+     * Returns the size of a record in the filesystem
+     * 
+     * @param record
+     *            - the name of the record to get its size
+     * @throws IOException
+     *             - if there's an error
+     */
+    long size(Record record) throws IOException;
+    
     /**
      * Checks if the filesystem is healthy. This will be called during health
      * check

@@ -89,6 +89,17 @@ public class FolderFilesystem implements Filesystem {
         throw new FileNotFoundException();
     }
 
+    @Override
+    public long size(Record record) throws IOException {
+        File file = new File(buildPath(record));
+
+        if (file.exists() && file.canRead()) {
+            return file.length();
+        }
+
+        throw new FileNotFoundException();
+    }
+
     protected String buildPath(Record record) {
         Path recordPath = Paths.get(root.getPath(), escape(record.getServiceId()), escape(record.getType()),
                 escape(record.getServiceId()));
