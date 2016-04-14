@@ -12,7 +12,7 @@ public class StatusUtil {
 	private static final String permGenStringJava7 	= "PS Perm Gen";
 	private static final String permGenStringJava8 	= "Metaspace";
 	private static final String defaultFailureStringValue = "N/A";
-	private static final int defaultFailureNumberValue = -1;
+	private static final long defaultFailureNumberValue = -1l;
 	private static String processName;
 	private static String processId;
 	private static String machineName;
@@ -52,7 +52,7 @@ public class StatusUtil {
 		}
 	}
 	
-	public static int getAvailableProcessors() {
+	public static long getAvailableProcessors() {
 		OperatingSystemMXBean osmxb = getOSMXB();
 		
 		if (osmxb != null) {
