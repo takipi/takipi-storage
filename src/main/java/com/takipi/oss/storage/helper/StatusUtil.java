@@ -120,9 +120,9 @@ public class StatusUtil {
 		}
 	}
 	
-	private static com.sun.management.OperatingSystemMXBean getOSMXB() {
+	private static OperatingSystemMXBean getOSMXB() {
 		try {
-			return (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+			return (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 		} catch (Exception e) {
 			return null;
 		}
