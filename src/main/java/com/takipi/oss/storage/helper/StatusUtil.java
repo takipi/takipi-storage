@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
 import com.sun.management.OperatingSystemMXBean;
 
 public class StatusUtil {
-	private static final String permGenStringJava7 	= "Perm Gen";
+	private static final String permGenStringJava7 	= "PS Perm Gen";
 	private static final String permGenStringJava8 	= "Metaspace";
 	private static final String defaultFailureValue = "N/A";
 	private static String processName;
