@@ -15,6 +15,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
@@ -121,9 +122,9 @@ public class BinaryStorageResource {
     }
 
     protected Response internalHead(Record record) throws IOException {
-        fs.exists(record);
+        long size = fs.size(record);
         
-        return Response.ok().build();
+        return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 
     protected Response internalPut(Record record, InputStream is) throws IOException {
