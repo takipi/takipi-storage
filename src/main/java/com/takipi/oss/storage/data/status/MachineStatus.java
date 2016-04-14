@@ -12,7 +12,7 @@ public class MachineStatus
 	private String machineName;
 	private String pid;
 	private long jvmUpTimeMillis;
-	private int availableProcessors;
+	private long availableProcessors;
 	private double loadAverage;
 	private double processCpuLoad;
 	private long totalRamBytes;
@@ -100,11 +100,11 @@ public class MachineStatus
 		return jvmUpTimeMillis;
 	}
 	
-	public void setAvailableProcessors(int availableProcessors) {
+	public void setAvailableProcessors(long availableProcessors) {
 		this.availableProcessors = availableProcessors;
 	}
 	
-	public int getAvailableProcessors() {
+	public long getAvailableProcessors() {
 		return availableProcessors;
 	}
 	
