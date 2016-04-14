@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -16,11 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.data.status.MachineStatus;
 import com.takipi.oss.storage.helper.StatusUtil;
 
 @Path("/storage/v1/diag/status")
 @Consumes(MediaType.TEXT_PLAIN)
-@Produces(MediaType.TEXT_PLAIN)
+@Produces(MediaType.APPLICATION_JSON)
 public class StatusStorageResource {
 	private static final Logger logger = LoggerFactory.getLogger(StatusStorageResource.class);
 	private static final String hitsSizeName 			= "hits size";
@@ -39,34 +40,33 @@ public class StatusStorageResource {
 		this.folderPath = folderPath;
 	}
 	
-	@GET
+	@POST
 	@Timed
-	public Response get() {
+	public Response post() {
 		try {
-			StringBuilder sb = new StringBuilder();
+			MachineStatus machineStatus = new MachineStatus();
 			
-			collectMachineInfo(sb);
-			collectDataInfo(sb);
+			collectMachineInfo(machineStatus);
+			collectDataInfo(machineStatus);
 			
-			return Response.ok(sb.toString()).build();
+			return Response.ok(machineStatus).build();
 		} catch (Exception e) {
 			logger.error("Failed retrieving System Status", e);
 			return Response.serverError().entity("Failed retrieving System Status").build();
 		}
 	}
 	
-	private void collectDataInfo(StringBuilder sb) {
+	private void collectDataInfo(MachineStatus machineStatus) {
 		File directory = new File(folderPath);
 		Map<String, Long> mappedData = traverseTreeForData(directory);
 		
-		StatusUtil.appendInfoMessage(sb, "------------------ Data Info ------------------", "");
-		StatusUtil.appendInfoMessage(sb, hitsSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(hitsSizeName)));
-		StatusUtil.appendInfoMessage(sb, hitsCountName + ": ", mappedData.get(hitsCountName));
-		StatusUtil.appendInfoMessage(sb, namersSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(namersSizeName)));
-		StatusUtil.appendInfoMessage(sb, namersCountName + ": ", mappedData.get(namersCountName));
-		StatusUtil.appendInfoMessage(sb, sourceCodesSizeName + ": ", StatusUtil.bytesToKbString(mappedData.get(sourceCodesSizeName)));
-		StatusUtil.appendInfoMessage(sb, sourceCodesCountName + ": ", mappedData.get(sourceCodesCountName));
-		StatusUtil.appendInfoMessage(sb, "Total free space left: ", StatusUtil.bytesToMbString(directory.getFreeSpace()));
+		machineStatus.setHitsSizeBytes(mappedData.get(hitsSizeName));
+		machineStatus.setHitsCount(mappedData.get(hitsCountName));
+		machineStatus.setNamersSizeBytes(mappedData.get(namersSizeName));
+		machineStatus.setNamersCount(mappedData.get(namersCountName));
+		machineStatus.setSourceCodeSizeBytes(mappedData.get(sourceCodesSizeName));
+		machineStatus.setSourceCodeCount(mappedData.get(sourceCodesCountName));
+		machineStatus.setFreeSpaceLeftBytes(directory.getFreeSpace());
 	}
 	
 	private Map<String, Long> traverseTreeForData(File directory) {
@@ -154,17 +154,16 @@ public class StatusStorageResource {
 		return result;
 	}
 	
-	private void collectMachineInfo(StringBuilder sb) {
-		StatusUtil.appendInfoMessage(sb, "----------------- Machine Info ----------------", "");
-		StatusUtil.appendInfoMessage(sb, "Machine Name: ", StatusUtil.getMachineName());
-		StatusUtil.appendInfoMessage(sb, "PID: ", StatusUtil.getProcessId());
-		StatusUtil.appendInfoMessage(sb, "JVM Uptime: ", StatusUtil.getJvmUpTime());
-		StatusUtil.appendInfoMessage(sb, "Available processors: ", StatusUtil.getAvailableProcessors());
-		StatusUtil.appendInfoMessage(sb, "Load Average: ", StatusUtil.getLoadAvg());
-		StatusUtil.appendInfoMessage(sb, "Process CPU Load: ", StatusUtil.getProcessCpuLoad());
-		StatusUtil.appendInfoMessage(sb, "RAM Total: ", StatusUtil.getRamTotal());
-		StatusUtil.appendInfoMessage(sb, "RAM Used: ", StatusUtil.getRamUsed());
-		StatusUtil.appendInfoMessage(sb, "Heap Size: ", StatusUtil.getHeapSize());
-		StatusUtil.appendInfoMessage(sb, "Perm Gen Size: ", StatusUtil.getPermGenSize());
+	private void collectMachineInfo(MachineStatus machineStatus) {
+		machineStatus.setMachineName(StatusUtil.getMachineName());
+		machineStatus.setPid(StatusUtil.getProcessId());
+		machineStatus.setJvmUpTimeMillis(StatusUtil.getJvmUpTimeInMilli());
+		machineStatus.setAvailableProcessors(StatusUtil.getAvailableProcessors());
+		machineStatus.setLoadAverage(StatusUtil.getLoadAvg());
+		machineStatus.setProcessCpuLoad(StatusUtil.getProcessCpuLoad());
+		machineStatus.setTotalRamBytes(StatusUtil.getTotalRamInBytes());
+		machineStatus.setUsedRamBytes(StatusUtil.getUsedRamInBytes());
+		machineStatus.setHeapSizeBytes(StatusUtil.getHeapSizeInBytes());
+		machineStatus.setPermGenSizeBytes(StatusUtil.getPermGenSizeInBytes());
 	}
 }
