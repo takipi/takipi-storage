@@ -11,8 +11,6 @@ import javax.servlet.FilterRegistration;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
-import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.folder.record.HashSubfolderFilesystem;
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.diag.PingStorageResource;
 import com.takipi.oss.storage.resources.diag.StatusStorageResource;
@@ -41,16 +39,14 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
         }
-        
-        String folderPath = configuration.getFolderPath();
 
         environment.jersey().register(new BinaryStorageResource(configuration));
         environment.jersey().register(new JsonMultiFetchStorageResource(configuration));
         environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
 	
         environment.jersey().register(new PingStorageResource());
-        environment.jersey().register(new TreeStorageResource(folderPath));
-        environment.jersey().register(new StatusStorageResource(folderPath));
+        environment.jersey().register(new TreeStorageResource(configuration));
+        environment.jersey().register(new StatusStorageResource(configuration));
     
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(configuration));
     }
