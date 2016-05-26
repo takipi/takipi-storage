@@ -32,7 +32,7 @@ public class JsonMultiFetchStorageResource extends HashFileSystemStorageResource
 
     public JsonMultiFetchStorageResource(TakipiStorageConfiguration configuration) {
         super(configuration);
-     }
+    }
 
     @POST
     @Timed

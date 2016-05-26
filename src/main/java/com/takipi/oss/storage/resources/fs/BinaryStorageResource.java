@@ -33,7 +33,7 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
 
     public BinaryStorageResource(TakipiStorageConfiguration configuration) {
-       super(configuration);
+        super(configuration);
     }
 
     @GET

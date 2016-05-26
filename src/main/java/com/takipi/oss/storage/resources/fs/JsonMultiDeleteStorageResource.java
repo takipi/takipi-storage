@@ -28,7 +28,7 @@ public class JsonMultiDeleteStorageResource extends HashFileSystemStorageResourc
 
     public JsonMultiDeleteStorageResource(TakipiStorageConfiguration configuration) {
         super(configuration);
-     }
+    }
 
     @POST
     @Timed
