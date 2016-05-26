@@ -47,9 +47,9 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         Filesystem fs = new HashSubfolderFilesystem(folderPath,
                 configuration.getMaxUsedStoragePercentage());
 
-        environment.jersey().register(new BinaryStorageResource(fs));
-        environment.jersey().register(new JsonMultiFetchStorageResource(fs));
-        environment.jersey().register(new JsonMultiDeleteStorageResource(fs));
+        environment.jersey().register(new BinaryStorageResource(configuration));
+        environment.jersey().register(new JsonMultiFetchStorageResource(configuration));
+        environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
 	
         environment.jersey().register(new PingStorageResource());
         environment.jersey().register(new TreeStorageResource(folderPath));

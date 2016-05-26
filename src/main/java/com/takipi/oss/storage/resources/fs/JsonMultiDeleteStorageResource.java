@@ -14,22 +14,21 @@ import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Lists;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.delete.MultiDeleteRequest;
 import com.takipi.oss.storage.data.delete.MultiDeleteResponse;
 import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
 
 @Path("/storage/v1/json/multidelete")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonMultiDeleteStorageResource {
+public class JsonMultiDeleteStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiDeleteStorageResource.class);
 
-    protected Filesystem fs;
-
-    public JsonMultiDeleteStorageResource(Filesystem fs) {
-        this.fs = fs;
-    }
+    public JsonMultiDeleteStorageResource(TakipiStorageConfiguration configuration) {
+        super(configuration);
+     }
 
     @POST
     @Timed

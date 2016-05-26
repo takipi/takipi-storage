@@ -16,24 +16,23 @@ import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.Lists;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.EncodingType;
 import com.takipi.oss.storage.data.RecordWithData;
-import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
+import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
 
 @Path("/storage/v1/json/multifetch")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonMultiFetchStorageResource {
+public class JsonMultiFetchStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiFetchStorageResource.class);
 
-    protected Filesystem fs;
-
-    public JsonMultiFetchStorageResource(Filesystem fs) {
-        this.fs = fs;
-    }
+    public JsonMultiFetchStorageResource(TakipiStorageConfiguration configuration) {
+        super(configuration);
+     }
 
     @POST
     @Timed
