@@ -44,9 +44,6 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         
         String folderPath = configuration.getFolderPath();
 
-        Filesystem fs = new HashSubfolderFilesystem(folderPath,
-                configuration.getMaxUsedStoragePercentage());
-
         environment.jersey().register(new BinaryStorageResource(configuration));
         environment.jersey().register(new JsonMultiFetchStorageResource(configuration));
         environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
@@ -55,7 +52,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new TreeStorageResource(folderPath));
         environment.jersey().register(new StatusStorageResource(folderPath));
     
-        environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
+        environment.healthChecks().register("filesystem", new FilesystemHealthCheck(configuration));
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {
