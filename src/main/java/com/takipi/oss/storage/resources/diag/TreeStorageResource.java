@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.resources;
+package com.takipi.oss.storage.resources.diag;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.resources;
+package com.takipi.oss.storage.resources.fs;
 
 import java.io.InputStream;
 import java.util.List;

@@ -14,12 +14,12 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.folder.HashSubfolderFilesystem;
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
-import com.takipi.oss.storage.resources.BinaryStorageResource;
-import com.takipi.oss.storage.resources.JsonMultiDeleteStorageResource;
-import com.takipi.oss.storage.resources.JsonMultiFetchStorageResource;
-import com.takipi.oss.storage.resources.PingStorageResource;
-import com.takipi.oss.storage.resources.StatusStorageResource;
-import com.takipi.oss.storage.resources.TreeStorageResource;
+import com.takipi.oss.storage.resources.diag.PingStorageResource;
+import com.takipi.oss.storage.resources.diag.StatusStorageResource;
+import com.takipi.oss.storage.resources.diag.TreeStorageResource;
+import com.takipi.oss.storage.resources.fs.BinaryStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonMultiDeleteStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     public static void main(String[] args) throws Exception {
