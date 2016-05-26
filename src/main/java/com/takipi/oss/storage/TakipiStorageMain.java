@@ -12,7 +12,7 @@ import javax.servlet.FilterRegistration;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.folder.HashSubfolderFilesystem;
+import com.takipi.oss.storage.fs.folder.record.HashSubfolderFilesystem;
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.diag.PingStorageResource;
 import com.takipi.oss.storage.resources.diag.StatusStorageResource;

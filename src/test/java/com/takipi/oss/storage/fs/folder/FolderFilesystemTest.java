@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.google.common.io.Files;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.folder.record.RecordFilesystem;
 
 public class FolderFilesystemTest {
 
@@ -24,7 +25,7 @@ public class FolderFilesystemTest {
         try {
             File tempRoot = newTempFolderFile();
 
-            new FolderFilesystem(tempRoot.getPath(), 0.0);
+            new RecordFilesystem(tempRoot.getPath(), 0.0);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -35,7 +36,7 @@ public class FolderFilesystemTest {
     @Test
     public void testRootFolderIsInvalid() {
         try {
-            new FolderFilesystem("//:/", 0.0);
+            new RecordFilesystem("//:/", 0.0);
             fail();
         } catch (Exception e) {
         }
@@ -47,7 +48,7 @@ public class FolderFilesystemTest {
         try {
             File tempRoot = newTempFolderFile();
 
-            new FolderFilesystem(tempRoot.getPath(), 0.95);
+            new RecordFilesystem(tempRoot.getPath(), 0.95);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -60,7 +61,7 @@ public class FolderFilesystemTest {
         try {
             File tempRoot = newTempFolderFile();
 
-            new FolderFilesystem(tempRoot.getPath(), -1);
+            new RecordFilesystem(tempRoot.getPath(), -1);
             fail();
         } catch (Exception e) {
         }
@@ -71,7 +72,7 @@ public class FolderFilesystemTest {
     public void testRootFolderMaxUsedStorageAboveOne() {
         try {
             File tempRoot = newTempFolderFile();
-            new FolderFilesystem(tempRoot.getPath(), 1.1);
+            new RecordFilesystem(tempRoot.getPath(), 1.1);
             fail();
         } catch (Exception e) {
         }
@@ -100,7 +101,7 @@ public class FolderFilesystemTest {
     }
 
     private boolean putGetRecord(byte[] bytes) throws IOException {
-        Filesystem fs = newValidFolderFilesystem();
+        Filesystem<Record> fs = newValidFolderFilesystem();
         InputStream is = new ByteArrayInputStream(bytes);
 
         Record record = newStubRecord();
@@ -117,7 +118,7 @@ public class FolderFilesystemTest {
     @Test
     public void testGetNonexistsRecord() {
         try {
-            Filesystem fs = newValidFolderFilesystem();
+            Filesystem<Record> fs = newValidFolderFilesystem();
 
             fs.get(newStubRecord());
 
@@ -129,7 +130,7 @@ public class FolderFilesystemTest {
     @Test
     public void testDeleteRecord() {
         try {
-            Filesystem fs = newValidFolderFilesystem();
+            Filesystem<Record> fs = newValidFolderFilesystem();
 
             Record record = newStubRecord();
 
@@ -143,7 +144,7 @@ public class FolderFilesystemTest {
     @Test
     public void testDeleteNonexistRecord() {
         try {
-            Filesystem fs = newValidFolderFilesystem();
+            Filesystem<Record> fs = newValidFolderFilesystem();
 
             Record record = newStubRecord();
 
@@ -156,7 +157,7 @@ public class FolderFilesystemTest {
     @Test
     public void testContainsRecord() {
         try {
-            Filesystem fs = newValidFolderFilesystem();
+            Filesystem<Record> fs = newValidFolderFilesystem();
 
             Record record = newStubRecord();
             fs.put(record, new ByteArrayInputStream(newStubBytes()));
@@ -169,7 +170,7 @@ public class FolderFilesystemTest {
     @Test
     public void testContainsNonexistRecord() {
         try {
-            Filesystem fs = newValidFolderFilesystem();
+            Filesystem<Record> fs = newValidFolderFilesystem();
 
             Record record = newStubRecord();
 
@@ -185,9 +186,9 @@ public class FolderFilesystemTest {
         return file;
     }
 
-    private Filesystem newValidFolderFilesystem() {
+    private Filesystem<Record> newValidFolderFilesystem() {
         File temp = newTempFolderFile();
-        return new FolderFilesystem(temp.getPath(), 0.99);
+        return new RecordFilesystem(temp.getPath(), 0.99);
     }
 
     private Record newStubRecord() {
