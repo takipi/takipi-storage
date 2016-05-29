@@ -16,7 +16,11 @@ public abstract class FolderFilesystem<T> extends FolderFilesystemHealth impleme
     public FolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
         super(rootFolder, maxUsedStoragePercentage);
     }
-    
+
+    public File getRoot() {
+        return root;
+    }
+
     @Override
     public InputStream get(T record) throws IOException {
         File file = new File(buildPath(record));
