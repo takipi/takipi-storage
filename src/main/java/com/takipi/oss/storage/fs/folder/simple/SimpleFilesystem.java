@@ -1,10 +1,10 @@
 package com.takipi.oss.storage.fs.folder.simple;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.takipi.oss.storage.fs.folder.FolderFilesystem;
+import com.takipi.oss.storage.helper.FilesystemUtil;
 
 public class SimpleFilesystem extends FolderFilesystem<String> {
     public SimpleFilesystem(String rootFolder, double maxUsedStoragePercentage) {
@@ -19,6 +19,6 @@ public class SimpleFilesystem extends FolderFilesystem<String> {
     }
 
     protected String escape(String value) {
-        return value.replace("/", File.separator).replace("\\", File.separator);
+        return FilesystemUtil.fixPath(value);
     }
 }
