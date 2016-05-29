@@ -11,14 +11,12 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 public class FilesystemUtil {
     public static<T> String read(Filesystem<T> fs, T record, EncodingType encodingType) {
         InputStream is = null;
-        String result = null;
         
         try {
             is = fs.get(record);
-            
-            result = encode(is, encodingType);
+            return encode(is, encodingType);
         } catch (IOException e) {
-            
+            return null;
         } finally {
             if (is != null) {
                 try {
@@ -26,8 +24,6 @@ public class FilesystemUtil {
                 } catch (IOException e) {}
             }
         }
-        
-        return result;
     }
     
     private static String encode(InputStream is, EncodingType type) throws IOException {
