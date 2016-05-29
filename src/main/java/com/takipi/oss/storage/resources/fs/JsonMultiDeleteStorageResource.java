@@ -38,7 +38,7 @@ public class JsonMultiDeleteStorageResource extends HashFileSystemStorageResourc
 
             return Response.ok(response).build();
         } catch (Exception e) {
-            return Response.serverError().entity("Problem getting keys").build();
+            return Response.serverError().entity("Problem deleting keys").build();
         }
     }
 
