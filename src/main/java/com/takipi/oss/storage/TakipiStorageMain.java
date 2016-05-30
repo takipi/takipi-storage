@@ -19,6 +19,7 @@ import com.takipi.oss.storage.resources.fs.BinaryStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiDeleteStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleFetchStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonSimpleSearchStorageResource;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -46,6 +47,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
         
         environment.jersey().register(new JsonSimpleFetchStorageResource(configuration));
+        environment.jersey().register(new JsonSimpleSearchStorageResource(configuration));
         
         environment.jersey().register(new PingStorageResource());
         environment.jersey().register(new TreeStorageResource(configuration));

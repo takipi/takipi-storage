@@ -33,7 +33,7 @@ public class JsonSimpleFetchStorageResource extends SimpleFileSystemStorageResou
         try {
             return handleResponse(request);
         } catch (Exception e) {
-            return Response.serverError().entity("Problem getting keys").build();
+            return Response.serverError().entity("Problem simple fetching").build();
         }
     }
 
