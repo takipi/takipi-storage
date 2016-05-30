@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.resources;
+package com.takipi.oss.storage.resources.diag;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
 
 @Path("/storage/v1/diag/tree")
 @Consumes(MediaType.TEXT_PLAIN)
@@ -27,8 +28,8 @@ public class TreeStorageResource {
 	
 	protected final String folderPath;
 	
-	public TreeStorageResource(String folderPath) {
-		this.folderPath = folderPath;
+	public TreeStorageResource(TakipiStorageConfiguration configuration) {
+		this.folderPath = configuration.getFolderPath();
 	}
 	
 	@GET

@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.fs.folder;
+package com.takipi.oss.storage.fs.folder.record;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -9,7 +9,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.takipi.oss.storage.fs.Record;
 
-public class HashSubfolderFilesystem extends FolderFilesystem {
+public class HashSubfolderFilesystem extends RecordFilesystem {
     private HashFunction func;
 
     public HashSubfolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
@@ -21,12 +21,10 @@ public class HashSubfolderFilesystem extends FolderFilesystem {
     @Override
     protected String buildPath(Record record) {
         String key = record.getKey();
-        String path = super.buildPath(key);
-        File pathParent = new File(path).getParentFile();
 
         String hashKey = hashKey(key);
 
-        Path recordPath = Paths.get(pathParent.getPath(), escape(record.getServiceId()), escape(record.getType()),
+        Path recordPath = Paths.get(root.getPath(), escape(record.getServiceId()), escape(record.getType()),
                 hashKey, escape(key));
 
         return recordPath.toString();
