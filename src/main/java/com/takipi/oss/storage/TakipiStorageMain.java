@@ -11,15 +11,15 @@ import javax.servlet.FilterRegistration;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
-import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.folder.HashSubfolderFilesystem;
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
-import com.takipi.oss.storage.resources.BinaryStorageResource;
-import com.takipi.oss.storage.resources.JsonMultiDeleteStorageResource;
-import com.takipi.oss.storage.resources.JsonMultiFetchStorageResource;
-import com.takipi.oss.storage.resources.PingStorageResource;
-import com.takipi.oss.storage.resources.StatusStorageResource;
-import com.takipi.oss.storage.resources.TreeStorageResource;
+import com.takipi.oss.storage.resources.diag.PingStorageResource;
+import com.takipi.oss.storage.resources.diag.StatusStorageResource;
+import com.takipi.oss.storage.resources.diag.TreeStorageResource;
+import com.takipi.oss.storage.resources.fs.BinaryStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonMultiDeleteStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonSimpleFetchStorageResource;
+import com.takipi.oss.storage.resources.fs.JsonSimpleSearchStorageResource;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -41,21 +41,19 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
         }
+
+        environment.jersey().register(new BinaryStorageResource(configuration));
+        environment.jersey().register(new JsonMultiFetchStorageResource(configuration));
+        environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
         
-        String folderPath = configuration.getFolderPath();
-
-        Filesystem fs = new HashSubfolderFilesystem(folderPath,
-                configuration.getMaxUsedStoragePercentage());
-
-        environment.jersey().register(new BinaryStorageResource(fs));
-        environment.jersey().register(new JsonMultiFetchStorageResource(fs));
-        environment.jersey().register(new JsonMultiDeleteStorageResource(fs));
-	
+        environment.jersey().register(new JsonSimpleFetchStorageResource(configuration));
+        environment.jersey().register(new JsonSimpleSearchStorageResource(configuration));
+        
         environment.jersey().register(new PingStorageResource());
-        environment.jersey().register(new TreeStorageResource(folderPath));
-        environment.jersey().register(new StatusStorageResource(folderPath));
+        environment.jersey().register(new TreeStorageResource(configuration));
+        environment.jersey().register(new StatusStorageResource(configuration));
     
-        environment.healthChecks().register("filesystem", new FilesystemHealthCheck(fs));
+        environment.healthChecks().register("filesystem", new FilesystemHealthCheck(configuration));
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {

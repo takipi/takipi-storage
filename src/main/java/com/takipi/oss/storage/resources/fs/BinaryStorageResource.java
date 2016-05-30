@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.resources;
+package com.takipi.oss.storage.resources.fs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,28 +13,27 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
 
 @Path("/storage/v1/binary/{serviceId}/{type}/{key}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
-public class BinaryStorageResource {
+public class BinaryStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
 
-    protected Filesystem fs;
-
-    public BinaryStorageResource(Filesystem fs) {
-        this.fs = fs;
+    public BinaryStorageResource(TakipiStorageConfiguration configuration) {
+        super(configuration);
     }
 
     @GET

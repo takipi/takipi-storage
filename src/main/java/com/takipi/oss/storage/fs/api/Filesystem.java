@@ -3,9 +3,7 @@ package com.takipi.oss.storage.fs.api;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.takipi.oss.storage.fs.Record;
-
-public interface Filesystem {
+public interface Filesystem<T> extends FilesystemHealth {
     /**
      * Put record
      * 
@@ -16,7 +14,7 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    void put(Record record, InputStream is) throws IOException;
+    void put(T record, InputStream is) throws IOException;
 
     /**
      * Get record
@@ -27,7 +25,7 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    InputStream get(Record record) throws IOException;
+    InputStream get(T record) throws IOException;
 
     /**
      * Removes record from filesystem
@@ -37,7 +35,7 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    void delete(Record record) throws IOException;
+    void delete(T record) throws IOException;
 
     /**
      * True if record exists in filesystem
@@ -47,7 +45,7 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    boolean exists(Record record) throws IOException;
+    boolean exists(T record) throws IOException;
 
      /**
      * Returns the size of a record in the filesystem
@@ -57,13 +55,5 @@ public interface Filesystem {
      * @throws IOException
      *             - if there's an error
      */
-    long size(Record record) throws IOException;
-    
-    /**
-     * Checks if the filesystem is healthy. This will be called during health
-     * check
-     * 
-     * @return true iff the filesystem is healthy
-     */
-    boolean healthy();
+    long size(T record) throws IOException;
 }
