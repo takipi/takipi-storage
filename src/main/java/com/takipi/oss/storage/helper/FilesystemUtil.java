@@ -18,14 +18,14 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 
 public class FilesystemUtil {
     private static final Logger logger = LoggerFactory.getLogger(FilesystemUtil.class);
-    
+
     public static String fixPath(String path) {
         return path.replace("/", File.separator).replace("\\", File.separator);
     }
-    
-    public static<T> String read(Filesystem<T> fs, T record, EncodingType encodingType) {
+
+    public static <T> String read(Filesystem<T> fs, T record, EncodingType encodingType) {
         InputStream is = null;
-        
+
         try {
             is = fs.get(record);
             return encode(is, encodingType);
@@ -35,11 +35,12 @@ public class FilesystemUtil {
             if (is != null) {
                 try {
                     is.close();
-                } catch (IOException e) {}
+                } catch (IOException e) {
+                }
             }
         }
     }
-    
+
     private static String encode(InputStream is, EncodingType type) throws IOException {
         switch (type) {
             case PLAIN:
@@ -55,66 +56,53 @@ public class FilesystemUtil {
 
         throw new IllegalArgumentException("problem encoding - " + type);
     }
-    
-    public static File listFilesRecursively(File baseFolder, Predicate<File> callback)
-    {
+
+    public static File listFilesRecursively(File baseFolder, Predicate<File> callback) {
         try {
             Set<File> seenFolders = new HashSet<>();
             Deque<File> pendingFolders = new LinkedList<>();
-            
+
             pendingFolders.add(baseFolder);
-            
-            while (!pendingFolders.isEmpty())
-            {
+
+            while (!pendingFolders.isEmpty()) {
                 File folder = pendingFolders.pop();
-                
-                if (seenFolders.contains(folder))
-                {
+
+                if (seenFolders.contains(folder)) {
                     continue;
                 }
-                
+
                 seenFolders.add(folder);
-                
-                try
-                {
-                    if ((!folder.exists()) ||
-                        (!folder.canRead()))
-                    {
+
+                try {
+                    if ((!folder.exists()) || (!folder.canRead())) {
                         continue;
                     }
-                    
-                    if (!folder.isDirectory())
-                    {
+
+                    if (!folder.isDirectory()) {
                         continue;
                     }
-                    
+
                     File[] files = folder.listFiles();
-                    
-                    if (files == null)
-                    {
+
+                    if (files == null) {
                         continue;
                     }
-                    
-                    for (File file : files)
-                    {
-                        if (file.isDirectory())
-                        {
+
+                    for (File file : files) {
+                        if (file.isDirectory()) {
                             pendingFolders.add(file);
                             continue;
                         }
-                        
-                        if (callback.apply(file))
-                        {
+
+                        if (callback.apply(file)) {
                             return file;
                         }
                     }
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     logger.error("Error accessing folder {}.", folder);
                 }
             }
-            
+
             return null;
         } catch (Exception e) {
             logger.error("Error searcing in {}.", baseFolder);
