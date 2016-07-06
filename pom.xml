@@ -5,7 +5,7 @@
 
 	<groupId>com.takipi</groupId>
 	<artifactId>takipi-storage</artifactId>
-	<version>1.6.0</version>
+	<version>1.7.0</version>
 
 	<properties>
 		<!-- use UTF-8 for everything -->
@@ -29,6 +29,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
+		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-s3</artifactId>
+			<version>1.11.13</version>
 		</dependency>
 	</dependencies>
 	<build>

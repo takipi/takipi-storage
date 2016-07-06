@@ -1,5 +1,13 @@
 package com.takipi.oss.storage.resources.fs;
 
+import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.data.simple.SimpleFetchRequest;
+import com.takipi.oss.storage.data.simple.SimpleFetchResponse;
+import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.helper.FilesystemUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -7,24 +15,17 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.codahale.metrics.annotation.Timed;
-import com.takipi.oss.storage.TakipiStorageConfiguration;
-import com.takipi.oss.storage.data.simple.SimpleFetchRequest;
-import com.takipi.oss.storage.data.simple.SimpleFetchResponse;
-import com.takipi.oss.storage.helper.FilesystemUtil;
-import com.takipi.oss.storage.resources.fs.base.SimpleFileSystemStorageResource;
-
 @Path("/storage/v1/json/simplefetch")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonSimpleFetchStorageResource extends SimpleFileSystemStorageResource {
+public class JsonSimpleFetchStorageResource {
+
     private static final Logger logger = LoggerFactory.getLogger(JsonSimpleFetchStorageResource.class);
 
-    public JsonSimpleFetchStorageResource(TakipiStorageConfiguration configuration) {
-        super(configuration);
+    private final Filesystem filesystem;
+
+    public JsonSimpleFetchStorageResource(Filesystem filesystem) {
+        this.filesystem = filesystem;
     }
 
     @POST
@@ -39,7 +40,7 @@ public class JsonSimpleFetchStorageResource extends SimpleFileSystemStorageResou
 
     private Response handleResponse(SimpleFetchRequest request) {
         try {
-            String data = FilesystemUtil.read(fs, request.path, request.encodingType);
+            String data = FilesystemUtil.read(filesystem, request.path, request.encodingType);
             
             if (data != null) {
                 return Response.ok(new SimpleFetchResponse(data)).build();
