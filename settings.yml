@@ -2,6 +2,7 @@ folderPath: /opt/takipi-storage/storage
 maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
+metricFrequencySeconds: 60
 
 server:
 #  softNofileLimit: 1000
@@ -18,6 +19,9 @@ server:
   adminConnectors:
     - type: http
       port: 8081
+      
+  requestLog:
+    appenders: []
 
 # Logging settings.
 logging:
@@ -27,8 +31,15 @@ logging:
 
   # Logger-specific levels.
   loggers:
-
     com.takipi: DEBUG
 
   appenders:
     - type: console
+      logFormat: "[%d{dd-MM HH:mm:ss.SSS}] %-5level - %msg {%logger{0}} [%thread] %n"
+    - type: file
+      logFormat: "[%d{dd-MM HH:mm:ss.SSS}] %-5level - %msg {%logger{0}} [%thread] %n"
+      threshold: INFO
+      currentLogFilename: ./log.log
+      archive: true
+      archivedLogFilenamePattern: ./archived-logs/logs-%d.log
+      archivedFileCount: 2

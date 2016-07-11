@@ -4,6 +4,9 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
@@ -21,7 +24,13 @@ import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleSearchStorageResource;
 
+import com.takipi.oss.storage.helper.StorageMetric;
+import com.takipi.oss.storage.helper.LoggerStorageMetric;
+import com.takipi.oss.storage.helper.NopStorageMetric;
+
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
+    private static final Logger logger = LoggerFactory.getLogger(TakipiStorageMain.class);
+    
     public static void main(String[] args) throws Exception {
         new TakipiStorageMain().run(args);
     }
@@ -41,8 +50,21 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
         }
+        
+        StorageMetric storageMetric;
+        
+        if (configuration.getMetricFrequencySeconds() == 0)
+        {
+            logger.info("Creating NOP storage metric");
+            storageMetric = new NopStorageMetric();
+        }
+        else
+        {
+            logger.info("Creating storage metric (freq: {})", configuration.getMetricFrequencySeconds());
+            storageMetric = new LoggerStorageMetric(configuration.getMetricFrequencySeconds());
+        }
 
-        environment.jersey().register(new BinaryStorageResource(configuration));
+        environment.jersey().register(new BinaryStorageResource(configuration, storageMetric));
         environment.jersey().register(new JsonMultiFetchStorageResource(configuration));
         environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
         

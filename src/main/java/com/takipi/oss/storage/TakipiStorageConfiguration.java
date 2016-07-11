@@ -18,10 +18,18 @@ public class TakipiStorageConfiguration extends Configuration {
     private double maxUsedStoragePercentage = 0.9;
 
     private boolean enableCors;
+    
+    private int metricFrequencySeconds;
 
     @NotEmpty
     private String corsOrigins;
 
+    
+    @JsonProperty
+    public int getMetricFrequencySeconds() {
+        return metricFrequencySeconds;
+    }
+    
     @JsonProperty
     public boolean isEnableCors() {
         return enableCors;

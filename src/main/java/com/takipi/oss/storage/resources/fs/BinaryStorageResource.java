@@ -21,19 +21,24 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.io.CountingInputStream;
+
 import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
+import com.takipi.oss.storage.helper.StorageMetric;
 
 @Path("/storage/v1/binary/{serviceId}/{type}/{key}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
 public class BinaryStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
-
-    public BinaryStorageResource(TakipiStorageConfiguration configuration) {
+    private final StorageMetric storageMetric;
+    
+    public BinaryStorageResource(TakipiStorageConfiguration configuration, StorageMetric storageMetric) {
         super(configuration);
+        this.storageMetric = storageMetric;
     }
 
     @GET
@@ -43,7 +48,7 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
         if (serviceId.equals("") || type.equals("") || key.equals("")) {
             return Response.status(Status.BAD_REQUEST).build();
         }
-
+       
         try {
             return internalGet(Record.newRecord(serviceId, type, key));
         } catch (FileNotFoundException e) {
@@ -103,8 +108,7 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
         }
 
         try {
-            fs.delete(Record.newRecord(serviceId, type, key));
-            return Response.ok().build();
+            return internalDelete(Record.newRecord(serviceId, type, key));
         } catch (FileNotFoundException e) {
             logger.warn("Key not found: {}", key);
             return keyNotFound(key);
@@ -115,21 +119,52 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
     }
 
     protected Response internalGet(Record record) throws IOException {
-        InputStream is = fs.get(record);
+        storageMetric.getStarted();
+        InputStream is = null;
         
-        return Response.ok(is).build();
+        try {
+            is = fs.get(record);
+         
+            return Response.ok(is).build();
+        } finally {
+            storageMetric.getDone(is == null ? 0 : is.available());
+        }
     }
 
     protected Response internalHead(Record record) throws IOException {
-        long size = fs.size(record);
+        storageMetric.headStarted();
         
-        return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
+        try {
+            long size = fs.size(record);
+                
+            return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
+        } finally {
+            storageMetric.headDone();
+        }      
     }
 
     protected Response internalPut(Record record, InputStream is) throws IOException {
-        fs.put(record, is);
+        storageMetric.putStarted();
+        CountingInputStream cis = new CountingInputStream(is);
+        
+        try {
+            fs.put(record, cis);
 
-        return Response.ok().build();
+            return Response.ok().build();
+        } finally {
+            storageMetric.putDone(cis.getCount());
+        }
+    }
+    
+    protected Response internalDelete(Record record) throws IOException {
+        storageMetric.deleteStarted();
+        
+        try {
+            fs.delete(record);
+            return Response.ok().build();
+        } finally {
+            storageMetric.deleteDone();
+        }
     }
 
     protected Response keyNotFound(String key) {
