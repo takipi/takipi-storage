@@ -23,14 +23,13 @@ import com.takipi.oss.storage.resources.fs.JsonMultiDeleteStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleSearchStorageResource;
-
-import com.takipi.oss.storage.helper.StorageMetric;
-import com.takipi.oss.storage.helper.LoggerStorageMetric;
-import com.takipi.oss.storage.helper.NopStorageMetric;
+import com.takipi.oss.storage.metric.LoggerStorageMetric;
+import com.takipi.oss.storage.metric.NopStorageMetric;
+import com.takipi.oss.storage.metric.StorageMetric;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     private static final Logger logger = LoggerFactory.getLogger(TakipiStorageMain.class);
-    
+
     public static void main(String[] args) throws Exception {
         new TakipiStorageMain().run(args);
     }
@@ -50,16 +49,13 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
         }
-        
+
         StorageMetric storageMetric;
-        
-        if (configuration.getMetricFrequencySeconds() == 0)
-        {
+
+        if (configuration.getMetricFrequencySeconds() == 0) {
             logger.info("Creating NOP storage metric");
             storageMetric = new NopStorageMetric();
-        }
-        else
-        {
+        } else {
             logger.info("Creating storage metric (freq: {})", configuration.getMetricFrequencySeconds());
             storageMetric = new LoggerStorageMetric(configuration.getMetricFrequencySeconds());
         }
@@ -67,14 +63,14 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new BinaryStorageResource(configuration, storageMetric));
         environment.jersey().register(new JsonMultiFetchStorageResource(configuration));
         environment.jersey().register(new JsonMultiDeleteStorageResource(configuration));
-        
+
         environment.jersey().register(new JsonSimpleFetchStorageResource(configuration));
         environment.jersey().register(new JsonSimpleSearchStorageResource(configuration));
-        
+
         environment.jersey().register(new PingStorageResource());
         environment.jersey().register(new TreeStorageResource(configuration));
         environment.jersey().register(new StatusStorageResource(configuration));
-    
+
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(configuration));
     }
 

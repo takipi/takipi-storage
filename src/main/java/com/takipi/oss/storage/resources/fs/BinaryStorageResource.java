@@ -26,8 +26,8 @@ import com.google.common.io.CountingInputStream;
 import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.fs.Record;
+import com.takipi.oss.storage.metric.StorageMetric;
 import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
-import com.takipi.oss.storage.helper.StorageMetric;
 
 @Path("/storage/v1/binary/{serviceId}/{type}/{key}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
@@ -35,9 +35,10 @@ import com.takipi.oss.storage.helper.StorageMetric;
 public class BinaryStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
     private final StorageMetric storageMetric;
-    
+
     public BinaryStorageResource(TakipiStorageConfiguration configuration, StorageMetric storageMetric) {
         super(configuration);
+
         this.storageMetric = storageMetric;
     }
 
@@ -48,7 +49,7 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
         if (serviceId.equals("") || type.equals("") || key.equals("")) {
             return Response.status(Status.BAD_REQUEST).build();
         }
-       
+
         try {
             return internalGet(Record.newRecord(serviceId, type, key));
         } catch (FileNotFoundException e) {
@@ -120,11 +121,12 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
 
     protected Response internalGet(Record record) throws IOException {
         storageMetric.getStarted();
+
         InputStream is = null;
-        
+
         try {
             is = fs.get(record);
-         
+
             return Response.ok(is).build();
         } finally {
             storageMetric.getDone(is == null ? 0 : is.available());
@@ -133,20 +135,21 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
 
     protected Response internalHead(Record record) throws IOException {
         storageMetric.headStarted();
-        
+
         try {
             long size = fs.size(record);
-                
+
             return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
         } finally {
             storageMetric.headDone();
-        }      
+        }
     }
 
     protected Response internalPut(Record record, InputStream is) throws IOException {
         storageMetric.putStarted();
+
         CountingInputStream cis = new CountingInputStream(is);
-        
+
         try {
             fs.put(record, cis);
 
@@ -155,10 +158,10 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
             storageMetric.putDone(cis.getCount());
         }
     }
-    
+
     protected Response internalDelete(Record record) throws IOException {
         storageMetric.deleteStarted();
-        
+
         try {
             fs.delete(record);
             return Response.ok().build();
