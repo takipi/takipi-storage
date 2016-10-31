@@ -29,7 +29,7 @@ import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.metric.StorageMetric;
 import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
 
-@Path("/storage/v1/binary/{serviceId}/{type}/{key}")
+@Path("/storage/v1/binary/{serviceId}/{type}/{key:.+}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
 public class BinaryStorageResource extends HashFileSystemStorageResource {
@@ -126,8 +126,10 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
 
         try {
             is = fs.get(record);
+            
+            long size = fs.size(record);
 
-            return Response.ok(is).build();
+            return Response.ok(is).header(HttpHeaders.CONTENT_LENGTH, size).build();
         } finally {
             storageMetric.getDone(is == null ? 0 : is.available());
         }
