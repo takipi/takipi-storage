@@ -166,5 +166,6 @@ public class StatusStorageResource {
 		machineStatus.setUsedRamBytes(StatusUtil.getUsedRamInBytes());
 		machineStatus.setHeapSizeBytes(StatusUtil.getHeapSizeInBytes());
 		machineStatus.setPermGenSizeBytes(StatusUtil.getPermGenSizeInBytes());
+		machineStatus.setVersion(StatusUtil.getMachineVersion());
 	}
 }

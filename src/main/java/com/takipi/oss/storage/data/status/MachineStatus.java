@@ -19,6 +19,7 @@ public class MachineStatus
 	private long usedRamBytes;
 	private long heapSizeBytes;
 	private long permGenSizeBytes;
+	private String version;
 	
 	public void setHitsCount(long hitsCount) {
 		this.hitsCount = hitsCount;
@@ -154,5 +155,13 @@ public class MachineStatus
 	
 	public long getPermGenSizeBytes() {
 		return permGenSizeBytes;
+	}
+	
+	public String getVersion() {
+		return version;
+	}
+	
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }
