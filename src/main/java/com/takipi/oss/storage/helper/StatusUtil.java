@@ -5,6 +5,8 @@ import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.RuntimeMXBean;
 
+import org.junit.internal.runners.statements.ExpectException;
+
 import com.google.common.base.Strings;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -16,6 +18,7 @@ public class StatusUtil {
 	private static String processName;
 	private static String processId;
 	private static String machineName;
+	private static String machineVersion;
 	
 	public static String getMachineName() {
 		if (Strings.isNullOrEmpty(machineName)) {
@@ -23,6 +26,22 @@ public class StatusUtil {
 		}
 		
 		return machineName;
+	}
+	
+	public static String getMachineVersion()
+	{
+		if (Strings.isNullOrEmpty(machineVersion)) {
+			try {
+				machineVersion = StatusUtil.class.getPackage().getImplementationVersion();
+			}
+			catch (Exception e) { }
+			
+			if (Strings.isNullOrEmpty(machineVersion)) {
+				machineName = "N/A";
+			}
+		}
+		
+		return machineVersion;
 	}
 	
 	public static String getProcessName() {
