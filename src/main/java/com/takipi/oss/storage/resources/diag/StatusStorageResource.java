@@ -34,9 +34,9 @@ public class StatusStorageResource {
 	private static final String sourceCodesSizeName 	= "sources size";
 	private static final String sourceCodesCountName 	= "sources count";
 	private static final String sourceCodeDirectoryName	= "source-code";
-	private static final String cerebroSizeName         = "cerebro size";
-    private static final String cerebroCountName        = "cerebro count";
-    private static final String cerebroDirectoryName    = "cerebro";
+	private static final String cerebroSizeName 		= "cerebro size";
+	private static final String cerebroCountName 		= "cerebro count";
+	private static final String cerebroDirectoryName 	= "cerebro";
 	
 	protected final String folderPath;
 	
@@ -114,9 +114,9 @@ public class StatusStorageResource {
 				handleSpecialDirectory(directory, sourceCodesSizeName, sourceCodesCountName, map);
 				break;
 			}
-			case cerebroDirectoryName : {
-	             handleSpecialDirectory(directory, cerebroSizeName, cerebroCountName, map);
-	             break;
+			case cerebroDirectoryName: {
+				handleSpecialDirectory(directory, cerebroSizeName, cerebroCountName, map);
+				break;
 			}
 			default : {
 				traverseTreeForData(directory, map);

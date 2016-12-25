@@ -71,20 +71,20 @@ public class MachineStatus
 	}
 	
 	public void setCerebroCount(long cerebroCount) {
-        this.cerebroCount = cerebroCount;
-    }
-    
-    public long getCerebroCount() {
-        return cerebroCount;
-    }
-    
-    public void setCerebroSizeBytes(long cerebroSizeBytes) {
-        this.cerebroSizeBytes = cerebroSizeBytes;
-    }
-    
-    public long getCerebroSizeBytes() {
-        return cerebroSizeBytes;
-    }
+		this.cerebroCount = cerebroCount;
+	}
+	
+	public long getCerebroCount() {
+		return cerebroCount;
+	}
+	
+	public void setCerebroSizeBytes(long cerebroSizeBytes) {
+		this.cerebroSizeBytes = cerebroSizeBytes;
+	}
+	
+	public long getCerebroSizeBytes() {
+		return cerebroSizeBytes;
+	}
 	
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
 		this.freeSpaceLeftBytes = freeSpaceLeftBytes;
