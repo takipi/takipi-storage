@@ -8,6 +8,8 @@ public class MachineStatus
 	private long namersSizeBytes;
 	private long sourceCodeCount;
 	private long sourceCodeSizeBytes;
+	private long cerebroCount;
+	private long cerebroSizeBytes;
 	private long freeSpaceLeftBytes;
 	private String machineName;
 	private String pid;
@@ -67,6 +69,22 @@ public class MachineStatus
 	
 	public long getSourceCodeSizeBytes() {
 		return sourceCodeSizeBytes;
+	}
+	
+	public void setCerebroCount(long cerebroCount) {
+		this.cerebroCount = cerebroCount;
+	}
+	
+	public long getCerebroCount() {
+		return cerebroCount;
+	}
+	
+	public void setCerebroSizeBytes(long cerebroSizeBytes) {
+		this.cerebroSizeBytes = cerebroSizeBytes;
+	}
+	
+	public long getCerebroSizeBytes() {
+		return cerebroSizeBytes;
 	}
 	
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
