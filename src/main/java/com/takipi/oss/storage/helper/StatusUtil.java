@@ -5,8 +5,6 @@ import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.RuntimeMXBean;
 
-import org.junit.internal.runners.statements.ExpectException;
-
 import com.google.common.base.Strings;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -28,8 +26,7 @@ public class StatusUtil {
 		return machineName;
 	}
 	
-	public static String getMachineVersion()
-	{
+	public static String getMachineVersion() {
 		if (Strings.isNullOrEmpty(machineVersion)) {
 			try {
 				machineVersion = StatusUtil.class.getPackage().getImplementationVersion();
