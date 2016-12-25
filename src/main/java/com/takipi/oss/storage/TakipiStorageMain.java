@@ -15,6 +15,7 @@ import com.takipi.oss.storage.health.FilesystemHealthCheck;
 import com.takipi.oss.storage.resources.diag.PingStorageResource;
 import com.takipi.oss.storage.resources.diag.StatusStorageResource;
 import com.takipi.oss.storage.resources.diag.TreeStorageResource;
+import com.takipi.oss.storage.resources.diag.VersionStorageResource;
 import com.takipi.oss.storage.resources.fs.BinaryStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiDeleteStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
@@ -50,6 +51,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new JsonSimpleSearchStorageResource(configuration));
         
         environment.jersey().register(new PingStorageResource());
+        environment.jersey().register(new VersionStorageResource());
         environment.jersey().register(new TreeStorageResource(configuration));
         environment.jersey().register(new StatusStorageResource(configuration));
     
