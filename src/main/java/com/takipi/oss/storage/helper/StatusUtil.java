@@ -34,7 +34,7 @@ public class StatusUtil {
 			catch (Exception e) { }
 			
 			if (Strings.isNullOrEmpty(machineVersion)) {
-				machineName = "N/A";
+			    machineVersion = "N/A";
 			}
 		}
 		
