@@ -8,6 +8,8 @@ public class MachineStatus
 	private long namersSizeBytes;
 	private long sourceCodeCount;
 	private long sourceCodeSizeBytes;
+	private long cerebroCount;
+	private long cerebroSizeBytes;
 	private long freeSpaceLeftBytes;
 	private String machineName;
 	private String pid;
@@ -19,6 +21,7 @@ public class MachineStatus
 	private long usedRamBytes;
 	private long heapSizeBytes;
 	private long permGenSizeBytes;
+	private String version;
 	
 	public void setHitsCount(long hitsCount) {
 		this.hitsCount = hitsCount;
@@ -66,6 +69,22 @@ public class MachineStatus
 	
 	public long getSourceCodeSizeBytes() {
 		return sourceCodeSizeBytes;
+	}
+	
+	public void setCerebroCount(long cerebroCount) {
+		this.cerebroCount = cerebroCount;
+	}
+	
+	public long getCerebroCount() {
+		return cerebroCount;
+	}
+	
+	public void setCerebroSizeBytes(long cerebroSizeBytes) {
+		this.cerebroSizeBytes = cerebroSizeBytes;
+	}
+	
+	public long getCerebroSizeBytes() {
+		return cerebroSizeBytes;
 	}
 	
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
@@ -154,5 +173,13 @@ public class MachineStatus
 	
 	public long getPermGenSizeBytes() {
 		return permGenSizeBytes;
+	}
+	
+	public String getVersion() {
+		return version;
+	}
+	
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }

@@ -26,7 +26,7 @@ import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
 
-@Path("/storage/v1/binary/{serviceId}/{type}/{key}")
+@Path("/storage/v1/binary/{serviceId}/{type}/{key:.+}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
 public class BinaryStorageResource extends HashFileSystemStorageResource {
@@ -117,7 +117,9 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
     protected Response internalGet(Record record) throws IOException {
         InputStream is = fs.get(record);
         
-        return Response.ok(is).build();
+        long size = fs.size(record);
+        
+        return Response.ok(is).header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 
     protected Response internalHead(Record record) throws IOException {

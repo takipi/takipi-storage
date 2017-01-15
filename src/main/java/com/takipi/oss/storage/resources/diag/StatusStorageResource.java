@@ -34,6 +34,9 @@ public class StatusStorageResource {
 	private static final String sourceCodesSizeName 	= "sources size";
 	private static final String sourceCodesCountName 	= "sources count";
 	private static final String sourceCodeDirectoryName	= "source-code";
+	private static final String cerebroSizeName 		= "cerebro size";
+	private static final String cerebroCountName 		= "cerebro count";
+	private static final String cerebroDirectoryName 	= "cerebro";
 	
 	protected final String folderPath;
 	
@@ -67,6 +70,8 @@ public class StatusStorageResource {
 		machineStatus.setNamersCount(mappedData.get(namersCountName));
 		machineStatus.setSourceCodeSizeBytes(mappedData.get(sourceCodesSizeName));
 		machineStatus.setSourceCodeCount(mappedData.get(sourceCodesCountName));
+		machineStatus.setCerebroSizeBytes(mappedData.get(cerebroSizeName));
+		machineStatus.setCerebroCount(mappedData.get(cerebroCountName));
 		machineStatus.setFreeSpaceLeftBytes(directory.getFreeSpace());
 	}
 	
@@ -108,7 +113,11 @@ public class StatusStorageResource {
 			case sourceCodeDirectoryName : {
 				handleSpecialDirectory(directory, sourceCodesSizeName, sourceCodesCountName, map);
 				break;
-			} 
+			}
+			case cerebroDirectoryName: {
+				handleSpecialDirectory(directory, cerebroSizeName, cerebroCountName, map);
+				break;
+			}
 			default : {
 				traverseTreeForData(directory, map);
 			}
@@ -151,6 +160,8 @@ public class StatusStorageResource {
 		result.put(namersCountName, 0l);
 		result.put(sourceCodesSizeName, 0l);
 		result.put(sourceCodesCountName, 0l);
+		result.put(cerebroSizeName, 0l);
+		result.put(cerebroCountName, 0l);
 		
 		return result;
 	}
@@ -166,5 +177,6 @@ public class StatusStorageResource {
 		machineStatus.setUsedRamBytes(StatusUtil.getUsedRamInBytes());
 		machineStatus.setHeapSizeBytes(StatusUtil.getHeapSizeInBytes());
 		machineStatus.setPermGenSizeBytes(StatusUtil.getPermGenSizeInBytes());
+		machineStatus.setVersion(StatusUtil.getMachineVersion());
 	}
 }
