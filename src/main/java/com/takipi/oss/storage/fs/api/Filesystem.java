@@ -1,5 +1,7 @@
 package com.takipi.oss.storage.fs.api;
 
+import com.takipi.oss.storage.data.simple.SimpleSearchRequest;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -9,8 +11,8 @@ public interface Filesystem<T> extends FilesystemHealth {
      * 
      * @param record
      *            - the record to save the input stream to
-     * @param bytes
-     *            - the byte array to save
+     * @param is
+     *            - the input stream to save
      * @throws IOException
      *             - if there's an error
      */
@@ -56,4 +58,26 @@ public interface Filesystem<T> extends FilesystemHealth {
      *             - if there's an error
      */
     long size(T record) throws IOException;
+
+
+    /**
+     * Returns the {@link SearchResult} that matches the search query.
+     *
+     * @return
+     * @throws IOException
+     * @param request
+     */
+
+    /**
+     * Returns the {@link SearchResult} that matches the search query.
+     *
+     * @param searchRequest
+     *          - the search request
+     * @return
+     *          - the result of the search or null if nothing was found.
+     * @throws IOException
+     *          - if there's an error
+     */
+    SearchResult search(SearchRequest searchRequest) throws IOException;
+
 }
