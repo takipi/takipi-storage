@@ -1,11 +1,12 @@
 package com.takipi.oss.storage.fs.folder;
 
+import com.takipi.oss.storage.fs.BaseRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 
-public abstract class FolderFilesystem<T> extends FolderFilesystemHealth implements Filesystem<T> {
+public abstract class FolderFilesystem<T extends BaseRecord> extends FolderFilesystemHealth implements Filesystem<T> {
     public FolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
         super(rootFolder, maxUsedStoragePercentage);
     }
