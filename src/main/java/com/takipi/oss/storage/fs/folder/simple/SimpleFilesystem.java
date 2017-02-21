@@ -7,22 +7,21 @@ import java.nio.file.Paths;
 
 import com.google.common.base.Predicate;
 import com.takipi.oss.storage.data.simple.SimpleSearchResponse;
+import com.takipi.oss.storage.fs.BaseRecord;
+import com.takipi.oss.storage.fs.SimplePathRecord;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
 import com.takipi.oss.storage.fs.folder.FolderFilesystem;
 import com.takipi.oss.storage.helper.FilesystemUtil;
-import com.takipi.oss.storage.resources.fs.JsonSimpleSearchStorageResource;
 
-import javax.ws.rs.core.Response;
-
-public class SimpleFilesystem extends FolderFilesystem<String> {
+public class SimpleFilesystem extends FolderFilesystem<SimplePathRecord> {
     public SimpleFilesystem(String rootFolder, double maxUsedStoragePercentage) {
         super(rootFolder, maxUsedStoragePercentage);
     }
 
     @Override
-    protected String buildPath(String record) {
-        Path recordPath = Paths.get(root.getPath(), escape(record));
+    protected String buildPath(SimplePathRecord record) {
+        Path recordPath = Paths.get(root.getPath(), escape(record.getPath()));
 
         return recordPath.toString();
     }
@@ -44,7 +43,7 @@ public class SimpleFilesystem extends FolderFilesystem<String> {
         }
 
         String relFSPath = result.getAbsolutePath().replace(getRoot().getAbsolutePath(), "");
-        String data = FilesystemUtil.read(this, relFSPath, searchRequest.getEncodingType());
+        String data = FilesystemUtil.read(this, SimplePathRecord.newRecord(relFSPath), searchRequest.getEncodingType());
 
         if (data == null) {
             return null;
@@ -91,5 +90,10 @@ public class SimpleFilesystem extends FolderFilesystem<String> {
         {
             return foundFile;
         }
+    }
+
+    @Override
+    public BaseRecord pathToRecord(String path) {
+        return SimplePathRecord.newRecord(path);
     }
 }

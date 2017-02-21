@@ -2,7 +2,7 @@ package com.takipi.oss.storage.fs;
 
 import org.apache.commons.lang.StringUtils;
 
-public class Record {
+public class Record implements BaseRecord {
     private String serviceId;
     private String type;
     private String key;
@@ -31,6 +31,10 @@ public class Record {
 
     public String getKey() {
         return key;
+    }
+
+    public String getPath() {
+       return  this.getServiceId() + "/" + this.getType() + "/" + this.getKey();
     }
 
     @Override

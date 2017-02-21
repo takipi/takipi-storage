@@ -1,10 +1,13 @@
 Takipi Storage
 ==============
 
+With thanks to moovel for developting this version supporting s3: https://github.com/moovel/takipi-storage/tree/s3-storage
+
 Build and run:
 - clone the repo
 - `cd takipi-storage`
 - `mvn compile package`
+- edit settings.yml to contain <bucket>, <key>, <password> to access your s3 bucket
 - `java -jar target/takipi-storage-1.7.0.jar server settings.yml`
 
 Deploy:

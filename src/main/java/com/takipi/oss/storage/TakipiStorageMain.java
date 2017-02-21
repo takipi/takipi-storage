@@ -1,5 +1,14 @@
 package com.takipi.oss.storage;
 
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -7,32 +16,22 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.folder.simple.SimpleFilesystem;
 import com.takipi.oss.storage.fs.s3.S3Filesystem;
-import com.takipi.oss.storage.resources.diag.*;
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-
-import org.eclipse.jetty.servlets.CrossOriginFilter;
-
 import com.takipi.oss.storage.health.FilesystemHealthCheck;
-
+import com.takipi.oss.storage.resources.diag.MachineInfoOnlyStatusStorageResource;
+import com.takipi.oss.storage.resources.diag.NoOpTreeStorageResource;
 import com.takipi.oss.storage.resources.diag.PingStorageResource;
 import com.takipi.oss.storage.resources.diag.StatusStorageResource;
 import com.takipi.oss.storage.resources.diag.TreeStorageResource;
 import com.takipi.oss.storage.resources.diag.VersionStorageResource;
-
 import com.takipi.oss.storage.resources.fs.BinaryStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiDeleteStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonMultiFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleFetchStorageResource;
 import com.takipi.oss.storage.resources.fs.JsonSimpleSearchStorageResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
 public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
