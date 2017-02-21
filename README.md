@@ -7,7 +7,7 @@ Build and run:
 - clone the repo
 - `cd takipi-storage`
 - `mvn compile package`
-- edit settings.yml to contain <bucket>, <key>, <password> to access your s3 bucket
+- edit settings.yml to contain bucket, key, password to access your s3 bucket
 - `java -jar target/takipi-storage-1.7.0.jar server settings.yml`
 
 Deploy:
