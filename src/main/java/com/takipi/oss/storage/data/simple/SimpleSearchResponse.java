@@ -1,8 +1,6 @@
 package com.takipi.oss.storage.data.simple;
 
-import com.takipi.oss.storage.fs.api.SearchResult;
-
-public class SimpleSearchResponse implements SearchResult {
+public class SimpleSearchResponse {
     String data;
     String path;
     

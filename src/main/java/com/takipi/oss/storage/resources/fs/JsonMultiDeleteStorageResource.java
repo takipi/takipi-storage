@@ -1,13 +1,6 @@
 package com.takipi.oss.storage.resources.fs;
 
-import com.codahale.metrics.annotation.Timed;
-import com.google.common.collect.Lists;
-import com.takipi.oss.storage.data.delete.MultiDeleteRequest;
-import com.takipi.oss.storage.data.delete.MultiDeleteResponse;
-import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.fs.api.Filesystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -15,19 +8,26 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.Lists;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
+import com.takipi.oss.storage.data.delete.MultiDeleteRequest;
+import com.takipi.oss.storage.data.delete.MultiDeleteResponse;
+import com.takipi.oss.storage.fs.Record;
+import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
 
 @Path("/storage/v1/json/multidelete")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonMultiDeleteStorageResource {
-
+public class JsonMultiDeleteStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiDeleteStorageResource.class);
 
-    private final Filesystem filesystem;
-
-    public JsonMultiDeleteStorageResource(Filesystem filesystem) {
-        this.filesystem = filesystem;
+    public JsonMultiDeleteStorageResource(TakipiStorageConfiguration configuration) {
+        super(configuration);
     }
 
     @POST
@@ -47,7 +47,7 @@ public class JsonMultiDeleteStorageResource {
         
         for (Record record : request.records) {
             try {
-                filesystem.delete(record);
+                fs.delete(record);
                 deletedRecords.add(record);
             } catch (Exception e) {
                 logger.error("Problem deleting record " + record, e);
