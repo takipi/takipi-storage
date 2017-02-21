@@ -1,31 +1,39 @@
 package com.takipi.oss.storage.resources.fs;
 
-import com.codahale.metrics.annotation.Timed;
-import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.fs.api.Filesystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
+import com.takipi.oss.storage.fs.Record;
+import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
+
 @Path("/storage/v1/binary/{serviceId}/{type}/{key:.+}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
-public class BinaryStorageResource {
-
+public class BinaryStorageResource extends HashFileSystemStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
 
-    private final Filesystem filesystem;
-
-    public BinaryStorageResource(Filesystem filesystem) {
-        this.filesystem = filesystem;
+    public BinaryStorageResource(TakipiStorageConfiguration configuration) {
+        super(configuration);
     }
 
     @GET
@@ -95,7 +103,7 @@ public class BinaryStorageResource {
         }
 
         try {
-            filesystem.delete(Record.newRecord(serviceId, type, key));
+            fs.delete(Record.newRecord(serviceId, type, key));
             return Response.ok().build();
         } catch (FileNotFoundException e) {
             logger.warn("Key not found: {}", key);
@@ -107,7 +115,7 @@ public class BinaryStorageResource {
     }
 
     protected Response internalGet(Record record) throws IOException {
-        InputStream is = filesystem.get(record);
+        InputStream is = fs.get(record);
         
         long size = fs.size(record);
         
@@ -115,13 +123,13 @@ public class BinaryStorageResource {
     }
 
     protected Response internalHead(Record record) throws IOException {
-        long size = filesystem.size(record);
+        long size = fs.size(record);
         
         return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 
     protected Response internalPut(Record record, InputStream is) throws IOException {
-        filesystem.put(record, is);
+        fs.put(record, is);
 
         return Response.ok().build();
     }
