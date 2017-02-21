@@ -108,15 +108,15 @@ public class BinaryStorageResource {
 
     protected Response internalGet(Record record) throws IOException {
         InputStream is = filesystem.get(record);
-        
-        long size = fs.size(record);
-        
+
+        long size = filesystem.size(record);
+
         return Response.ok(is).header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 
     protected Response internalHead(Record record) throws IOException {
         long size = filesystem.size(record);
-        
+
         return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 

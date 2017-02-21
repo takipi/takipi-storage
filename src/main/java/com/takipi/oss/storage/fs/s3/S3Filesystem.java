@@ -1,20 +1,23 @@
 package com.takipi.oss.storage.fs.s3;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
-import com.takipi.oss.storage.data.simple.SimpleSearchResponse;
-import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.api.SearchRequest;
-import com.takipi.oss.storage.fs.api.SearchResult;
-import com.takipi.oss.storage.fs.folder.simple.SimpleFilesystem;
-import com.takipi.oss.storage.helper.FilesystemUtil;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class S3Filesystem<T extends Record> implements Filesystem<T> {
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
+import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.takipi.oss.storage.data.simple.SimpleSearchResponse;
+import com.takipi.oss.storage.fs.BaseRecord;
+import com.takipi.oss.storage.fs.SimplePathRecord;
+import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.api.SearchRequest;
+import com.takipi.oss.storage.fs.api.SearchResult;
+import com.takipi.oss.storage.helper.FilesystemUtil;
+
+public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
 
     private final AmazonS3 amazonS3;
     private final String bucket;
@@ -81,8 +84,13 @@ public class S3Filesystem<T extends Record> implements Filesystem<T> {
         return true;
     }
 
+    @Override
+    public BaseRecord pathToRecord(String path) {
+        return SimplePathRecord.newRecord(path);
+    }
+
     private String keyOf(T record) {
-        return record.getServiceId() + "/" + record.getType() + "/" + record.getKey();
+        return record.getPath();
     }
 
 }
