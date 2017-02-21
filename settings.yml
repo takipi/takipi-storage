@@ -1,7 +1,16 @@
-folderPath: /opt/takipi-storage/storage
-maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
+
+s3Fs:
+    bucket: <bucket>
+    credentials:
+      accessKey: <key> 
+      secretKey: <secret> 
+
+#folderFs:
+#  folderPath: /opt/takipi-storage/storage
+#  maxUsedStoragePercentage: 0.95
+
 
 server:
 #  softNofileLimit: 1000
