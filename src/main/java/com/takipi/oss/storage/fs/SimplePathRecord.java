@@ -11,13 +11,14 @@ public class SimplePathRecord  implements BaseRecord {
     }
 
     private SimplePathRecord(String path) {
-        this.path = path;
+        this.path = path.replaceAll("//", "/");
 
         this.pathParts = path.split("/", 3);
     }
 
+    @Override
     public String getPath() {
-       return path;
+        return path;
     }
 
     @Override
