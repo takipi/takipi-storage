@@ -41,7 +41,7 @@ public class FilesystemUtil {
         }
     }
 
-    private static String encode(InputStream is, EncodingType type) throws IOException {
+    public static String encode(InputStream is, EncodingType type) throws IOException {
         switch (type) {
             case PLAIN:
             case JSON: {

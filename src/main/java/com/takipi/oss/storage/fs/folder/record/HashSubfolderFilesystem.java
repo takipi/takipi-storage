@@ -9,7 +9,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.takipi.oss.storage.fs.Record;
 
-public class HashSubfolderFilesystem extends RecordFilesystem {
+public abstract class HashSubfolderFilesystem extends RecordFilesystem {
     private HashFunction func;
 
     public HashSubfolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
@@ -40,4 +40,6 @@ public class HashSubfolderFilesystem extends RecordFilesystem {
 
         return sb.toString();
     }
+
+
 }

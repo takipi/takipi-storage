@@ -29,7 +29,7 @@ public class TreeStorageResource {
 	protected final String folderPath;
 	
 	public TreeStorageResource(TakipiStorageConfiguration configuration) {
-		this.folderPath = configuration.getFolderPath();
+		this.folderPath = configuration.getFolderFs().getFolderPath();
 	}
 	
 	@GET
