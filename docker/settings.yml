@@ -1,27 +1,36 @@
-folderPath: /opt/takipi-storage/storage
-maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
+
+s3Fs:
+    bucket: <bucket>
+    credentials:
+      accessKey: <key> 
+      secretKey: <secret> 
 
 server:
   applicationConnectors:
     - type: http
       port: 8080
+# this requires the alpn-boot library on the JVM's boot classpath
+#    - type: spdy3
+#      port: 8445
+#      keyStorePath: example.keystore
+#      keyStorePassword: example
+#      validateCerts: false
   adminConnectors:
     - type: http
       port: 8081
-  requestLog:
-    appenders:
-      - type: file
-        currentLogFilename: ./storage/log/access.log
-        archivedLogFilenamePattern: ./storage/log/access.%d.log.gz
-        archivedFileCount: 14
+
+# Logging settings.
 logging:
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
+
+  # Logger-specific levels.
   loggers:
+
     com.takipi: DEBUG
+
   appenders:
-    - type: file
-      currentLogFilename: ./storage/log/takipi-storage.log
-      archivedLogFilenamePattern: ./storage/log/takipi-storage.%d.log.gz
-      archivedFileCount: 14
+    - type: console
