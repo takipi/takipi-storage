@@ -67,7 +67,7 @@ public class TakipiStorageConfiguration extends Configuration {
 
             @JsonProperty
             public String getAccessKey() {
-                return accessKey;
+                return TakipiStorageConfigurationEnvResolver.resolveEnv(accessKey);
             }
 
             @JsonProperty
@@ -77,7 +77,7 @@ public class TakipiStorageConfiguration extends Configuration {
 
             @JsonProperty
             public String getSecretKey() {
-                return secretKey;
+                return TakipiStorageConfigurationEnvResolver.resolveEnv(secretKey);
             }
 
             @JsonProperty
@@ -88,7 +88,7 @@ public class TakipiStorageConfiguration extends Configuration {
 
         @JsonProperty
         public String getBucket() {
-            return bucket;
+            return TakipiStorageConfigurationEnvResolver.resolveEnv(bucket);
         }
 
         @JsonProperty
