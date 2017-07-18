@@ -3,11 +3,19 @@
 declare -r  FILES_TO_DELETE="HYB_HIT*"
 declare -ri MIN_DAYS_TO_PRESERVE=0
 declare -ri NUM_ARGS=$#
-declare -r ARG1=$1
-declare -i days_to_preserve=$1
+declare -r  ARG1=$1
+declare -i  days_to_preserve=$1
+
+function match() {
+	local -r str=$1
+	local -r regex=$2
+	matched=0
+	echo $str | grep -i -E $regex > /dev/null
+	[ $? -eq 0 ] && matched=1 || matched=0
+}
 
 function usage {
-	echo "usage: takipi-cleanup [number of days to preserve]"
+	echo "usage: takipi-cleanup.sh [number of days to preserve]"
 }
 
 function checkArgument {
@@ -27,7 +35,7 @@ function checkArgument {
 	fi
 }
 
-function getNumberOfDaysToPreserve {
+function readDaysToPreserve {
 
 	while [ $days_to_preserve -lt $MIN_DAYS_TO_PRESERVE ]
 	do
@@ -40,21 +48,22 @@ function main {
 
 	checkArgument
 
-	getNumberOfDaysToPreserve
+	readDaysToPreserve
 
 	local -i file_count=$(find . -name "$FILES_TO_DELETE" -type f -mtime +$days_to_preserve | wc -l)
 	if [ $file_count -eq 0 ]
 	then
 		echo "There are no files older than $days_to_preserve days to delete"
 	else
-		echo -e "Delete all $file_count files older than $days_to_preserve days? (yes/no): \c"
+		echo -e "Delete all $file_count files older than $days_to_preserve days? (y/n): \c"
 		read proceed
 
-		if [ -n "$proceed" ] && [ $proceed == "yes" ]
+		match $proceed "^y$|^yes$" 
+		
+		if [ -n "$proceed" ] && [ $matched -eq 1 ]
 		then
-			#echo "Deleting the following $file_count files:"
-			#find . -name "$FILES_TO_DELETE" -type f -mtime +$days_to_preserve 
 			find . -name "$FILES_TO_DELETE" -type f -mtime +$days_to_preserve -delete
+			echo "File deletion is complete."
 		else
 			exit 1
 		fi
