@@ -59,10 +59,8 @@ public class TakipiStorageConfiguration extends Configuration {
         private Credentials credentials;
 
         public static class Credentials {
-            @NotEmpty
             private String accessKey;
 
-            @NotEmpty
             private String secretKey;
 
             @JsonProperty
