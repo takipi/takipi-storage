@@ -1,6 +1,6 @@
 package com.takipi.oss.storage.fs;
 
-public class SimplePathRecord  implements BaseRecord {
+public class SimplePathRecord implements BaseRecord {
 
     private final String path;
 
@@ -23,8 +23,7 @@ public class SimplePathRecord  implements BaseRecord {
 
     @Override
     public String getServiceId() {
-        if (pathParts.length > 0)
-        {
+        if (pathParts.length > 0) {
             return pathParts[0];
         }
 
@@ -33,8 +32,7 @@ public class SimplePathRecord  implements BaseRecord {
 
     @Override
     public String getType() {
-        if (pathParts.length > 1)
-        {
+        if (pathParts.length > 1) {
             return pathParts[1];
         }
 
@@ -43,8 +41,7 @@ public class SimplePathRecord  implements BaseRecord {
 
     @Override
     public String getKey() {
-        if (pathParts.length > 2)
-        {
+        if (pathParts.length > 2) {
             return pathParts[2];
         }
 

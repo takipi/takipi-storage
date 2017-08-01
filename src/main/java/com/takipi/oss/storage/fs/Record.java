@@ -1,5 +1,7 @@
 package com.takipi.oss.storage.fs;
 
+import java.io.File;
+
 import org.apache.commons.lang.StringUtils;
 
 public class Record implements BaseRecord {
@@ -34,7 +36,9 @@ public class Record implements BaseRecord {
     }
 
     public String getPath() {
-       return  this.getServiceId() + "/" + this.getType() + "/" + this.getKey();
+       return (this.getServiceId() + File.separator +
+               this.getType() + File.separator +
+               this.getKey());
     }
 
     @Override
