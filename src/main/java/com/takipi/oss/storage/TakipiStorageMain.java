@@ -93,10 +93,15 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new NoOpTreeStorageResource());
         environment.jersey().register(new MachineInfoOnlyStatusStorageResource());
 
+        AmazonS3 amazonS3;
         // Setup Amazon S3 client
-        TakipiStorageConfiguration.S3Fs.Credentials credentials = configuration.getS3Fs().getCredentials();
-        AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
-        AmazonS3 amazonS3 = new AmazonS3Client(awsCredentials);
+        if (configuration.getS3Fs().getCredentials() != null) {
+            TakipiStorageConfiguration.S3Fs.Credentials credentials = configuration.getS3Fs().getCredentials();
+            AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
+            amazonS3 = new AmazonS3Client(awsCredentials);
+        } else {
+            amazonS3 = new AmazonS3Client();
+        }
 
         // S3 bucket
         String bucket = configuration.getS3Fs().getBucket();
