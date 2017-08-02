@@ -1,6 +1,7 @@
 enableCors: true
 corsOrigins: "*"
 
+# If using attaching IAM Role to instance leave accessKey and secretKey empty.
 s3Fs:
     bucket: <bucket>
     pathPrefix: <path_prefix>
