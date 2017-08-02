@@ -93,16 +93,23 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new NoOpTreeStorageResource());
         environment.jersey().register(new MachineInfoOnlyStatusStorageResource());
 
-        AmazonS3 amazonS3;
         // Setup Amazon S3 client
-        if (configuration.getS3Fs().getCredentials() != null) {
-            TakipiStorageConfiguration.S3Fs.Credentials credentials = configuration.getS3Fs().getCredentials();
-            AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
-            amazonS3 = new AmazonS3Client(awsCredentials);
-        } else {
+        TakipiStorageConfiguration.S3Fs.Credentials credentials = configuration.getS3Fs().getCredentials();
+        AmazonS3 amazonS3;
+        
+        if ( credentials.getAccessKey() != null && !credentials.getAccessKey().isEmpty() &&
+                credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty()  ){
+                log.debug("Using S3 Filesystem with keys" );
+
+                AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
+                amazonS3 = new AmazonS3Client(awsCredentials);
+        }
+        else {
+            // create a client connection based on IAM role assigned
+            log.debug("Using S3 Filesystem with IAM Role");
             amazonS3 = new AmazonS3Client();
         }
-
+        
         // S3 bucket
         String bucket = configuration.getS3Fs().getBucket();
         String pathPrefix = configuration.getS3Fs().getPathPrefix();
