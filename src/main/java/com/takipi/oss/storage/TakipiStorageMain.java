@@ -100,9 +100,10 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         // S3 bucket
         String bucket = configuration.getS3Fs().getBucket();
-        log.debug("Using AWS S3 based filesystem with bucket: {}", bucket);
+        String pathPrefix = configuration.getS3Fs().getPathPrefix();
+        log.debug("Using AWS S3 based filesystem with bucket: {}, prefix: {}", bucket, pathPrefix);
 
-        return new S3Filesystem(amazonS3, bucket);
+        return new S3Filesystem(amazonS3, bucket, pathPrefix);
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {
