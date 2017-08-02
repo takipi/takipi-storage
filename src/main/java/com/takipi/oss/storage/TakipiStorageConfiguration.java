@@ -62,7 +62,7 @@ public class TakipiStorageConfiguration extends Configuration {
         private Credentials credentials;
 
         public static class Credentials {
-
+    
             private String accessKey;
 
             private String secretKey;

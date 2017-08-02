@@ -95,10 +95,11 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         // Setup Amazon S3 client
         TakipiStorageConfiguration.S3Fs.Credentials credentials = configuration.getS3Fs().getCredentials();
+
         AmazonS3 amazonS3;
         
         if ( credentials.getAccessKey() != null && !credentials.getAccessKey().isEmpty() &&
-                credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty()  ){
+                credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty() ) {
                 log.debug("Using S3 Filesystem with keys" );
 
                 AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
@@ -109,7 +110,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
             log.debug("Using S3 Filesystem with IAM Role");
             amazonS3 = new AmazonS3Client();
         }
-        
+
         // S3 bucket
         String bucket = configuration.getS3Fs().getBucket();
         String pathPrefix = configuration.getS3Fs().getPathPrefix();
