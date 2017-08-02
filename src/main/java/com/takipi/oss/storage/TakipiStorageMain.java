@@ -95,27 +95,28 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         // Setup Amazon S3 client
         TakipiStorageConfiguration.S3Fs.Credentials credentials = configuration.getS3Fs().getCredentials();
-	AmazonS3 amazonS3;
 
-	if ( credentials.getAccessKey() != null && !credentials.getAccessKey().isEmpty() &&
-                credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty()  ){
+        AmazonS3 amazonS3;
+        
+        if ( credentials.getAccessKey() != null && !credentials.getAccessKey().isEmpty() &&
+                credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty() ) {
                 log.debug("Using S3 Filesystem with keys" );
 
                 AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
                 amazonS3 = new AmazonS3Client(awsCredentials);
-	}
-	else {
-		// create a client connection based on IAM role assigned
-                log.debug("Using S3 Filesystem with IAM Role");
-		amazonS3 = new AmazonS3Client();
-
-	}
+        }
+        else {
+            // create a client connection based on IAM role assigned
+            log.debug("Using S3 Filesystem with IAM Role");
+            amazonS3 = new AmazonS3Client();
+        }
 
         // S3 bucket
         String bucket = configuration.getS3Fs().getBucket();
-        log.debug("Using AWS S3 based filesystem with bucket: {}", bucket);
+        String pathPrefix = configuration.getS3Fs().getPathPrefix();
+        log.debug("Using AWS S3 based filesystem with bucket: {}, prefix: {}", bucket, pathPrefix);
 
-        return new S3Filesystem(amazonS3, bucket);
+        return new S3Filesystem(amazonS3, bucket, pathPrefix);
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {

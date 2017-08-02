@@ -1,5 +1,6 @@
 package com.takipi.oss.storage.fs.s3;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,10 +22,12 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
 
     private final AmazonS3 amazonS3;
     private final String bucket;
-
-    public S3Filesystem(AmazonS3 amazonS3, String bucket) {
+    private final String pathPrefix;
+    
+    public S3Filesystem(AmazonS3 amazonS3, String bucket, String pathPrefix) {
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
+        this.pathPrefix = pathPrefix;
     }
 
     @Override
@@ -59,7 +62,13 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
         // Start a prefix search
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
         listObjectsRequest.setBucketName(bucket);
-        listObjectsRequest.setPrefix(searchRequest.getBaseSearchPath());
+        
+        if (this.pathPrefix != null) {
+            listObjectsRequest.setPrefix(this.pathPrefix + "/" + searchRequest.getBaseSearchPath());
+        } else {
+            listObjectsRequest.setPrefix(searchRequest.getBaseSearchPath());    
+        }
+
         ObjectListing objectListing = amazonS3.listObjects(listObjectsRequest);
 
         // Just select the first object
@@ -90,6 +99,10 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     }
 
     private String keyOf(T record) {
+        if (this.pathPrefix != null) {
+            return this.pathPrefix + File.separator + record.getPath();
+        }
+        
         return record.getPath();
     }
 

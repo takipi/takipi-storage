@@ -1,8 +1,10 @@
 enableCors: true
 corsOrigins: "*"
 
+# If using attaching IAM Role to instance leave accessKey and secretKey empty.
 s3Fs:
     bucket: <bucket>
+    pathPrefix: <path_prefix>
     credentials:
       accessKey: <key> 
       secretKey: <secret> 
@@ -11,12 +13,12 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
-# this requires the alpn-boot library on the JVM's boot classpath
-#    - type: spdy3
-#      port: 8445
-#      keyStorePath: example.keystore
-#      keyStorePassword: example
-#      validateCerts: false
+# https support
+#   - type: https
+#     port: 8443
+#     keyStorePath: example.keystore
+#     keyStorePassword: example
+#     validateCerts: false
   adminConnectors:
     - type: http
       port: 8081

@@ -1,5 +1,5 @@
 # Run me with docker run -v <host-path-to-storage>:/opt/takipi-storage/storage -p <host_port>:$STORAGE_PORT
-# Logs are written to <storage>/log folder and they should be persistent outside of the running container
+# Logs are written to <storage>/log folder and so <host-path-to-storage> should be persistent outside of the running container
 
 FROM java:8
 MAINTAINER Chen harel "https://github.com/chook"

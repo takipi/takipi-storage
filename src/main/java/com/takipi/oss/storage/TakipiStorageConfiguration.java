@@ -54,11 +54,15 @@ public class TakipiStorageConfiguration extends Configuration {
         @NotEmpty
         private String bucket;
 
+        @NotEmpty
+        private String pathPrefix;
+        
         @NotNull
         @Valid
         private Credentials credentials;
 
         public static class Credentials {
+    
             private String accessKey;
 
             private String secretKey;
@@ -93,7 +97,17 @@ public class TakipiStorageConfiguration extends Configuration {
         public void setBucket(String bucket) {
             this.bucket = bucket;
         }
+        
+        @JsonProperty
+        public String getPathPrefix() {
+            return pathPrefix;
+        }
 
+        @JsonProperty
+        public void setPathPrefix(String pathPrefix) {
+            this.pathPrefix = pathPrefix;
+        }
+        
         @JsonProperty
         public Credentials getCredentials() {
             return credentials;
