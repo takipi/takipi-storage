@@ -1,7 +1,8 @@
 Takipi Storage
 ==============
 
-Thanks to moovel for developing this version supporting s3: https://github.com/moovel/takipi-storage/tree/s3-storage
+Thanks to Moovel for developing this version supporting s3: https://github.com/moovel/takipi-storage/tree/s3-storage
+And to Atlassian for adding some extra features
 
 Build and run:
 - clone the repo
