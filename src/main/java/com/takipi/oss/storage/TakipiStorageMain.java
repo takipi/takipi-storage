@@ -98,8 +98,9 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         AmazonS3 amazonS3;
         
-        if ( credentials.getAccessKey() != null && !credentials.getAccessKey().isEmpty() &&
-                credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty() ) {
+        if ((credentials.getAccessKey() != null) &&
+            (!credentials.getAccessKey().isEmpty()) &&
+            (credentials.getSecretKey() != null && !credentials.getSecretKey().isEmpty())) {
                 log.debug("Using S3 Filesystem with keys" );
 
                 AWSCredentials awsCredentials = new BasicAWSCredentials(credentials.getAccessKey(), credentials.getSecretKey());
