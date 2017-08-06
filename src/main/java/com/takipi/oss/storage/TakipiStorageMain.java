@@ -13,6 +13,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.takipi.oss.storage.fs.BaseRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.folder.simple.SimpleFilesystem;
 import com.takipi.oss.storage.fs.s3.S3Filesystem;
@@ -52,6 +53,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     }
 
     @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void run(TakipiStorageConfiguration configuration, Environment environment) {
         if (configuration.isEnableCors()) {
             enableCors(configuration, environment);
@@ -69,7 +71,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         environment.jersey().register(new VersionStorageResource());
     }
 
-    private Filesystem configureFilesystem(TakipiStorageConfiguration configuration, Environment environment) {
+    private Filesystem<?> configureFilesystem(TakipiStorageConfiguration configuration, Environment environment) {
         if(configuration.hasFolderFs()) {
             return configureFolderFilesystem(configuration, environment);
         } else if(configuration.hasS3Fs()) {
@@ -80,7 +82,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         }
     }
 
-    private Filesystem configureFolderFilesystem(TakipiStorageConfiguration configuration, Environment environment) {
+    private SimpleFilesystem configureFolderFilesystem(TakipiStorageConfiguration configuration, Environment environment) {
         log.debug("Using local filesystem at: {}", configuration.getFolderFs().getFolderPath());
 
         environment.jersey().register(new TreeStorageResource(configuration));
@@ -88,7 +90,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         return new SimpleFilesystem(configuration.getFolderFs().getFolderPath(), configuration.getFolderFs().getMaxUsedStoragePercentage());
     }
 
-    private Filesystem configureS3Filesystem(TakipiStorageConfiguration configuration, Environment environment) {
+    private <T extends BaseRecord> Filesystem<T> configureS3Filesystem(TakipiStorageConfiguration configuration, Environment environment) {
         // Setup basically mocked versions of info resources.
         environment.jersey().register(new NoOpTreeStorageResource());
         environment.jersey().register(new MachineInfoOnlyStatusStorageResource());
@@ -117,7 +119,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         String pathPrefix = configuration.getS3Fs().getPathPrefix();
         log.debug("Using AWS S3 based filesystem with bucket: {}, prefix: {}", bucket, pathPrefix);
 
-        return new S3Filesystem(amazonS3, bucket, pathPrefix);
+        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix);
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {

@@ -25,7 +25,7 @@ public class FolderFilesystemTest {
         try {
             File tempRoot = newTempFolderFile();
 
-            new RecordFilesystem(tempRoot.getPath(), 0.0);
+            new RecordFilesystem<Record>(tempRoot.getPath(), 0.0);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -36,7 +36,7 @@ public class FolderFilesystemTest {
     @Test
     public void testRootFolderIsInvalid() {
         try {
-            new RecordFilesystem("//:/", 0.0);
+            new RecordFilesystem<Record>("//:/", 0.0);
             fail();
         } catch (Exception e) {
         }
@@ -48,7 +48,7 @@ public class FolderFilesystemTest {
         try {
             File tempRoot = newTempFolderFile();
 
-            new RecordFilesystem(tempRoot.getPath(), 0.95);
+            new RecordFilesystem<Record>(tempRoot.getPath(), 0.95);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -61,7 +61,7 @@ public class FolderFilesystemTest {
         try {
             File tempRoot = newTempFolderFile();
 
-            new RecordFilesystem(tempRoot.getPath(), -1);
+            new RecordFilesystem<Record>(tempRoot.getPath(), -1);
             fail();
         } catch (Exception e) {
         }
@@ -72,7 +72,7 @@ public class FolderFilesystemTest {
     public void testRootFolderMaxUsedStorageAboveOne() {
         try {
             File tempRoot = newTempFolderFile();
-            new RecordFilesystem(tempRoot.getPath(), 1.1);
+            new RecordFilesystem<Record>(tempRoot.getPath(), 1.1);
             fail();
         } catch (Exception e) {
         }
@@ -188,7 +188,7 @@ public class FolderFilesystemTest {
 
     private Filesystem<Record> newValidFolderFilesystem() {
         File temp = newTempFolderFile();
-        return new RecordFilesystem(temp.getPath(), 0.99);
+        return new RecordFilesystem<Record>(temp.getPath(), 0.99);
     }
 
     private Record newStubRecord() {

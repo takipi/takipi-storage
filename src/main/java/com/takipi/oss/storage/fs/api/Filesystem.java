@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.takipi.oss.storage.fs.BaseRecord;
-import com.takipi.oss.storage.fs.Record;
 
 public interface Filesystem<T extends BaseRecord> extends FilesystemHealth {
     /**

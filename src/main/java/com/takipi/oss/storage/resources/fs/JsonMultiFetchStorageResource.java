@@ -25,9 +25,9 @@ import java.util.List;
 public class JsonMultiFetchStorageResource {
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiFetchStorageResource.class);
 
-    private final Filesystem filesystem;
+    private final Filesystem<Record> filesystem;
 
-    public JsonMultiFetchStorageResource(Filesystem filesystem) {
+    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem) {
         this.filesystem = filesystem;
     }
 
