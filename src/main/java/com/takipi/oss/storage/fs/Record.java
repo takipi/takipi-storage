@@ -23,18 +23,22 @@ public class Record implements BaseRecord {
         return new Record(serviceId, type, key);
     }
 
+    @Override
     public String getServiceId() {
         return serviceId;
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getKey() {
         return key;
     }
 
+    @Override
     public String getPath() {
        return (this.getServiceId() + File.separator +
                this.getType() + File.separator +
