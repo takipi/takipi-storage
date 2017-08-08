@@ -1,11 +1,11 @@
 package com.takipi.oss.storage.fs.api;
 
-import com.takipi.oss.storage.data.simple.SimpleSearchRequest;
-
 import java.io.IOException;
 import java.io.InputStream;
 
-public interface Filesystem<T> extends FilesystemHealth {
+import com.takipi.oss.storage.fs.BaseRecord;
+
+public interface Filesystem<T extends BaseRecord> extends FilesystemHealth {
     /**
      * Put record
      * 
@@ -79,5 +79,13 @@ public interface Filesystem<T> extends FilesystemHealth {
      *          - if there's an error
      */
     SearchResult search(SearchRequest searchRequest) throws IOException;
+
+    /**
+     * Convert string path to record object
+	 * 
+     * @param path
+     * @return record
+     */
+    BaseRecord pathToRecord(String path);
 
 }

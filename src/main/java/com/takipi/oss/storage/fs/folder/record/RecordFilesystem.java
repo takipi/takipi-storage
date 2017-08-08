@@ -8,19 +8,20 @@ import java.nio.file.Paths;
 
 import com.google.common.base.Predicate;
 import com.takipi.oss.storage.data.simple.SimpleSearchResponse;
-import com.takipi.oss.storage.fs.Record;
+import com.takipi.oss.storage.fs.BaseRecord;
+import com.takipi.oss.storage.fs.SimplePathRecord;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
 import com.takipi.oss.storage.fs.folder.FolderFilesystem;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 
-public class RecordFilesystem extends FolderFilesystem<Record> {
+public class RecordFilesystem<T extends BaseRecord> extends FolderFilesystem<T> {
     public RecordFilesystem(String rootFolder, double maxUsedStoragePercentage) {
         super(rootFolder, maxUsedStoragePercentage);
     }
 
     @Override
-    protected String buildPath(Record record) {
+    protected String buildPath(T record) {
         Path recordPath = Paths.get(root.getPath(), escape(record.getServiceId()), escape(record.getType()),
                 escape(record.getKey()));
 
@@ -91,5 +92,10 @@ public class RecordFilesystem extends FolderFilesystem<Record> {
         {
             return foundFile;
         }
+    }
+
+    @Override
+    public BaseRecord pathToRecord(String path) {
+        return SimplePathRecord.newRecord(path);
     }
 }

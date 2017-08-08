@@ -11,10 +11,12 @@ public class SimpleSearchResponse implements SearchResult {
         this.path = path;
     }
     
+    @Override
     public String getData() {
         return data;
     }
     
+    @Override
     public String getPath() {
         return path;
     }

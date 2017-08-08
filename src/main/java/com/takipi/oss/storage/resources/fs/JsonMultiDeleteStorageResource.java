@@ -24,9 +24,9 @@ public class JsonMultiDeleteStorageResource {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiDeleteStorageResource.class);
 
-    private final Filesystem filesystem;
+    private final Filesystem<Record> filesystem;
 
-    public JsonMultiDeleteStorageResource(Filesystem filesystem) {
+    public JsonMultiDeleteStorageResource(Filesystem<Record> filesystem) {
         this.filesystem = filesystem;
     }
 

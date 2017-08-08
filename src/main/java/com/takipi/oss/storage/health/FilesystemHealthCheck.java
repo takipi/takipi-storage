@@ -4,9 +4,9 @@ import com.codahale.metrics.health.HealthCheck;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
 public class FilesystemHealthCheck extends HealthCheck {
-    private final Filesystem filesystem;
+    private final Filesystem<?> filesystem;
 
-    public FilesystemHealthCheck(Filesystem filesystem) {
+    public FilesystemHealthCheck(Filesystem<?> filesystem) {
         this.filesystem = filesystem;
     }
 

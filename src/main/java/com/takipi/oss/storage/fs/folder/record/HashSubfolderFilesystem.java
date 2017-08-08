@@ -7,9 +7,9 @@ import java.nio.file.Paths;
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
-import com.takipi.oss.storage.fs.Record;
+import com.takipi.oss.storage.fs.BaseRecord;
 
-public abstract class HashSubfolderFilesystem extends RecordFilesystem {
+public abstract class HashSubfolderFilesystem<T extends BaseRecord> extends RecordFilesystem<T> {
     private HashFunction func;
 
     public HashSubfolderFilesystem(String rootFolder, double maxUsedStoragePercentage) {
@@ -19,7 +19,7 @@ public abstract class HashSubfolderFilesystem extends RecordFilesystem {
     }
 
     @Override
-    protected String buildPath(Record record) {
+    protected String buildPath(T record) {
         String key = record.getKey();
 
         String hashKey = hashKey(key);

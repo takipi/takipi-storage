@@ -22,9 +22,9 @@ public class JsonSimpleSearchStorageResource {
 
     private static final Logger logger = LoggerFactory.getLogger(JsonSimpleSearchStorageResource.class);
 
-    private final Filesystem filesystem;
+    private final Filesystem<?> filesystem;
 
-    public JsonSimpleSearchStorageResource(Filesystem filesystem) {
+    public JsonSimpleSearchStorageResource(Filesystem<?> filesystem) {
         this.filesystem = filesystem;
     }
 
