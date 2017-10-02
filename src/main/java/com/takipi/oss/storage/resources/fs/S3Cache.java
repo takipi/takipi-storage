@@ -28,11 +28,8 @@ class S3CacheInMemory implements S3Cache {
 	
 	S3CacheInMemory(final int maxCacheSize) {
 		
-		int initialCapacity = 2;
-		int estimatedAverageSizePerElement = 600;
-		while ((initialCapacity * estimatedAverageSizePerElement) < maxCacheSize) {
-			initialCapacity *= 2;
-		}
+		int estimatedSizePerElement = 600;
+		int initialCapacity = (int)Math.pow(2, Math.ceil(Math.log((float)maxCacheSize / estimatedSizePerElement) / Math.log(2)));
 		
 		cache = Collections.synchronizedMap(
 				
