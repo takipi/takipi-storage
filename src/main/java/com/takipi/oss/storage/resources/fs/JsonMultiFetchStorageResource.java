@@ -26,36 +26,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonMultiFetchStorageResource {
     
-    private static final int MAX_CACHE_SIZE = 4194304;  // 4 MB
-    private final static int MAX_THREADS = 50;
+    private static final int MAX_THREADS = 50;
     
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiFetchStorageResource.class);
-    private static final AtomicInteger threadCount = new AtomicInteger();
     private static final ExecutorService executorService;
-    private static final Map<String, String> cache;
-    
+    private static final AtomicInteger threadCount = new AtomicInteger();
+    private static final S3Cache cache = new DummyS3Cache();
     private final Filesystem<Record> filesystem;
     
     static {
-        
-        cache = Collections.synchronizedMap(
-                new LinkedHashMap<String, String>(1024,0.75f, true) {
-                    
-                    private int cacheSize = 0;
-                    
-                    @Override protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-                        boolean remove = cacheSize > MAX_CACHE_SIZE;
-                        if (remove) {
-                            cacheSize -= eldest.getValue().length();
-                        }
-                        return remove;
-                    }
-                    
-                    @Override public String put(String key, String value) {
-                        cacheSize += value.length();
-                        return super.put(key, value);
-                    }
-                });
         
         executorService = Executors.newFixedThreadPool(MAX_THREADS, new ThreadFactory() {
             @Override
