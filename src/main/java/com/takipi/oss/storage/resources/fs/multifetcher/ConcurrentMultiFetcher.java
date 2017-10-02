@@ -25,15 +25,11 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	public ConcurrentMultiFetcher() {
 
-		executorService = Executors.newFixedThreadPool(MAX_THREADS, new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r)
-			{
-				Thread t = new Thread(r);
-				t.setDaemon(true);
-				t.setName("fetcher_thread_" + threadCount.incrementAndGet());
-				return t;
-			}
+		executorService = Executors.newFixedThreadPool(MAX_THREADS, r -> {
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			t.setName("fetcher_thread_" + threadCount.incrementAndGet());
+			return t;
 		});
 	}
 	
