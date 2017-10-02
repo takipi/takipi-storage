@@ -1,32 +1,14 @@
-package com.takipi.oss.storage.resources.fs;
+package com.takipi.oss.storage.resources.fs.fetcher;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-interface S3Cache {
-	String get(String key);
-	String put(String key, String value);
-}
-
-class DummyS3Cache implements S3Cache {
-	
-	@Override
-	public String get(String key) {
-		return null;
-	}
-	
-	@Override
-	public String put(String key, String value) {
-		return null;
-	}
-}
-
-class S3CacheInMemory implements S3Cache {
-
+public class InMemoryCache implements Cache
+{
 	private final Map<String, String> cache;
 	
-	S3CacheInMemory(final int maxCacheSize) {
+	public InMemoryCache(final int maxCacheSize) {
 		
 		int estimatedSizePerElement = 600;
 		int initialCapacity = (int)Math.pow(2, Math.ceil(Math.log((float)maxCacheSize / estimatedSizePerElement) / Math.log(2)));

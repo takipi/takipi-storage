@@ -1,10 +1,10 @@
-package com.takipi.oss.storage.resources.fs;
+package com.takipi.oss.storage.resources.fs.fetcher;
 
-class StopWatch
+class MillisecStopWatch
 {
 	private long start;
 	
-	StopWatch() {
+	MillisecStopWatch() {
 		reset();
 	}
 	
