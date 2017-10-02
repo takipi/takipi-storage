@@ -18,11 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConcurrentMultiFetcher.class);
-	
 	private static final int MAX_THREADS = 50;
 	
 	private final ExecutorService executorService;
-	
 	private final AtomicInteger threadCount = new AtomicInteger();
 	
 	public ConcurrentMultiFetcher() {
@@ -41,6 +39,7 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	@Override
 	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem, Cache cache) {
+		
 		final EncodingType encodingType = request.encodingType;
 		final List<Record> recordsToRetrieve = request.records;
 		final int count = recordsToRetrieve.size();
