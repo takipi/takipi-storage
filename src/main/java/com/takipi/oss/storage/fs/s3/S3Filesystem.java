@@ -17,8 +17,8 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
 import com.takipi.oss.storage.helper.FilesystemUtil;
-import com.takipi.oss.storage.resources.fs.fetcher.ConcurrentMultiFetcher;
-import com.takipi.oss.storage.resources.fs.fetcher.MultiFetcher;
+import com.takipi.oss.storage.resources.fs.multifetcher.ConcurrentMultiFetcher;
+import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
 
 public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
 
