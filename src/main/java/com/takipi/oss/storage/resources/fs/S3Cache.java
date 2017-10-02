@@ -12,41 +12,44 @@ interface S3Cache {
 class DummyS3Cache implements S3Cache {
 	
 	@Override
-	public String get(String key)
-	{
+	public String get(String key) {
 		return null;
 	}
 	
 	@Override
-	public String put(String key, String value)
-	{
+	public String put(String key, String value) {
 		return null;
 	}
 }
 
 class S3CacheInMemory implements S3Cache {
 
-	private static final int MAX_CACHE_SIZE = 4194304;  // 4 MB
-	
 	private final Map<String, String> cache;
 	
-	S3CacheInMemory() {
-
+	S3CacheInMemory(final int maxCacheSize) {
+		
+		int initialCapacity = 2;
+		int estimatedAverageSizePerElement = 600;
+		while ((initialCapacity * estimatedAverageSizePerElement) < maxCacheSize) {
+			initialCapacity *= 2;
+		}
+		
 		cache = Collections.synchronizedMap(
-				new LinkedHashMap<String, String>(1024,0.75f, true) {
+				
+				new LinkedHashMap<String, String>(initialCapacity,0.75f, true) {
 					
 					private int cacheSize = 0;
 					
 					@Override protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-						boolean remove = cacheSize > MAX_CACHE_SIZE;
+						boolean remove = cacheSize > maxCacheSize;
 						if (remove) {
-							cacheSize -= eldest.getValue().length();
+							cacheSize -= (eldest.getKey().length() + eldest.getValue().length());
 						}
 						return remove;
 					}
 					
 					@Override public String put(String key, String value) {
-						cacheSize += value.length();
+						cacheSize += (key.length() + value.length());
 						return super.put(key, value);
 					}
 				});

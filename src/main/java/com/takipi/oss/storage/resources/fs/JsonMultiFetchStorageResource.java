@@ -27,10 +27,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class JsonMultiFetchStorageResource {
     
     private static final int MAX_THREADS = 50;
+    private static final int MAX_CACHE_SIZE = 8388608;  // 8 MB
     
     private static final Logger logger = LoggerFactory.getLogger(JsonMultiFetchStorageResource.class);
     private static final ExecutorService executorService;
     private static final AtomicInteger threadCount = new AtomicInteger();
+    //private static final S3Cache cache = new S3CacheInMemory(MAX_CACHE_SIZE);
     private static final S3Cache cache = new DummyS3Cache();
     private final Filesystem<Record> filesystem;
     
