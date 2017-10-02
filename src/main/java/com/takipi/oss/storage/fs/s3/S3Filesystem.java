@@ -17,6 +17,8 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
 import com.takipi.oss.storage.helper.FilesystemUtil;
+import com.takipi.oss.storage.resources.fs.fetcher.ConcurrentMultiFetcher;
+import com.takipi.oss.storage.resources.fs.fetcher.MultiFetcher;
 
 public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
 
@@ -97,7 +99,12 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     public BaseRecord pathToRecord(String path) {
         return SimplePathRecord.newRecord(path);
     }
-
+    
+    @Override
+    public MultiFetcher getMultiFetcher() {
+        return new ConcurrentMultiFetcher();
+    }
+    
     private String keyOf(T record) {
         if (this.pathPrefix != null) {
             return this.pathPrefix + File.separator + record.getPath();
@@ -105,5 +112,4 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
         
         return record.getPath();
     }
-
 }

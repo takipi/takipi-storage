@@ -6,6 +6,7 @@ import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.cache.Cache;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +23,12 @@ public class ConcurrentMultiFetcher implements MultiFetcher {
 	private static final int MAX_THREADS = 50;
 	
 	private final ExecutorService executorService;
+	
 	private final AtomicInteger threadCount = new AtomicInteger();
 	
 	public ConcurrentMultiFetcher() {
 
-		executorService = Executors.newFixedThreadPool(MAX_THREADS, new ThreadFactory()
-		{
+		executorService = Executors.newFixedThreadPool(MAX_THREADS, new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r)
 			{
@@ -49,7 +50,7 @@ public class ConcurrentMultiFetcher implements MultiFetcher {
 		
 		logger.debug("---------- Starting concurrent multi fetch request for " + count + " records");
 		
-		MillisecStopWatch stopWatch = new MillisecStopWatch();
+		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		
 		for (Record record : recordsToRetrieve) {
 			String value = cache.get(record.getKey());
@@ -97,7 +98,7 @@ public class ConcurrentMultiFetcher implements MultiFetcher {
 		
 		@Override
 		public String call() throws Exception {
-			MillisecStopWatch stopWatch = new MillisecStopWatch();
+			SimpleStopWatch stopWatch = new SimpleStopWatch();
 			String value = null;
 			final int MAX_TRIES = 2;
 			int count = 0;

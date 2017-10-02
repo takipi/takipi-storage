@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.resources.fs.fetcher;
+package com.takipi.oss.storage.fs.cache;
 
 public interface Cache
 {

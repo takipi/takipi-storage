@@ -6,6 +6,7 @@ import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.cache.Cache;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +24,7 @@ public class SequentialMultiFetcher implements MultiFetcher {
 		final int count = request.records.size();
 		
 		logger.debug("---------- Starting sequential multi fetch request for " + count + " records");
-		MillisecStopWatch stopWatch = new MillisecStopWatch();
+		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		
 		for (Record record : request.records) {
 			
