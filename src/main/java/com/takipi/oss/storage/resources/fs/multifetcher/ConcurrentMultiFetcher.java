@@ -25,18 +25,22 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	public ConcurrentMultiFetcher() {
 		
-		ThreadFactory threadFactory = r -> {
-			Thread t = new Thread(r);
-			t.setDaemon(true);
-			t.setName("fetcher_thread_" + threadCount.incrementAndGet());
-			return t;
+		ThreadFactory threadFactory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r)
+			{
+				Thread t = new Thread(r);
+				t.setDaemon(true);
+				t.setName("fetcher_thread_" + threadCount.incrementAndGet());
+				return t;
+			}
 		};
 		
 		executorService = Executors.newFixedThreadPool(MAX_THREADS, threadFactory);
 	}
 	
 	@Override
-	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
+	public MultiFetchResponse loadData(final MultiFetchRequest request, final Filesystem<Record> filesystem) {
 		
 		final EncodingType encodingType = request.encodingType;
 		final List<Record> recordsToRetrieve = request.records;
@@ -50,9 +54,16 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 		
 		final List<RecordWithData> recordsWithData = loadFromCache(request.records, cache);
 		
-		for (RecordWithData recordWithData : recordsWithData) {
+		for (final RecordWithData recordWithData : recordsWithData) {
 			if (recordWithData.getData() == null) {
-				Callable<String> callable = () -> load(filesystem, recordWithData.getRecord(), encodingType);
+				Callable<String> callable = new Callable<String>()
+				{
+					@Override
+					public String call() throws Exception
+					{
+						return load(filesystem, recordWithData.getRecord(), encodingType);
+					}
+				};
 				futures.add(executorService.submit(callable));
 			}
 		}
