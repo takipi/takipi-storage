@@ -18,29 +18,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConcurrentMultiFetcher.class);
-	private static final int MAX_THREADS = 50;
+	private static final int MAX_THREADS = 30;
 	
 	private final ExecutorService executorService;
 	private final AtomicInteger threadCount = new AtomicInteger();
 	
 	public ConcurrentMultiFetcher() {
-
-		executorService = Executors.newFixedThreadPool(MAX_THREADS, r -> {
+		
+		ThreadFactory threadFactory = r -> {
 			Thread t = new Thread(r);
 			t.setDaemon(true);
 			t.setName("fetcher_thread_" + threadCount.incrementAndGet());
 			return t;
-		});
+		};
+		
+		executorService = Executors.newFixedThreadPool(MAX_THREADS, threadFactory);
 	}
 	
 	@Override
-	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem, Cache cache) {
+	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
 		
 		final EncodingType encodingType = request.encodingType;
 		final List<Record> recordsToRetrieve = request.records;
 		final int count = recordsToRetrieve.size();
 		final List<Future<String>> futures = new ArrayList<>(count);
 		final List<RecordWithData> recordsWithData = new ArrayList<>(count);
+		Cache cache = filesystem.getCache();
 		
 		logger.info("---------- Starting concurrent multi fetch request for " + count + " records");
 		
@@ -50,7 +53,7 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 			String value = cache.get(record.getKey());
 			recordsWithData.add(RecordWithData.of(record, value));
 			if (value != null) {
-				logger.info("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
+				logger.debug("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
 			}
 			else {
 				

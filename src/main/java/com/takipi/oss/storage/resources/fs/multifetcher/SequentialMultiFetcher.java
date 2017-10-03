@@ -18,20 +18,21 @@ public class SequentialMultiFetcher extends BaseMultiFetcher {
 	private static final Logger logger = LoggerFactory.getLogger(SequentialMultiFetcher.class);
 	
 	@Override
-	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem, Cache cache) {
+	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
 		
 		List<RecordWithData> records = Lists.newArrayList();
 		final int count = request.records.size();
 		final EncodingType encodingType = request.encodingType;
 		logger.info("---------- Starting sequential multi fetch request for " + count + " records");
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
+		Cache cache = filesystem.getCache();
 		
 		for (Record record : request.records) {
 			
 			String value = cache.get(record.getKey());
 			
 			if (value != null) {
-				logger.info("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
+				logger.debug("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
 				records.add(RecordWithData.of(record, value));
 			}
 			else {

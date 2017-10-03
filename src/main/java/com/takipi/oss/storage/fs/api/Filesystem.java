@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.takipi.oss.storage.fs.BaseRecord;
+import com.takipi.oss.storage.fs.cache.Cache;
 import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
 
 public interface Filesystem<T extends BaseRecord> extends FilesystemHealth {
@@ -90,4 +91,6 @@ public interface Filesystem<T extends BaseRecord> extends FilesystemHealth {
     BaseRecord pathToRecord(String path);
     
     MultiFetcher getMultiFetcher();
+    
+    Cache getCache();
 }

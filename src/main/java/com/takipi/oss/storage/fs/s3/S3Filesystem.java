@@ -16,12 +16,17 @@ import com.takipi.oss.storage.fs.SimplePathRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
+import com.takipi.oss.storage.fs.cache.Cache;
+import com.takipi.oss.storage.fs.cache.InMemoryCache;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import com.takipi.oss.storage.resources.fs.multifetcher.ConcurrentMultiFetcher;
 import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
 
 public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
-
+    
+    private static final int MAX_CACHE_SIZE = 8388608;  // 8 MB
+    private static final Cache cache = new InMemoryCache(MAX_CACHE_SIZE);
+    
     private final AmazonS3 amazonS3;
     private final String bucket;
     private final String pathPrefix;
@@ -103,6 +108,11 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     @Override
     public MultiFetcher getMultiFetcher() {
         return new ConcurrentMultiFetcher();
+    }
+    
+    @Override
+    public Cache getCache() {
+        return cache;
     }
     
     private String keyOf(T record) {

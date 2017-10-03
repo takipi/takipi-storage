@@ -5,14 +5,13 @@ import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.cache.Cache;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public interface MultiFetcher {
 	
-	MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem, Cache cache);
+	MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem);
 }
 
 abstract class BaseMultiFetcher implements MultiFetcher {
@@ -44,7 +43,7 @@ abstract class BaseMultiFetcher implements MultiFetcher {
 		
 		if (value != null) {
 			
-			logger.info("--------------------- " + Thread.currentThread().getName() + " loaded key " +
+			logger.debug("--------------------- " + Thread.currentThread().getName() + " loaded key " +
 					record.getKey() + " in " + stopWatch.elapsed() + " ms. " + value.length() + " bytes");
 			
 			return value;

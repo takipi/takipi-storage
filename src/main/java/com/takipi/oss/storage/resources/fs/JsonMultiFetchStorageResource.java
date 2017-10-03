@@ -5,8 +5,6 @@ import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.cache.Cache;
-import com.takipi.oss.storage.fs.cache.InMemoryCache;
 import com.takipi.oss.storage.resources.fs.multifetcher.*;
 
 import javax.ws.rs.Consumes;
@@ -21,13 +19,7 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonMultiFetchStorageResource {
     
-    private static final int MAX_CACHE_SIZE = 8388608;  // 8 MB
-    
-    private static final Cache cache = new InMemoryCache(MAX_CACHE_SIZE);
-    //private static final Cache cache = DummyCache.dummyCache;
-    
     private final Filesystem<Record> filesystem;
-    
     private final MultiFetcher multiFetcher;
     
     public JsonMultiFetchStorageResource(Filesystem<Record> filesystem) {
@@ -41,7 +33,7 @@ public class JsonMultiFetchStorageResource {
     public Response post(MultiFetchRequest request) {
 
         try {
-            MultiFetchResponse response = multiFetcher.loadData(request, filesystem, cache);
+            MultiFetchResponse response = multiFetcher.loadData(request, filesystem);
             return Response.ok(response).build();
         }
         catch (Exception e) {
