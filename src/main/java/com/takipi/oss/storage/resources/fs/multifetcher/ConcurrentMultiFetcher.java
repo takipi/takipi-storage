@@ -42,28 +42,24 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 		final List<Record> recordsToRetrieve = request.records;
 		final int count = recordsToRetrieve.size();
 		final List<Future<String>> futures = new ArrayList<>(count);
-		final List<RecordWithData> recordsWithData = new ArrayList<>(count);
 		Cache cache = filesystem.getCache();
 		
 		logger.info("---------- Starting concurrent multi fetch request for " + count + " records");
 		
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		
-		for (Record record : recordsToRetrieve) {
-			String value = cache.get(record.getKey());
-			recordsWithData.add(RecordWithData.of(record, value));
-			if (value != null) {
-				logger.debug("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
-			}
-			else {
-				
-				Callable<String> callable = () -> load(filesystem, record, encodingType);
+		final List<RecordWithData> recordsWithData = loadFromCache(request.records, cache);
+		
+		for (RecordWithData recordWithData : recordsWithData) {
+			if (recordWithData.getData() == null) {
+				Callable<String> callable = () -> load(filesystem, recordWithData.getRecord(), encodingType);
 				futures.add(executorService.submit(callable));
 			}
 		}
 		
-		for (int i = 0, futureIndex = 0; i < count; ++i) {
-			RecordWithData recordWithData = recordsWithData.get(i);
+		int futureIndex = 0;
+		
+		for (RecordWithData recordWithData : recordsWithData) {
 			if (recordWithData.getData() == null) {
 				try {
 					String value = futures.get(futureIndex++).get(20, TimeUnit.SECONDS);

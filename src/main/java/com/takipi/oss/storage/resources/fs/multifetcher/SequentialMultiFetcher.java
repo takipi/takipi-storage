@@ -1,6 +1,5 @@
 package com.takipi.oss.storage.resources.fs.multifetcher;
 
-import com.google.common.collect.Lists;
 import com.takipi.oss.storage.data.EncodingType;
 import com.takipi.oss.storage.data.RecordWithData;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
@@ -11,6 +10,7 @@ import com.takipi.oss.storage.fs.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SequentialMultiFetcher extends BaseMultiFetcher {
@@ -20,25 +20,20 @@ public class SequentialMultiFetcher extends BaseMultiFetcher {
 	@Override
 	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
 		
-		List<RecordWithData> records = Lists.newArrayList();
 		final int count = request.records.size();
 		final EncodingType encodingType = request.encodingType;
 		logger.info("---------- Starting sequential multi fetch request for " + count + " records");
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		Cache cache = filesystem.getCache();
 		
-		for (Record record : request.records) {
+		final List<RecordWithData> recordsWithData = loadFromCache(request.records, cache);
+		
+		for (RecordWithData recordWithData : recordsWithData) {
 			
-			String value = cache.get(record.getKey());
-			
-			if (value != null) {
-				logger.debug("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
-				records.add(RecordWithData.of(record, value));
-			}
-			else {
+			if (recordWithData.getData() == null) {
 				try {
-					value = load(filesystem, record, encodingType);
-					records.add(RecordWithData.of(record, value));
+					String value = load(filesystem, recordWithData.getRecord(), encodingType);
+					recordWithData.setData(value);
 				}
 				catch (Exception e) {
 					logger.error(e.getMessage());
@@ -48,6 +43,6 @@ public class SequentialMultiFetcher extends BaseMultiFetcher {
 		
 		logger.info("---------- Sequential multi fetch request for " + count + " records completed in " + stopWatch.elapsed() + " ms");
 		
-		return new MultiFetchResponse(records);
+		return new MultiFetchResponse(recordsWithData);
 	}
 }

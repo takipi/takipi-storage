@@ -1,13 +1,18 @@
 package com.takipi.oss.storage.resources.fs.multifetcher;
 
 import com.takipi.oss.storage.data.EncodingType;
+import com.takipi.oss.storage.data.RecordWithData;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.cache.Cache;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface MultiFetcher {
 	
@@ -54,5 +59,20 @@ abstract class BaseMultiFetcher implements MultiFetcher {
 			
 			throw new RuntimeException("Failed to load object for key: " + record.getKey());
 		}
+	}
+	
+	static List<RecordWithData> loadFromCache(List<Record> records, Cache cache) {
+		
+		List<RecordWithData> recordsWithData = new ArrayList<>(records.size());
+		
+		for (Record record : records) {
+			String value = cache.get(record.getKey());
+			recordsWithData.add(RecordWithData.of(record, value));
+			if (value != null) {
+				logger.debug("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
+			}
+		}
+		
+		return recordsWithData;
 	}
 }
