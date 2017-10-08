@@ -21,7 +21,7 @@ public interface MultiFetcher {
 
 abstract class BaseMultiFetcher implements MultiFetcher {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ConcurrentMultiFetcher.class);
+	private static final Logger logger = LoggerFactory.getLogger(BaseMultiFetcher.class);
 	
 	static String load(Filesystem<Record> filesystem, Record record, EncodingType encodingType) {
 		
