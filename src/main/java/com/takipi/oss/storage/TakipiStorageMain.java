@@ -115,11 +115,12 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         }
 
         // S3 bucket
-        String bucket = configuration.getS3Fs().getBucket();
-        String pathPrefix = configuration.getS3Fs().getPathPrefix();
+        TakipiStorageConfiguration.S3Fs s3Fs = configuration.getS3Fs();
+        String bucket = s3Fs.getBucket();
+        String pathPrefix = s3Fs.getPathPrefix();
         log.debug("Using AWS S3 based filesystem with bucket: {}, prefix: {}", bucket, pathPrefix);
 
-        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix);
+        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix, s3Fs.getConcurrencyLevel(), s3Fs.getMaxCacheSize());
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {

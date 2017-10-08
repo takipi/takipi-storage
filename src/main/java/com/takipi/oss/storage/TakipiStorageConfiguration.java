@@ -51,12 +51,17 @@ public class TakipiStorageConfiguration extends Configuration {
     private S3Fs s3Fs;
 
     public static class S3Fs {
+
+        private Integer concurrencyLevel;
+    
+        private Integer maxCacheSize;
+
         @NotEmpty
         private String bucket;
 
         @NotEmpty
         private String pathPrefix;
-        
+    
         @NotNull
         @Valid
         private Credentials credentials;
@@ -116,6 +121,26 @@ public class TakipiStorageConfiguration extends Configuration {
         @JsonProperty
         public void setCredentials(Credentials credentials) {
             this.credentials = credentials;
+        }
+    
+        @JsonProperty
+        public Integer getConcurrencyLevel() {
+            return concurrencyLevel;
+        }
+    
+        @JsonProperty
+        public void setConcurrencyLevel(Integer concurrencyLevel) {
+            this.concurrencyLevel = concurrencyLevel;
+        }
+    
+        @JsonProperty
+        public Integer getMaxCacheSize() {
+            return maxCacheSize;
+        }
+    
+        @JsonProperty
+        public void setMaxCacheSize(Integer maxCacheSize) {
+            this.maxCacheSize = maxCacheSize;
         }
     }
 

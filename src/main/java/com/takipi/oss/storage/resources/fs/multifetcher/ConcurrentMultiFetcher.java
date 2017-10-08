@@ -18,12 +18,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConcurrentMultiFetcher.class);
-	private static final int MAX_THREADS = 30;
 	
 	private final ExecutorService executorService;
 	private final AtomicInteger threadCount = new AtomicInteger();
 	
-	public ConcurrentMultiFetcher() {
+	public ConcurrentMultiFetcher(int maxThreads) {
+		
+		if (maxThreads > 50) {
+			logger.warn("ConcurrentMultiFetcher concurrency level can not be greater than 50");
+			maxThreads = 50;
+		}
+		else if (maxThreads < 1) {
+			logger.warn("ConcurrentMultiFetcher concurrency level can not be less than 1");
+			maxThreads = 1;
+		}
+		
+		logger.info("ConcurrentMultiFetcher maximum number of threads = " + maxThreads);
 		
 		ThreadFactory threadFactory = new ThreadFactory() {
 			@Override
@@ -36,7 +46,7 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 			}
 		};
 		
-		executorService = Executors.newFixedThreadPool(MAX_THREADS, threadFactory);
+		executorService = Executors.newFixedThreadPool(maxThreads, threadFactory);
 	}
 	
 	@Override
@@ -54,31 +64,39 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 		
 		final List<RecordWithData> recordsWithData = loadFromCache(request.records, cache);
 		
-		for (final RecordWithData recordWithData : recordsWithData) {
-			if (recordWithData.getData() == null) {
-				Callable<String> callable = new Callable<String>()
-				{
-					@Override
-					public String call() throws Exception
-					{
-						return load(filesystem, recordWithData.getRecord(), encodingType);
-					}
-				};
-				futures.add(executorService.submit(callable));
+		// if only 1 record, then no need to initiate a multi-threaded load
+		if (recordsWithData.size() == 1) {
+			RecordWithData firstRecord = recordsWithData.get(0);
+			if (firstRecord.getData() == null) {
+				logger.debug("Only one record so loading object in calling thread");
+				firstRecord.setData(load(filesystem, firstRecord.getRecord(), encodingType));
 			}
 		}
-		
-		int futureIndex = 0;
-		
-		for (RecordWithData recordWithData : recordsWithData) {
-			if (recordWithData.getData() == null) {
-				try {
-					String value = futures.get(futureIndex++).get(20, TimeUnit.SECONDS);
-					cache.put(recordWithData.getRecord().getKey(), value);
-					recordWithData.setData(value);
+		else {
+			for (final RecordWithData recordWithData : recordsWithData) {
+				if (recordWithData.getData() == null) {
+					Callable<String> callable = new Callable<String>() {
+						@Override
+						public String call() throws Exception {
+							return load(filesystem, recordWithData.getRecord(), encodingType);
+						}
+					};
+					futures.add(executorService.submit(callable));
 				}
-				catch (Exception e) {
-					logger.error(e.getMessage());
+			}
+			
+			int futureIndex = 0;
+			
+			for (RecordWithData recordWithData : recordsWithData) {
+				if (recordWithData.getData() == null) {
+					try {
+						String value = futures.get(futureIndex++).get(20, TimeUnit.SECONDS);
+						cache.put(recordWithData.getRecord().getKey(), value);
+						recordWithData.setData(value);
+					}
+					catch (Exception e) {
+						logger.error(e.getMessage());
+					}
 				}
 			}
 		}
