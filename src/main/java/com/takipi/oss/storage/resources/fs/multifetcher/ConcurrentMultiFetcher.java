@@ -28,9 +28,9 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 			logger.warn("ConcurrentMultiFetcher concurrency level can not be greater than 50");
 			maxThreads = 50;
 		}
-		else if (maxThreads < 1) {
-			logger.warn("ConcurrentMultiFetcher concurrency level can not be less than 1");
-			maxThreads = 1;
+		else if (maxThreads < 2) {
+			logger.warn("ConcurrentMultiFetcher concurrency level can not be less than 2");
+			maxThreads = 2;
 		}
 		
 		logger.info("ConcurrentMultiFetcher maximum number of threads = " + maxThreads);
