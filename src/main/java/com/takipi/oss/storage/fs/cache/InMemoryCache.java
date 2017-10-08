@@ -15,16 +15,16 @@ public class InMemoryCache implements Cache
 	
 	public InMemoryCache(int maxCacheSize) {
 		
-		int oneMegaByte = 1048576;
-		int hundredMegaByte = 100 * 1048576;
+		int minAllowedCacheSize = 65536;
+		int maxAllowedCacheSize = 134217728;
 		
-		if (maxCacheSize < oneMegaByte) {
-			logger.warn("Minimum In Memory Cache size = 1048576");
-			maxCacheSize = oneMegaByte;
+		if (maxCacheSize < minAllowedCacheSize) {
+			logger.warn("Minimum allowable In Memory Cache size = ", minAllowedCacheSize);
+			maxCacheSize = minAllowedCacheSize;
 		}
-		else if (maxCacheSize > hundredMegaByte) {
-			logger.warn("Maximum allowable In Memory Cache size = ", hundredMegaByte);
-			maxCacheSize = hundredMegaByte;
+		else if (maxCacheSize > maxAllowedCacheSize) {
+			logger.warn("Maximum allowable In Memory Cache size = ", maxAllowedCacheSize);
+			maxCacheSize = maxAllowedCacheSize;
 		}
 		
 		final int cacheSizeLimit = maxCacheSize;

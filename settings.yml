@@ -4,7 +4,7 @@ corsOrigins: "*"
 # If using attaching IAM Role to instance leave accessKey and secretKey empty
 s3Fs:
     concurrencyLevel: 30    # maximum number of threads for concurrent multifetch
-    maxCacheSize: 8388608   # set to zero to disable caching, else use 8388608 (8MB) for example.
+    maxCacheSize: 2097152   # Recommended size > 524288. Set to zero to disable caching.
     bucket: <bucket>
     pathPrefix: <path_prefix>
     credentials:
