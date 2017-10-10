@@ -58,7 +58,7 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 		final List<Future<String>> futures = new ArrayList<>(count);
 		Cache cache = filesystem.getCache();
 		
-		logger.info("---------- Starting concurrent multi fetch request for " + count + " records");
+		logger.debug("---------- Starting concurrent multi fetch request for " + count + " records");
 		
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		
@@ -101,7 +101,7 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 			}
 		}
 		
-		logger.info("---------- Concurrent multi fetch request for " + count + " records completed in " + stopWatch.elapsed() + " ms");
+		logger.debug("---------- Concurrent multi fetch request for " + count + " records completed in " + stopWatch.elapsed() + " ms");
 		
 		return new MultiFetchResponse(recordsWithData);
 	}

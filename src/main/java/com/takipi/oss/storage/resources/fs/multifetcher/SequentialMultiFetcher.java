@@ -21,7 +21,7 @@ public class SequentialMultiFetcher extends BaseMultiFetcher {
 		
 		final int count = request.records.size();
 		final EncodingType encodingType = request.encodingType;
-		logger.info("---------- Starting sequential multi fetch request for " + count + " records");
+		logger.debug("---------- Starting sequential multi fetch request for " + count + " records");
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		Cache cache = filesystem.getCache();
 		
@@ -40,7 +40,7 @@ public class SequentialMultiFetcher extends BaseMultiFetcher {
 			}
 		}
 		
-		logger.info("---------- Sequential multi fetch request for " + count + " records completed in " + stopWatch.elapsed() + " ms");
+		logger.debug("---------- Sequential multi fetch request for " + count + " records completed in " + stopWatch.elapsed() + " ms");
 		
 		return new MultiFetchResponse(recordsWithData);
 	}
