@@ -13,8 +13,7 @@ public class InMemoryCache implements Cache
 	
 	private final Map<String, String> cache;
 	
-	public InMemoryCache(int maxCacheSize) {
-		
+	public static InMemoryCache create(int maxCacheSize, String cacheLogLevel) {
 		int minAllowedCacheSize = 65536;
 		int maxAllowedCacheSize = 134217728;
 		
@@ -27,7 +26,11 @@ public class InMemoryCache implements Cache
 			maxCacheSize = maxAllowedCacheSize;
 		}
 		
-		final int cacheSizeLimit = maxCacheSize;
+		return new InMemoryCache(maxCacheSize, cacheLogLevel);
+	}
+	
+	private InMemoryCache(final int maxCacheSize, final String cacheLogLevel) {
+
 		logger.info("In Memory Cache maximum size = " + maxCacheSize);
 		
 		int estimatedSizePerElement = 600;
@@ -40,16 +43,25 @@ public class InMemoryCache implements Cache
 					private int cacheSize = 0;
 					
 					@Override protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-						boolean remove = cacheSize > cacheSizeLimit;
+						boolean remove = cacheSize > maxCacheSize;
 						if (remove) {
 							cacheSize -= (eldest.getKey().length() + eldest.getValue().length());
+							String logMsg = "InMemoryCache max size exceeded. Count = " + cache.size() + ". Size = " + cacheSize;
+							switch (cacheLogLevel) {
+								case "info": logger.info(logMsg); break;
+								default: logger.debug(logMsg);
+							}
 						}
 						return remove;
 					}
 					
 					@Override public String put(String key, String value) {
 						cacheSize += (key.length() + value.length());
-						logger.debug("InMemoryCache size = " + cacheSize);
+						String logMsg = "InMemoryCache element inserted. Count = " + cache.size() + ". Size = " + cacheSize;
+						switch (cacheLogLevel) {
+							case "info": logger.info(logMsg); break;
+							default: logger.debug(logMsg);
+						}
 						return super.put(key, value);
 					}
 				});

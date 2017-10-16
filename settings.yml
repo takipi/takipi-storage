@@ -3,13 +3,16 @@ corsOrigins: "*"
 
 # If using attaching IAM Role to instance leave accessKey and secretKey empty
 s3Fs:
-    concurrencyLevel: 30    # maximum number of threads for concurrent multi-fetch. Set to zero to disable concurrent fetching.
-    maxCacheSize: 4194304   # Recommended size > 524288. Set to zero to disable caching.
     bucket: <bucket>
     pathPrefix: <path_prefix>
     credentials:
       accessKey: <key> 
       secretKey: <secret> 
+
+multifetch:
+    concurrencyLevel: 30    # maximum number of threads for concurrent multi-fetch. Set to zero to disable concurrent fetching.
+    maxCacheSize: 0         # Recommended size >= 4194304. Set to zero to disable caching.
+    cacheLogLevel: debug    # info / debug
 
 #folderFs:
 #  folderPath: /opt/takipi-storage/storage

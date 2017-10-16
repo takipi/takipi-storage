@@ -36,13 +36,14 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
                         String bucket,
                         String pathPrefix,
                         int multiFetcherConcurrencyLevel,
-                        int maxCacheSize) {
+                        int maxCacheSize,
+                        String cacheLogLevel) {
         
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
         this.pathPrefix = pathPrefix;
         
-        this.cache = (maxCacheSize > 0) ? new InMemoryCache(maxCacheSize) : DummyCache.dummyCache;
+        this.cache = (maxCacheSize > 0) ? InMemoryCache.create(maxCacheSize, cacheLogLevel) : DummyCache.dummyCache;
         
         this.multiFetcher = (multiFetcherConcurrencyLevel > 1) ?
                 new ConcurrentMultiFetcher(multiFetcherConcurrencyLevel) :

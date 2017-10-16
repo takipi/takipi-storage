@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ConcurrentMultiFetcher.class);
+	private static final SequentialMultiFetcher sequentialMultiFetcher = new SequentialMultiFetcher();
 	
 	private final ExecutorService executorService;
 	private final AtomicInteger threadCount = new AtomicInteger();
@@ -52,51 +53,45 @@ public class ConcurrentMultiFetcher extends BaseMultiFetcher {
 	@Override
 	public MultiFetchResponse loadData(final MultiFetchRequest request, final Filesystem<Record> filesystem) {
 		
-		final EncodingType encodingType = request.encodingType;
-		final List<Record> recordsToRetrieve = request.records;
-		final int count = recordsToRetrieve.size();
-		final List<Future<String>> futures = new ArrayList<>(count);
-		Cache cache = filesystem.getCache();
+		final int count = request.records.size();
+		
+		if (count == 1) {
+			logger.debug("Only one record so loading object in calling thread");
+			return sequentialMultiFetcher.loadData(request, filesystem);
+		}
 		
 		logger.debug("---------- Starting concurrent multi fetch request for " + count + " records");
 		
+		final EncodingType encodingType = request.encodingType;
+		final List<Future<String>> futures = new ArrayList<>(count);
+		Cache cache = filesystem.getCache();
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		
 		final List<RecordWithData> recordsWithData = loadFromCache(request.records, cache);
 		
-		// if only 1 record, then no need to initiate a multi-threaded load
-		if (recordsWithData.size() == 1) {
-			RecordWithData firstRecord = recordsWithData.get(0);
-			if (firstRecord.getData() == null) {
-				logger.debug("Only one record so loading object in calling thread");
-				firstRecord.setData(load(filesystem, firstRecord.getRecord(), encodingType));
+		for (final RecordWithData recordWithData : recordsWithData) {
+			if (recordWithData.getData() == null) {
+				Callable<String> callable = new Callable<String>() {
+					@Override
+					public String call() throws Exception {
+						return load(filesystem, recordWithData.getRecord(), encodingType);
+					}
+				};
+				futures.add(executorService.submit(callable));
 			}
 		}
-		else {
-			for (final RecordWithData recordWithData : recordsWithData) {
-				if (recordWithData.getData() == null) {
-					Callable<String> callable = new Callable<String>() {
-						@Override
-						public String call() throws Exception {
-							return load(filesystem, recordWithData.getRecord(), encodingType);
-						}
-					};
-					futures.add(executorService.submit(callable));
+		
+		int futureIndex = 0;
+		
+		for (RecordWithData recordWithData : recordsWithData) {
+			if (recordWithData.getData() == null) {
+				try {
+					String value = futures.get(futureIndex++).get(20, TimeUnit.SECONDS);
+					cache.put(recordWithData.getRecord().getKey(), value);
+					recordWithData.setData(value);
 				}
-			}
-			
-			int futureIndex = 0;
-			
-			for (RecordWithData recordWithData : recordsWithData) {
-				if (recordWithData.getData() == null) {
-					try {
-						String value = futures.get(futureIndex++).get(20, TimeUnit.SECONDS);
-						cache.put(recordWithData.getRecord().getKey(), value);
-						recordWithData.setData(value);
-					}
-					catch (Exception e) {
-						logger.error(e.getMessage());
-					}
+				catch (Exception e) {
+					logger.error(e.getMessage());
 				}
 			}
 		}

@@ -20,8 +20,8 @@ public class SequentialMultiFetcher extends BaseMultiFetcher {
 	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
 		
 		final int count = request.records.size();
-		final EncodingType encodingType = request.encodingType;
 		logger.debug("---------- Starting sequential multi fetch request for " + count + " records");
+		final EncodingType encodingType = request.encodingType;
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		Cache cache = filesystem.getCache();
 		
