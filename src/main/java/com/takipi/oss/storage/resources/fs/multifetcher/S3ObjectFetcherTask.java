@@ -5,12 +5,11 @@ import com.takipi.oss.storage.data.RecordWithData;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.concurrent.SimpleStopWatch;
-import com.takipi.oss.storage.fs.concurrent.Task;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class S3ObjectFetcherTask implements Task {
+public class S3ObjectFetcherTask implements Runnable {
 	
 	private static final Logger logger = LoggerFactory.getLogger(S3ObjectFetcherTask.class);
 	
@@ -25,14 +24,9 @@ public class S3ObjectFetcherTask implements Task {
 	}
 	
 	@Override
-	public Runnable getRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				String result = load(filesystem, recordWithData.getRecord(), encodingType);
-				recordWithData.setData(result);
-			}
-		};
+	public void run() {
+		String result = load(filesystem, recordWithData.getRecord(), encodingType);
+		recordWithData.setData(result);
 	}
 	
 	private static String load(Filesystem<Record> filesystem, Record record, EncodingType encodingType) {

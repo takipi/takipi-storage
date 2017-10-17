@@ -10,7 +10,7 @@ public class SequentialTaskExecutor implements TaskExecutor {
 	private static final Logger logger = LoggerFactory.getLogger(ConcurrentTaskExecutor.class);
 	
 	@Override
-	public void execute(List<Task> tasks) {
+	public void execute(List<Runnable> tasks) {
 		
 		final int count = tasks.size();
 		
@@ -18,9 +18,9 @@ public class SequentialTaskExecutor implements TaskExecutor {
 		
 		logger.debug("---------- Starting sequential execute for " + count + " tasks");
 		
-		for (Task task : tasks) {
+		for (Runnable task : tasks) {
 			try {
-				task.getRunnable().run();
+				task.run();
 			}
 			catch (Exception e) {
 				logger.error(e.getMessage());

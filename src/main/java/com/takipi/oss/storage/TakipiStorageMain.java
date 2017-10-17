@@ -60,10 +60,11 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         }
 
         Filesystem filesystem = configureFilesystem(configuration, environment);
-
+        TakipiStorageConfiguration.Multifetch multifetchConfig = configuration.getMultifetch();
+    
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(filesystem));
         environment.jersey().register(new BinaryStorageResource(filesystem));
-        environment.jersey().register(new JsonMultiFetchStorageResource(filesystem));
+        environment.jersey().register(new JsonMultiFetchStorageResource(filesystem, multifetchConfig.getConcurrencyLevel()));
         environment.jersey().register(new JsonMultiDeleteStorageResource(filesystem));
         environment.jersey().register(new JsonSimpleFetchStorageResource(filesystem));
         environment.jersey().register(new JsonSimpleSearchStorageResource(filesystem));
@@ -119,11 +120,8 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
         String bucket = s3Fs.getBucket();
         String pathPrefix = s3Fs.getPathPrefix();
         log.debug("Using AWS S3 based filesystem with bucket: {}, prefix: {}", bucket, pathPrefix);
-    
-        TakipiStorageConfiguration.Multifetch multifetchConfig = configuration.getMultifetch();
-        int concurrencyLevel = multifetchConfig.getConcurrencyLevel();
-        
-        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix, concurrencyLevel);
+   
+        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix);
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {

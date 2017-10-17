@@ -2,8 +2,6 @@ package com.takipi.oss.storage.fs.folder;
 
 import com.takipi.oss.storage.fs.BaseRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
-import com.takipi.oss.storage.resources.fs.multifetcher.SequentialMultiFetcher;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -73,11 +71,6 @@ public abstract class FolderFilesystem<T extends BaseRecord> extends FolderFiles
         }
 
         throw new FileNotFoundException();
-    }
-    
-    @Override
-    public MultiFetcher getMultiFetcher() {
-        return new SequentialMultiFetcher();
     }
     
     protected void beforePut(File file) {

@@ -5,6 +5,7 @@ import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.s3.S3Filesystem;
 import com.takipi.oss.storage.resources.fs.multifetcher.*;
 
 import javax.ws.rs.Consumes;
@@ -22,10 +23,16 @@ public class JsonMultiFetchStorageResource {
     private final Filesystem<Record> filesystem;
     private final MultiFetcher multiFetcher;
     
-    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem) {
+    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem, int multiFetcherConcurrencyLevel) {
 
         this.filesystem = filesystem;
-        this.multiFetcher = filesystem.getMultiFetcher();
+        
+        if ((filesystem instanceof S3Filesystem) && (multiFetcherConcurrencyLevel > 1)) {
+            this.multiFetcher = new ConcurrentMultiFetcher(multiFetcherConcurrencyLevel);
+        }
+        else {
+            this.multiFetcher = new SequentialMultiFetcher();
+        }
     }
     
     @POST

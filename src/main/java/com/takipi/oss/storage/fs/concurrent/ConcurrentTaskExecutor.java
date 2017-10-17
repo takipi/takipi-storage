@@ -43,7 +43,7 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
 	}
 	
 	@Override
-	public void execute(List<Task> tasks) {
+	public void execute(List<Runnable> tasks) {
 		
 		final int count = tasks.size();
 		
@@ -53,7 +53,7 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
 		
 		if (count == 1) {
 			try {
-				tasks.get(0).getRunnable().run();
+				tasks.get(0).run();
 			}
 			catch (Exception e) {
 				logger.error(e.getMessage());
@@ -63,8 +63,8 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
 			
 			final List<Future<?>> futures = new ArrayList<>(count);
 			
-			for (Task command : tasks) {
-				futures.add(executorService.submit(command.getRunnable()));
+			for (Runnable task : tasks) {
+				futures.add(executorService.submit(task));
 			}
 			
 			for (Future<?> future : futures) {

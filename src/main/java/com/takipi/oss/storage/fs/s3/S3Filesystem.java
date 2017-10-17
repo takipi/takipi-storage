@@ -17,29 +17,18 @@ import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
 import com.takipi.oss.storage.helper.FilesystemUtil;
-import com.takipi.oss.storage.resources.fs.multifetcher.ConcurrentMultiFetcher;
-import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
-import com.takipi.oss.storage.resources.fs.multifetcher.SequentialMultiFetcher;
 
 public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     
-    private final MultiFetcher multiFetcher;
     private final AmazonS3 amazonS3;
     private final String bucket;
     private final String pathPrefix;
     
-    public S3Filesystem(AmazonS3 amazonS3,
-                        String bucket,
-                        String pathPrefix,
-                        int multiFetcherConcurrencyLevel) {
+    public S3Filesystem(AmazonS3 amazonS3, String bucket, String pathPrefix) {
         
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
         this.pathPrefix = pathPrefix;
-        
-        this.multiFetcher = (multiFetcherConcurrencyLevel > 1) ?
-                new ConcurrentMultiFetcher(multiFetcherConcurrencyLevel) :
-                new SequentialMultiFetcher();
     }
 
     @Override
@@ -108,11 +97,6 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     @Override
     public BaseRecord pathToRecord(String path) {
         return SimplePathRecord.newRecord(path);
-    }
-    
-    @Override
-    public MultiFetcher getMultiFetcher() {
-        return multiFetcher;
     }
     
     private String keyOf(T record) {
