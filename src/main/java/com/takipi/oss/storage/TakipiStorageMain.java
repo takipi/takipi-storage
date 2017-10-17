@@ -122,10 +122,8 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     
         TakipiStorageConfiguration.Multifetch multifetchConfig = configuration.getMultifetch();
         int concurrencyLevel = multifetchConfig.getConcurrencyLevel();
-        int maxCacheSize = multifetchConfig.getMaxCacheSize();
-        String cacheLogLevel = multifetchConfig.getCacheLogLevel();
-    
-        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix, concurrencyLevel, maxCacheSize, cacheLogLevel);
+        
+        return new S3Filesystem<T>(amazonS3, bucket, pathPrefix, concurrencyLevel);
     }
 
     private void enableCors(TakipiStorageConfiguration configuration, Environment environment) {

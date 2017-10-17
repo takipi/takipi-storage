@@ -2,10 +2,12 @@ package com.takipi.oss.storage.resources.fs.multifetcher;
 
 import com.takipi.oss.storage.data.EncodingType;
 import com.takipi.oss.storage.data.RecordWithData;
+import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
+import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
-import com.takipi.oss.storage.fs.cache.Cache;
-import com.takipi.oss.storage.helper.FilesystemUtil;
+import com.takipi.oss.storage.fs.concurrent.Task;
+import com.takipi.oss.storage.fs.concurrent.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,56 +18,31 @@ abstract class BaseMultiFetcher implements MultiFetcher
 {
 	private static final Logger logger = LoggerFactory.getLogger(BaseMultiFetcher.class);
 	
-	static String load(Filesystem<Record> filesystem, Record record, EncodingType encodingType) {
-		
-		SimpleStopWatch stopWatch = new SimpleStopWatch();
-		String value = null;
-		final int MAX_TRIES = 2;
-		int count = 0;
-		
-		while ((value == null) && (count < MAX_TRIES)) {
-			
-			if (count++ > 0) {
-				logger.warn("Retry loading object for key " + record.getKey());
-				stopWatch.reset();
-			}
-			
-			try {
-				value = FilesystemUtil.read(filesystem, record, encodingType);
-			}
-			catch (Exception e) {
-				// Need this catch because some exceptions inside FilesystemUtil.read are caught and result in a
-				// null return value, and some are thrown. The code would be simpler if all exceptions were thrown. 
-			}
-		}
-		
-		if (value != null) {
-			
-			logger.debug("--------------------- " + Thread.currentThread().getName() + " loaded key " +
-					record.getKey() + " in " + stopWatch.elapsed() + " ms. " + value.length() + " bytes");
-			
-			return value;
-		}
-		else {
-			
-			logger.error("Failed to load object for key: " + record.getKey() + ". Elapsed time = " + stopWatch.elapsed() + " ms");
-			
-			throw new RuntimeException("Failed to load object for key: " + record.getKey());
-		}
+	private final TaskExecutor taskExecutor;
+	
+	BaseMultiFetcher(TaskExecutor taskExecutor) {
+		this.taskExecutor = taskExecutor;
 	}
 	
-	static List<RecordWithData> loadFromCache(List<Record> records, Cache cache) {
+	@Override
+	public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
 		
-		List<RecordWithData> recordsWithData = new ArrayList<>(records.size());
+		final int count = request.records.size();
+		final EncodingType encodingType = request.encodingType;
+		final List<Task> tasks = new ArrayList<>(count);
 		
-		for (Record record : records) {
-			String value = cache.get(record.getKey());
-			recordsWithData.add(RecordWithData.of(record, value));
-			if (value != null) {
-				logger.debug("Object for key " + record.getKey() + " found in cache. " + value.length() + " bytes");
-			}
+		List<RecordWithData> recordsWithData = new ArrayList<>(count);
+		
+		for (Record record : request.records) {
+			RecordWithData recordWithData = RecordWithData.of(record, null);
+			recordsWithData.add(recordWithData);
+			tasks.add(new S3ObjectFetcherTask(recordWithData, filesystem, encodingType));
 		}
 		
-		return recordsWithData;
+		taskExecutor.execute(tasks);
+		
+		logger.debug("Multi fetched completed fetching of " + count + " objects");
+		
+		return new MultiFetchResponse(recordsWithData);
 	}
 }

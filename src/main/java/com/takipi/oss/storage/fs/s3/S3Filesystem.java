@@ -16,9 +16,6 @@ import com.takipi.oss.storage.fs.SimplePathRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
-import com.takipi.oss.storage.fs.cache.Cache;
-import com.takipi.oss.storage.fs.cache.DummyCache;
-import com.takipi.oss.storage.fs.cache.InMemoryCache;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 import com.takipi.oss.storage.resources.fs.multifetcher.ConcurrentMultiFetcher;
 import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
@@ -26,7 +23,6 @@ import com.takipi.oss.storage.resources.fs.multifetcher.SequentialMultiFetcher;
 
 public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     
-    private final Cache cache;
     private final MultiFetcher multiFetcher;
     private final AmazonS3 amazonS3;
     private final String bucket;
@@ -35,15 +31,11 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     public S3Filesystem(AmazonS3 amazonS3,
                         String bucket,
                         String pathPrefix,
-                        int multiFetcherConcurrencyLevel,
-                        int maxCacheSize,
-                        String cacheLogLevel) {
+                        int multiFetcherConcurrencyLevel) {
         
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
         this.pathPrefix = pathPrefix;
-        
-        this.cache = (maxCacheSize > 0) ? InMemoryCache.create(maxCacheSize, cacheLogLevel) : DummyCache.dummyCache;
         
         this.multiFetcher = (multiFetcherConcurrencyLevel > 1) ?
                 new ConcurrentMultiFetcher(multiFetcherConcurrencyLevel) :
@@ -121,11 +113,6 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     @Override
     public MultiFetcher getMultiFetcher() {
         return multiFetcher;
-    }
-    
-    @Override
-    public Cache getCache() {
-        return cache;
     }
     
     private String keyOf(T record) {
