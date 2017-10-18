@@ -41,42 +41,43 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
 		
 		executorService = Executors.newFixedThreadPool(maxThreads, threadFactory);
 	}
-	
-	@Override
-	public void execute(List<Runnable> tasks) {
-		
-		final int count = tasks.size();
-		
-		logger.debug("---------- Starting concurrent task execute for " + count + " tasks");
-		
-		SimpleStopWatch stopWatch = new SimpleStopWatch();
-		
-		if (count == 1) {
-			try {
-				tasks.get(0).run();
-			}
-			catch (Exception e) {
-				logger.error(e.getMessage());
-			}
-		}
-		else {
-			
-			final List<Future<?>> futures = new ArrayList<>(count);
-			
-			for (Runnable task : tasks) {
-				futures.add(executorService.submit(task));
-			}
-			
-			for (Future<?> future : futures) {
-				try {
-					future.get(1, TimeUnit.MINUTES);
-				}
-				catch (Exception e) {
-					logger.error(e.getMessage());
-				}
-			}
-		}
-		
-		logger.debug("---------- Concurrent task executor executed " + count + "tasks in " + stopWatch.elapsed() + " ms");
-	}
+
+    @Override
+    public void execute(List<Runnable> tasks) {
+    
+        final int count = tasks.size();
+    
+        if (count == 0) {
+            return;
+        }
+    
+        logger.debug("---------- Starting concurrent task execute for " + count + " tasks");
+    
+        SimpleStopWatch stopWatch = new SimpleStopWatch();
+    
+        final List<Future<?>> futures = new ArrayList<>(count - 1);
+    
+        for (int i = 1; i < count; ++i) {
+            Runnable task = tasks.get(i);
+            futures.add(executorService.submit(task));
+        }
+    
+        try {
+            tasks.get(0).run();
+        }
+        catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            }
+            catch (Exception e) {
+                logger.error(e.getMessage());
+            }
+        }
+    
+        logger.debug("---------- Concurrent task executor executed " + count + "tasks in " + stopWatch.elapsed() + " ms");
+    }
 }
