@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SequentialTaskExecutor implements TaskExecutor {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ConcurrentTaskExecutor.class);
+	private static final Logger logger = LoggerFactory.getLogger(SequentialTaskExecutor.class);
 	
 	@Override
 	public void execute(List<Runnable> tasks) {
@@ -16,17 +16,17 @@ public class SequentialTaskExecutor implements TaskExecutor {
 		
 		SimpleStopWatch stopWatch = new SimpleStopWatch();
 		
-		logger.debug("---------- Starting sequential execute for " + count + " tasks");
+		logger.debug("Starting sequential execute for {} tasks", count);
 		
 		for (Runnable task : tasks) {
 			try {
 				task.run();
 			}
 			catch (Exception e) {
-				logger.error(e.getMessage());
+				logger.error("Error running task", e);
 			}
 		}
 		
-		logger.debug("---------- Sequential task executor executed " + count + "tasks in " + stopWatch.elapsed() + " ms");
+		logger.debug("Sequential task executor executed {} tasks in {} ms", count, stopWatch.elapsed());
 	}
 }

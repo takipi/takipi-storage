@@ -26,7 +26,7 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
 			maxThreads = 2;
 		}
 		
-		logger.info("ConcurrentTaskExecutor maximum number of threads = " + maxThreads);
+		logger.info("ConcurrentTaskExecutor maximum number of threads = {}", maxThreads);
 		
 		ThreadFactory threadFactory = new ThreadFactory() {
 			@Override
@@ -51,7 +51,7 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
             return;
         }
     
-        logger.debug("---------- Starting concurrent task execute for " + count + " tasks");
+        logger.debug("Starting concurrent task execute for {} tasks", count);
     
         SimpleStopWatch stopWatch = new SimpleStopWatch();
     
@@ -63,10 +63,11 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
         }
     
         try {
-            tasks.get(0).run();
+        	Runnable firstTask = tasks.get(0);
+            firstTask.run();
         }
         catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error running task", e);
         }
     
         for (Future<?> future : futures) {
@@ -74,10 +75,10 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
                 future.get();
             }
             catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("Error running task", e);
             }
         }
     
-        logger.debug("---------- Concurrent task executor executed " + count + "tasks in " + stopWatch.elapsed() + " ms");
+        logger.debug("Concurrent task executor executed {} tasks in {} ms", count, stopWatch.elapsed());
     }
 }
