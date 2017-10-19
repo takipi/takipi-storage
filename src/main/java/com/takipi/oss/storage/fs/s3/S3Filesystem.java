@@ -19,12 +19,13 @@ import com.takipi.oss.storage.fs.api.SearchResult;
 import com.takipi.oss.storage.helper.FilesystemUtil;
 
 public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
-
+    
     private final AmazonS3 amazonS3;
     private final String bucket;
     private final String pathPrefix;
     
     public S3Filesystem(AmazonS3 amazonS3, String bucket, String pathPrefix) {
+        
         this.amazonS3 = amazonS3;
         this.bucket = bucket;
         this.pathPrefix = pathPrefix;
@@ -97,7 +98,7 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
     public BaseRecord pathToRecord(String path) {
         return SimplePathRecord.newRecord(path);
     }
-
+    
     private String keyOf(T record) {
         if (this.pathPrefix != null) {
             return this.pathPrefix + File.separator + record.getPath();
@@ -105,5 +106,4 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
         
         return record.getPath();
     }
-
 }

@@ -51,12 +51,13 @@ public class TakipiStorageConfiguration extends Configuration {
     private S3Fs s3Fs;
 
     public static class S3Fs {
+    
         @NotEmpty
         private String bucket;
 
         @NotEmpty
         private String pathPrefix;
-        
+    
         @NotNull
         @Valid
         private Credentials credentials;
@@ -118,7 +119,47 @@ public class TakipiStorageConfiguration extends Configuration {
             this.credentials = credentials;
         }
     }
-
+    
+    @JsonProperty
+    private Multifetch multifetch;
+    
+    public static class Multifetch {
+        
+        private Integer concurrencyLevel;
+        private Integer maxCacheSize;
+        private String cacheLogLevel;
+        
+        @JsonProperty
+        public Integer getConcurrencyLevel() {
+            return concurrencyLevel;
+        }
+        
+        @JsonProperty
+        public void setConcurrencyLevel(Integer concurrencyLevel) {
+            this.concurrencyLevel = concurrencyLevel;
+        }
+        
+        @JsonProperty
+        public Integer getMaxCacheSize() {
+            return maxCacheSize;
+        }
+        
+        @JsonProperty
+        public void setMaxCacheSize(Integer maxCacheSize) {
+            this.maxCacheSize = maxCacheSize;
+        }
+    
+        @JsonProperty
+        public String getCacheLogLevel() {
+            return cacheLogLevel;
+        }
+    
+        @JsonProperty
+        public void setCacheLogLevel(String cacheLogLevel) {
+            this.cacheLogLevel = cacheLogLevel;
+        }
+    }
+    
     private boolean enableCors;
 
     @NotEmpty
@@ -163,7 +204,12 @@ public class TakipiStorageConfiguration extends Configuration {
     public S3Fs getS3Fs() {
         return s3Fs;
     }
-
+    
+    @JsonProperty
+    public TakipiStorageConfiguration.Multifetch getMultifetch() {
+        return multifetch;
+    }
+    
     @JsonProperty
     public void setS3Fs(S3Fs s3Fs) {
         this.s3Fs = s3Fs;
