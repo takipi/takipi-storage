@@ -39,7 +39,7 @@ public class S3ObjectFetcherTask implements Runnable {
         while ((value == null) && (count < MAX_TRIES)) {
             
             if (count++ > 0) {
-                logger.warn("Retry loading object for key " + record.getKey());
+                logger.warn("Retry loading object for key {}", record.getKey());
                 stopWatch.reset();
             }
             
@@ -53,15 +53,15 @@ public class S3ObjectFetcherTask implements Runnable {
         }
         
         if (value != null) {
-            
-            logger.debug("--------------------- " + Thread.currentThread().getName() + " loaded key " +
-                    record.getKey() + " in " + stopWatch.elapsed() + " ms. " + value.length() + " bytes");
+            logger.debug("{} loaded key {} int {}ms {} bytes", 
+                Thread.currentThread().getName(), record.getKey(), stopWatch.elapsed(), value.length());
             
             return value;
         }
         else {
             
-            logger.error("Failed to load object for key: " + record.getKey() + ". Elapsed time = " + stopWatch.elapsed() + " ms");
+            logger.error("Failed to load object for key: {}. Elapsed time = {} ms", 
+                record.getKey(), stopWatch.elapsed());
             
             throw new RuntimeException("Failed to load object for key: " + record.getKey());
         }
