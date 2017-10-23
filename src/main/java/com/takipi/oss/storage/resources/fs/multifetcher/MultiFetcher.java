@@ -82,6 +82,8 @@ public class MultiFetcher {
         for (RecordWithData recordWithData : recordsToFetch) {
             cache.put(recordWithData.getRecord().getKey(), recordWithData.getData());
         }
+
+        logger.debug("Multi fetcher cached {} objects.", recordsToFetch.size());
     
         return new MultiFetchResponse(recordsWithData);
     }

@@ -21,13 +21,17 @@ public class S3CacheImpl implements S3Cache {
         
         byte[] bytes = cache.get(key);
         
-        try {
-            return new String(bytes, "UTF-8");
+        if (bytes != null) {
+            
+            try {
+                return new String(bytes, "UTF-8");
+            }
+            catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
-        catch (Exception e) {
-            logger.error(e.getMessage());
-            return null;
-        }
+        
+        return null;
     }
     
     public void put(String key, String value) {
