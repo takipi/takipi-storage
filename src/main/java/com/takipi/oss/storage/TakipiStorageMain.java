@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
+import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         Filesystem filesystem = configureFilesystem(configuration, environment);
         TakipiStorageConfiguration.Multifetch multifetchConfig = configuration.getMultifetch();
+        MultiFetcher.setMaxCacheSize(multifetchConfig.getMaxCacheSize());
     
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(filesystem));
         environment.jersey().register(new BinaryStorageResource(filesystem));

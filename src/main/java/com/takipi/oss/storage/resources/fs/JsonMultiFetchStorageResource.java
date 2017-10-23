@@ -22,27 +22,26 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonMultiFetchStorageResource {
-    
+
     private final Filesystem<Record> filesystem;
     private final MultiFetcher multiFetcher;
-    
+
     public JsonMultiFetchStorageResource(Filesystem<Record> filesystem, int multiFetcherConcurrencyLevel) {
 
         this.filesystem = filesystem;
         
         TaskExecutor taskExecutor;
-        
-        if ((filesystem instanceof S3Filesystem) && 
-            (multiFetcherConcurrencyLevel > 1)) {
+
+        if ((filesystem instanceof S3Filesystem) && (multiFetcherConcurrencyLevel > 1)) {
             taskExecutor = new ConcurrentTaskExecutor(multiFetcherConcurrencyLevel);
         }
         else {
             taskExecutor = new SequentialTaskExecutor();
         }
-        
+
         this.multiFetcher = new MultiFetcher(taskExecutor);
     }
-    
+
     @POST
     @Timed
     public Response post(MultiFetchRequest request) {
@@ -55,5 +54,5 @@ public class JsonMultiFetchStorageResource {
             return Response.serverError().entity("Problem getting keys").build();
         }
     }
-    
+
 }
