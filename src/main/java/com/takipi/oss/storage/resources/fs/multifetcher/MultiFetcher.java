@@ -1,11 +1,11 @@
 package com.takipi.oss.storage.resources.fs.multifetcher;
 
-import com.takipi.oss.storage.data.EncodingType;
 import com.takipi.oss.storage.data.RecordWithData;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
+import com.takipi.oss.storage.fs.concurrent.SimpleStopWatch;
 import com.takipi.oss.storage.fs.concurrent.TaskExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,11 +49,13 @@ public class MultiFetcher {
     
     public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
     
+        SimpleStopWatch stopWatch = new SimpleStopWatch();
         List<Record> records = request.records;
         final int count = records.size();
-        final EncodingType encodingType = request.encodingType;
         final List<RecordWithData> recordsWithData = new ArrayList<>(count);
         final List<RecordWithData> recordsToFetch = new ArrayList<>(count);
+    
+        logger.debug("------------ Multi fetcher commencing load of {} objects", count);
         
         for (Record record : records) {
             String value = cache.get(record.getKey());
@@ -62,17 +64,20 @@ public class MultiFetcher {
             if (value == null) {
                 recordsToFetch.add(recordWithData);
             }
+            else {
+                logger.debug("Multi fetcher found key {} in cache", record.getKey());
+            }
         }
         
         final List<Runnable> tasks = new ArrayList<>(recordsToFetch.size());
         
         for (RecordWithData recordWithData : recordsToFetch) {
-            tasks.add(new S3ObjectFetcherTask(recordWithData, filesystem, encodingType));
+            tasks.add(new S3ObjectFetcherTask(recordWithData, filesystem, request.encodingType));
         }
         
         taskExecutor.execute(tasks);
         
-        logger.debug("Multi fetcher completed fetching of {} objects", count);
+        logger.debug("------------ Multi fetcher completed loading {} objects in {} ms", count, stopWatch.elapsed());
     
         for (RecordWithData recordWithData : recordsToFetch) {
             cache.put(recordWithData.getRecord().getKey(), recordWithData.getData());
