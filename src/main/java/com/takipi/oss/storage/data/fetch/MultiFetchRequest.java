@@ -8,4 +8,5 @@ import com.takipi.oss.storage.fs.Record;
 public class MultiFetchRequest {
     public EncodingType encodingType;
     public List<Record> records;
+    public int maxBatchSize;
 }

@@ -14,12 +14,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiFetcher {
-    
+
+    private static class PartSizeEstimator {
+        private long totalSizeLoaded = 0;
+        private long numberOfPartsLoaded = 0;
+        synchronized void updateStats(long size) {
+            if (numberOfPartsLoaded < 1000000) {
+                totalSizeLoaded += size;
+                ++numberOfPartsLoaded;
+            }
+        }
+        synchronized int getEstimatedSizePerPart() {
+            return (numberOfPartsLoaded < 10) ? 1700 : (int)(totalSizeLoaded / numberOfPartsLoaded);
+        }
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(MultiFetcher.class);
     private static long maxCacheSize = 33554432;
     
     private final TaskExecutor taskExecutor;
     private final static S3Cache cache;
+    private static PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
     
     static {
         if (maxCacheSize > 0) {
@@ -48,15 +63,24 @@ public class MultiFetcher {
     }
     
     public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
-    
-        SimpleStopWatch stopWatch = new SimpleStopWatch();
+
+        int estimatedSizePerPart = partSizeEstimator.getEstimatedSizePerPart();
+        final int maxBatchCount = request.maxBatchSize / estimatedSizePerPart;
+        logger.info("Max batch size = {}. Estimated size per part = {}. Max batch count = {}",
+                request.maxBatchSize, estimatedSizePerPart, maxBatchCount);
+
         List<Record> records = request.records;
+        records = (records.size() > maxBatchCount) ? records.subList(0, maxBatchCount) : records;
+
+        final SimpleStopWatch stopWatch = new SimpleStopWatch();
         final int count = records.size();
         final List<RecordWithData> recordsWithData = new ArrayList<>(count);
         final List<RecordWithData> recordsToFetch = new ArrayList<>(count);
-    
+
         logger.debug("------------ Multi fetcher commencing load of {} objects", count);
-        
+
+        long totalSize = 0;
+
         for (Record record : records) {
             String value = cache.get(record.getKey());
             RecordWithData recordWithData = RecordWithData.of(record, value);
@@ -65,26 +89,29 @@ public class MultiFetcher {
                 recordsToFetch.add(recordWithData);
             }
             else {
-                logger.debug("Multi fetcher found key {} in cache", record.getKey());
+                totalSize += value.length();
+                logger.debug("Multi fetcher found key {} in cache. {} bytes", record.getKey(), value.length());
             }
         }
-        
+
         final List<Runnable> tasks = new ArrayList<>(recordsToFetch.size());
-        
+
         for (RecordWithData recordWithData : recordsToFetch) {
             tasks.add(new S3ObjectFetcherTask(recordWithData, filesystem, request.encodingType));
         }
-        
+
         taskExecutor.execute(tasks);
-        
-        logger.debug("------------ Multi fetcher completed loading {} objects in {} ms", count, stopWatch.elapsed());
-    
+
         for (RecordWithData recordWithData : recordsToFetch) {
-            cache.put(recordWithData.getRecord().getKey(), recordWithData.getData());
+            String value = recordWithData.getData();
+            cache.put(recordWithData.getRecord().getKey(), value);
+            totalSize += value.length();
+            partSizeEstimator.updateStats(value.length());
         }
 
-        logger.debug("Multi fetcher cached {} objects.", recordsToFetch.size());
-    
+        logger.debug("------------ Multi fetcher completed loading {} objects in {} ms. Total bytes fetched = {}",
+                count, stopWatch.elapsed(), totalSize);
+
         return new MultiFetchResponse(recordsWithData);
     }
 }
