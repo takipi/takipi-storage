@@ -15,26 +15,36 @@ import java.util.List;
 
 public class MultiFetcher {
 
+    private static final long DEFAULT_MAX_CACHE_SIZE = 33554432; // 32 MB
+
     private static class PartSizeEstimator {
+
+        private static long MIN_LOADED_PARTS_FOR_SIZE_ESTIMATION = 10;
+        private static long DEFAULT_PART_SIZE_ESTIMATION = 1700;
+        private static long MAX_TOTAL_SIZE = 1L << 30;
+
         private long totalSizeLoaded = 0;
         private long numberOfPartsLoaded = 0;
+
         synchronized void updateStats(long size) {
-            if (numberOfPartsLoaded < 1000000) {
+            if (totalSizeLoaded < MAX_TOTAL_SIZE) {
                 totalSizeLoaded += size;
                 ++numberOfPartsLoaded;
             }
         }
+
         synchronized int getEstimatedSizePerPart() {
-            return (numberOfPartsLoaded < 10) ? 1700 : (int)(totalSizeLoaded / numberOfPartsLoaded);
+            return (int)((numberOfPartsLoaded < MIN_LOADED_PARTS_FOR_SIZE_ESTIMATION) ?
+                    DEFAULT_PART_SIZE_ESTIMATION : (totalSizeLoaded / numberOfPartsLoaded));
         }
     }
 
     private static final Logger logger = LoggerFactory.getLogger(MultiFetcher.class);
-    private static long maxCacheSize = 33554432;
+    private static long maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
     
     private final TaskExecutor taskExecutor;
     private final static S3Cache cache;
-    private static PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
+    private static final PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
     
     static {
         if (maxCacheSize > 0) {
