@@ -93,20 +93,23 @@ public class MultiFetcher {
                 logger.debug("Multi fetcher found key {} in cache. {} bytes", record.getKey(), value.length());
             }
         }
+        
+        if (!recordsToFetch.isEmpty()) {
 
-        final List<Runnable> tasks = new ArrayList<>(recordsToFetch.size());
+            final List<Runnable> tasks = new ArrayList<>(recordsToFetch.size());
 
-        for (RecordWithData recordWithData : recordsToFetch) {
-            tasks.add(new S3ObjectFetcherTask(recordWithData, filesystem, request.encodingType));
-        }
+            for (RecordWithData recordWithData : recordsToFetch) {
+                tasks.add(new S3ObjectFetcherTask(recordWithData, filesystem, request.encodingType));
+            }
 
-        taskExecutor.execute(tasks);
+            taskExecutor.execute(tasks);
 
-        for (RecordWithData recordWithData : recordsToFetch) {
-            String value = recordWithData.getData();
-            cache.put(recordWithData.getRecord().getKey(), value);
-            totalSize += value.length();
-            partSizeEstimator.updateStats(value.length());
+            for (RecordWithData recordWithData : recordsToFetch) {
+                String value = recordWithData.getData();
+                cache.put(recordWithData.getRecord().getKey(), value);
+                totalSize += value.length();
+                partSizeEstimator.updateStats(value.length());
+            }
         }
 
         logger.debug("------------ Multi fetcher completed loading {} objects in {} ms. Total bytes fetched = {}",
