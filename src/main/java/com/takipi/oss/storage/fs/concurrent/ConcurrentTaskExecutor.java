@@ -16,18 +16,7 @@ public class ConcurrentTaskExecutor implements TaskExecutor {
 	private final AtomicInteger threadCount = new AtomicInteger();
 	
 	public ConcurrentTaskExecutor(int maxThreads) {
-	    
-	    int maxAllowedThreads = 500;
-		
-		if (maxThreads > maxAllowedThreads) {
-			logger.warn("ConcurrentTaskExecutor cannot have more than {} threads", maxAllowedThreads);
-			maxThreads = maxAllowedThreads;
-		}
-		else if (maxThreads < 2) {
-			logger.warn("ConcurrentTaskExecutor cannot have less than 2 threads");
-			maxThreads = 2;
-		}
-		
+
 		logger.info("ConcurrentTaskExecutor maximum number of threads = {}", maxThreads);
 		
 		ThreadFactory threadFactory = new ThreadFactory() {

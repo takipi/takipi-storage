@@ -20,7 +20,7 @@ public class MultiFetcher {
     private static class PartSizeEstimator {
 
         private static long MIN_LOADED_PARTS_FOR_SIZE_ESTIMATION = 10;
-        private static long DEFAULT_PART_SIZE_ESTIMATION = 1700;
+        private static int DEFAULT_PART_SIZE_ESTIMATION = 1700;
         private static long MAX_TOTAL_SIZE = 1L << 30;
 
         private long totalSizeLoaded = 0;
@@ -34,8 +34,12 @@ public class MultiFetcher {
         }
 
         synchronized int getEstimatedSizePerPart() {
-            return (int)((numberOfPartsLoaded < MIN_LOADED_PARTS_FOR_SIZE_ESTIMATION) ?
-                    DEFAULT_PART_SIZE_ESTIMATION : (totalSizeLoaded / numberOfPartsLoaded));
+            if (numberOfPartsLoaded < MIN_LOADED_PARTS_FOR_SIZE_ESTIMATION) {
+                return DEFAULT_PART_SIZE_ESTIMATION;
+            }
+            else {
+                return (int)(totalSizeLoaded / numberOfPartsLoaded);
+            }
         }
     }
 
@@ -122,7 +126,7 @@ public class MultiFetcher {
             }
         }
 
-        logger.debug("------------ Multi fetcher completed loading {} objects in {} ms. Total bytes fetched = {}",
+        logger.info("------------ Multi fetcher completed loading {} objects in {} ms. Total bytes fetched = {}",
                 count, stopWatch.elapsed(), totalSize);
 
         return new MultiFetchResponse(recordsWithData);
