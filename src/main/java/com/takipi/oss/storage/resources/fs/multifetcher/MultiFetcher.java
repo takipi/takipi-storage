@@ -91,7 +91,7 @@ public class MultiFetcher {
         final List<RecordWithData> recordsWithData = new ArrayList<>(count);
         final List<RecordWithData> recordsToFetch = new ArrayList<>(count);
 
-        logger.debug("------------ Multi fetcher commencing load of {} objects", count);
+        logger.debug("Multi fetcher commencing load of {} objects", count);
 
         long totalSize = 0;
 
@@ -126,8 +126,8 @@ public class MultiFetcher {
             }
         }
 
-        logger.info("------------ Multi fetcher completed loading {} objects in {} ms. Total bytes fetched = {}",
-                count, stopWatch.elapsed(), totalSize);
+        logger.info("Multi fetcher loaded {} parts in {} ms. {} parts found in cache. {} bytes total.",
+                count, stopWatch.elapsed(), (records.size() - recordsToFetch.size()), totalSize);
 
         return new MultiFetchResponse(recordsWithData);
     }
