@@ -12,7 +12,7 @@ public class S3CacheImpl implements S3Cache {
     private final InMemoryCache memoryCache;
     private final Cache cache;
 
-    public S3CacheImpl(long maxSize) {
+    S3CacheImpl(long maxSize) {
         memoryCache = new InMemoryCache.Builder().setMaxSize(maxSize).build();
         cache = new Cache(memoryCache);
     }
@@ -27,7 +27,7 @@ public class S3CacheImpl implements S3Cache {
                 return new String(bytes, "UTF-8");
             }
             catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("Failed to convert byte[] to String", e.getMessage());
             }
         }
         

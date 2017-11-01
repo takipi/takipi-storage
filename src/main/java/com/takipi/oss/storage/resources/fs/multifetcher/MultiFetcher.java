@@ -44,36 +44,14 @@ public class MultiFetcher {
     }
 
     private static final Logger logger = LoggerFactory.getLogger(MultiFetcher.class);
-    private static long maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
     
     private final TaskExecutor taskExecutor;
-    private final static S3Cache cache;
-    private static final PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
+    private final S3Cache cache;
+    private final PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
     
-    static {
-        if (maxCacheSize > 0) {
-            cache = new S3CacheImpl(maxCacheSize);
-        }
-        else {
-            cache = new S3Cache() {
-                @Override
-                public String get(String key) {
-                    return null;
-                }
-    
-                @Override
-                public void put(String key, String value) {
-                }
-            };
-        }
-    }
-    
-    public MultiFetcher(TaskExecutor taskExecutor) {
+    public MultiFetcher(TaskExecutor taskExecutor, int maxCacheSize) {
         this.taskExecutor = taskExecutor;
-    }
-    
-    public static void setMaxCacheSize(long maxCacheSize) {
-        MultiFetcher.maxCacheSize = maxCacheSize;
+        this.cache = (maxCacheSize > 0) ? new S3CacheImpl(maxCacheSize) : S3DummyCache.instance;
     }
     
     public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {

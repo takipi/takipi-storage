@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.caching;
+package com.takipi.oss.storage.helper;
 
 public class StringUtil {
     public static String padRight(String str, int targetLength) {

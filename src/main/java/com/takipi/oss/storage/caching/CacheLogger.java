@@ -2,6 +2,7 @@ package com.takipi.oss.storage.caching;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.takipi.oss.storage.helper.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

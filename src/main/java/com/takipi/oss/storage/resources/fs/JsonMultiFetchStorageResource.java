@@ -1,6 +1,7 @@
 package com.takipi.oss.storage.resources.fs;
 
 import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
@@ -26,20 +27,23 @@ public class JsonMultiFetchStorageResource {
     private final Filesystem<Record> filesystem;
     private final MultiFetcher multiFetcher;
 
-    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem, int multiFetcherConcurrencyLevel) {
+    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem,
+                                         TakipiStorageConfiguration.Multifetch multifetchConfig) {
 
         this.filesystem = filesystem;
         
         TaskExecutor taskExecutor;
+        
+        int maxConcurrencyLevel = multifetchConfig.getConcurrencyLevel();
 
-        if ((filesystem instanceof S3Filesystem) && (multiFetcherConcurrencyLevel > 1)) {
-            taskExecutor = new ConcurrentTaskExecutor(multiFetcherConcurrencyLevel);
+        if ((filesystem instanceof S3Filesystem) && (maxConcurrencyLevel > 1)) {
+            taskExecutor = new ConcurrentTaskExecutor(maxConcurrencyLevel);
         }
         else {
             taskExecutor = new SequentialTaskExecutor();
         }
 
-        this.multiFetcher = new MultiFetcher(taskExecutor);
+        this.multiFetcher = new MultiFetcher(taskExecutor, multifetchConfig.getMaxCacheSize());
     }
 
     @POST

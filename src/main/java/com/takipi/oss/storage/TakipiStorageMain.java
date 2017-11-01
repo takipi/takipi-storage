@@ -62,11 +62,10 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
 
         Filesystem filesystem = configureFilesystem(configuration, environment);
         TakipiStorageConfiguration.Multifetch multifetchConfig = configuration.getMultifetch();
-        MultiFetcher.setMaxCacheSize(multifetchConfig.getMaxCacheSize());
     
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(filesystem));
         environment.jersey().register(new BinaryStorageResource(filesystem));
-        environment.jersey().register(new JsonMultiFetchStorageResource(filesystem, multifetchConfig.getConcurrencyLevel()));
+        environment.jersey().register(new JsonMultiFetchStorageResource(filesystem, multifetchConfig));
         environment.jersey().register(new JsonMultiDeleteStorageResource(filesystem));
         environment.jersey().register(new JsonSimpleFetchStorageResource(filesystem));
         environment.jersey().register(new JsonSimpleSearchStorageResource(filesystem));
