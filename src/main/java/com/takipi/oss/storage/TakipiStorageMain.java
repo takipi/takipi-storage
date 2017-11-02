@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
-import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

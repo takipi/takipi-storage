@@ -1,7 +1,6 @@
-package com.takipi.oss.storage.resources.fs.multifetcher;
+package com.takipi.oss.storage.s3cache;
 
-import com.takipi.oss.storage.caching.Cache;
-import com.takipi.oss.storage.caching.InMemoryCache;
+import com.takipi.oss.storage.caching.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,12 +8,12 @@ public class S3CacheImpl implements S3Cache {
 
     private static final Logger logger = LoggerFactory.getLogger(S3CacheImpl.class);
 
-    private final InMemoryCache memoryCache;
     private final Cache cache;
 
-    S3CacheImpl(long maxSize) {
-        memoryCache = new InMemoryCache.Builder().setMaxSize(maxSize).build();
-        cache = new Cache(memoryCache);
+    public S3CacheImpl(long maxSize, boolean enableCacheLogger) {
+        InMemoryCache memoryCache = new InMemoryCache.Builder().setMaxSize(maxSize).build();
+        CacheDelegator cacheDelegator = enableCacheLogger ? new CacheLogger(memoryCache) : memoryCache;
+        cache = new Cache(cacheDelegator);
     }
 
     public String get(String key) {

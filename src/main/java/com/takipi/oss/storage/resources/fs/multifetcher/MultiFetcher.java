@@ -7,6 +7,9 @@ import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.concurrent.SimpleStopWatch;
 import com.takipi.oss.storage.fs.concurrent.TaskExecutor;
+import com.takipi.oss.storage.s3cache.S3Cache;
+import com.takipi.oss.storage.s3cache.S3CacheImpl;
+import com.takipi.oss.storage.s3cache.S3DummyCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,22 +18,17 @@ import java.util.List;
 
 public class MultiFetcher {
 
-    private static final long DEFAULT_MAX_CACHE_SIZE = 33554432; // 32 MB
-
     private static class PartSizeEstimator {
 
         private static long MIN_LOADED_PARTS_FOR_SIZE_ESTIMATION = 10;
         private static int DEFAULT_PART_SIZE_ESTIMATION = 1700;
-        private static long MAX_TOTAL_SIZE = 1L << 30;
 
         private long totalSizeLoaded = 0;
         private long numberOfPartsLoaded = 0;
 
         synchronized void updateStats(long size) {
-            if (totalSizeLoaded < MAX_TOTAL_SIZE) {
-                totalSizeLoaded += size;
-                ++numberOfPartsLoaded;
-            }
+            totalSizeLoaded += size;
+            ++numberOfPartsLoaded;
         }
 
         synchronized int getEstimatedSizePerPart() {
@@ -49,9 +47,9 @@ public class MultiFetcher {
     private final S3Cache cache;
     private final PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
     
-    public MultiFetcher(TaskExecutor taskExecutor, int maxCacheSize) {
+    public MultiFetcher(TaskExecutor taskExecutor, int maxCacheSize, boolean enableCacheLogger) {
         this.taskExecutor = taskExecutor;
-        this.cache = (maxCacheSize > 0) ? new S3CacheImpl(maxCacheSize) : S3DummyCache.instance;
+        this.cache = (maxCacheSize > 0) ? new S3CacheImpl(maxCacheSize, enableCacheLogger) : S3DummyCache.instance;
     }
     
     public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {

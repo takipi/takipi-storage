@@ -1,4 +1,4 @@
-package com.takipi.oss.storage.resources.fs.multifetcher;
+package com.takipi.oss.storage.s3cache;
 
 public class S3DummyCache implements S3Cache {
 
