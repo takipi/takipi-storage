@@ -46,18 +46,20 @@ public class MultiFetcher {
     private final TaskExecutor taskExecutor;
     private final S3Cache cache;
     private final PartSizeEstimator partSizeEstimator = new PartSizeEstimator();
+    private final int maxBatchSize;
     
-    public MultiFetcher(TaskExecutor taskExecutor, int maxCacheSize, boolean enableCacheLogger) {
+    public MultiFetcher(TaskExecutor taskExecutor, int maxCacheSize, boolean enableCacheLogger, int maxBatchSize) {
         this.taskExecutor = taskExecutor;
         this.cache = (maxCacheSize > 0) ? new S3CacheImpl(maxCacheSize, enableCacheLogger) : S3DummyCache.instance;
+        this.maxBatchSize = maxBatchSize;
     }
     
     public MultiFetchResponse loadData(MultiFetchRequest request, Filesystem<Record> filesystem) {
 
         int estimatedSizePerPart = partSizeEstimator.getEstimatedSizePerPart();
-        final int maxBatchCount = request.maxBatchSize / estimatedSizePerPart;
+        final int maxBatchCount = maxBatchSize / estimatedSizePerPart;
         logger.info("Max batch size = {}. Estimated size per part = {}. Max batch count = {}",
-                request.maxBatchSize, estimatedSizePerPart, maxBatchCount);
+                maxBatchSize, estimatedSizePerPart, maxBatchCount);
 
         List<Record> records = request.records;
         records = (records.size() > maxBatchCount) ? records.subList(0, maxBatchCount) : records;

@@ -45,8 +45,9 @@ public class JsonMultiFetchStorageResource {
         
         int maxCacheSize = multifetchConfig.getMaxCacheSize();
         boolean enableCacheLogger = multifetchConfig.getEnableCacheLogger();
+        int maxBatchSize = multifetchConfig.getMaxBatchSize();
 
-        this.multiFetcher = new MultiFetcher(taskExecutor, maxCacheSize, enableCacheLogger);
+        this.multiFetcher = new MultiFetcher(taskExecutor, maxCacheSize, enableCacheLogger, maxBatchSize);
     }
 
     @POST

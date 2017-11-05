@@ -12,10 +12,14 @@ s3Fs:
 multifetch:
 
     # maximum number of threads for concurrent multi-fetch. Set to zero to disable concurrent fetching.
-    concurrencyLevel: 30
+    concurrencyLevel: 100
     
-    # Recommended size >= 4194304. Set to zero to disable caching.
+    # Recommended size >= 16777216. Set to zero to disable caching.
     maxCacheSize: 67108864
+    
+    enableCacheLogger: false
+    
+    maxBatchSize: 4194304
 
 #folderFs:
 #  folderPath: /opt/takipi-storage/storage
