@@ -1,6 +1,9 @@
 package com.takipi.oss.storage.s3cache;
 
-import com.takipi.oss.storage.caching.*;
+import com.takipi.oss.storage.caching.Cache;
+import com.takipi.oss.storage.caching.CacheDelegator;
+import com.takipi.oss.storage.caching.CacheLogger;
+import com.takipi.oss.storage.caching.InMemoryCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

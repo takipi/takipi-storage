@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheLogger extends CacheDelegator {
-    private static final Logger logger = LoggerFactory.getLogger("backendcache");
+    private static final Logger logger = LoggerFactory.getLogger(CacheLogger.class);
 
     private static final AtomicLong counter = new AtomicLong();
 
