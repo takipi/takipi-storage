@@ -1,6 +1,7 @@
 package com.takipi.oss.storage.resources.fs;
 
 import com.codahale.metrics.annotation.Timed;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
 import com.takipi.oss.storage.fs.Record;
@@ -22,27 +23,33 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonMultiFetchStorageResource {
-    
+
     private final Filesystem<Record> filesystem;
     private final MultiFetcher multiFetcher;
-    
-    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem, int multiFetcherConcurrencyLevel) {
+
+    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem,
+                                         TakipiStorageConfiguration.Multifetch multifetchConfig) {
 
         this.filesystem = filesystem;
         
         TaskExecutor taskExecutor;
         
-        if ((filesystem instanceof S3Filesystem) && 
-            (multiFetcherConcurrencyLevel > 1)) {
-            taskExecutor = new ConcurrentTaskExecutor(multiFetcherConcurrencyLevel);
+        int maxConcurrencyLevel = multifetchConfig.getConcurrencyLevel();
+
+        if ((filesystem instanceof S3Filesystem) && (maxConcurrencyLevel > 1)) {
+            taskExecutor = new ConcurrentTaskExecutor(maxConcurrencyLevel);
         }
         else {
             taskExecutor = new SequentialTaskExecutor();
         }
         
-        this.multiFetcher = new MultiFetcher(taskExecutor);
+        int maxCacheSize = multifetchConfig.getMaxCacheSize();
+        boolean enableCacheLogger = multifetchConfig.getEnableCacheLogger();
+        int maxBatchSize = multifetchConfig.getMaxBatchSize();
+
+        this.multiFetcher = new MultiFetcher(taskExecutor, maxCacheSize, enableCacheLogger, maxBatchSize);
     }
-    
+
     @POST
     @Timed
     public Response post(MultiFetchRequest request) {
@@ -55,5 +62,5 @@ public class JsonMultiFetchStorageResource {
             return Response.serverError().entity("Problem getting keys").build();
         }
     }
-    
+
 }

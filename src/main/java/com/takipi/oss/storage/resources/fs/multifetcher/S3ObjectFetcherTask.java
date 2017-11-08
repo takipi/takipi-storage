@@ -31,7 +31,8 @@ public class S3ObjectFetcherTask implements Runnable {
     
     private static String load(Filesystem<Record> filesystem, Record record, EncodingType encodingType) {
         
-        SimpleStopWatch stopWatch = new SimpleStopWatch();
+        final SimpleStopWatch stopWatch = new SimpleStopWatch();
+        final String key = record.getKey();
         String value = null;
         final int MAX_TRIES = 2;
         int count = 0;
@@ -39,7 +40,7 @@ public class S3ObjectFetcherTask implements Runnable {
         while ((value == null) && (count < MAX_TRIES)) {
             
             if (count++ > 0) {
-                logger.warn("Retry loading object for key {}", record.getKey());
+                logger.warn("Retry loading object for key {}", key);
                 stopWatch.reset();
             }
             
@@ -51,19 +52,15 @@ public class S3ObjectFetcherTask implements Runnable {
                 // null return value, and some are thrown. The code would be simpler if all exceptions were thrown. 
             }
         }
+    
+        long elapsed = stopWatch.elapsed();
         
-        if (value != null) {
-            logger.debug("{} loaded key {} int {}ms {} bytes", 
-                Thread.currentThread().getName(), record.getKey(), stopWatch.elapsed(), value.length());
-            
-            return value;
+        if (value == null) {
+            logger.error("Failed to load object for key: {}. Elapsed time = {} ms", key, elapsed);
+            throw new RuntimeException("Failed to load object for key: " + key);
         }
-        else {
-            
-            logger.error("Failed to load object for key: {}. Elapsed time = {} ms", 
-                record.getKey(), stopWatch.elapsed());
-            
-            throw new RuntimeException("Failed to load object for key: " + record.getKey());
-        }
+    
+        logger.debug("{} loaded key {} in {} ms. {} bytes", Thread.currentThread().getName(), key, elapsed, value.length());
+        return value;
     }
 }

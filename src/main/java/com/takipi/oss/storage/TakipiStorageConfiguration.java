@@ -127,7 +127,8 @@ public class TakipiStorageConfiguration extends Configuration {
         
         private Integer concurrencyLevel;
         private Integer maxCacheSize;
-        private String cacheLogLevel;
+        private Boolean enableCacheLogger;
+        private Integer maxBatchSize;
         
         @JsonProperty
         public Integer getConcurrencyLevel() {
@@ -148,15 +149,25 @@ public class TakipiStorageConfiguration extends Configuration {
         public void setMaxCacheSize(Integer maxCacheSize) {
             this.maxCacheSize = maxCacheSize;
         }
-    
+
         @JsonProperty
-        public String getCacheLogLevel() {
-            return cacheLogLevel;
+        public Boolean getEnableCacheLogger() {
+            return enableCacheLogger;
         }
-    
+
         @JsonProperty
-        public void setCacheLogLevel(String cacheLogLevel) {
-            this.cacheLogLevel = cacheLogLevel;
+        public void setEnableCacheLogger(Boolean enableCacheLogger) {
+            this.enableCacheLogger = enableCacheLogger;
+        }
+
+        @JsonProperty
+        public Integer getMaxBatchSize() {
+            return maxBatchSize;
+        }
+
+        @JsonProperty
+        public void setMaxBatchSize(Integer maxBatchSize) {
+            this.maxBatchSize = maxBatchSize;
         }
     }
     

@@ -64,7 +64,7 @@ public class TakipiStorageMain extends Application<TakipiStorageConfiguration> {
     
         environment.healthChecks().register("filesystem", new FilesystemHealthCheck(filesystem));
         environment.jersey().register(new BinaryStorageResource(filesystem));
-        environment.jersey().register(new JsonMultiFetchStorageResource(filesystem, multifetchConfig.getConcurrencyLevel()));
+        environment.jersey().register(new JsonMultiFetchStorageResource(filesystem, multifetchConfig));
         environment.jersey().register(new JsonMultiDeleteStorageResource(filesystem));
         environment.jersey().register(new JsonSimpleFetchStorageResource(filesystem));
         environment.jersey().register(new JsonSimpleSearchStorageResource(filesystem));
