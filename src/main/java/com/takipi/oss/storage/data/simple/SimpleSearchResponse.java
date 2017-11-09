@@ -1,6 +1,8 @@
 package com.takipi.oss.storage.data.simple;
 
-public class SimpleSearchResponse {
+import com.takipi.oss.storage.fs.api.SearchResult;
+
+public class SimpleSearchResponse implements SearchResult {
     String data;
     String path;
     
@@ -9,10 +11,12 @@ public class SimpleSearchResponse {
         this.path = path;
     }
     
+    @Override
     public String getData() {
         return data;
     }
     
+    @Override
     public String getPath() {
         return path;
     }

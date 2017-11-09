@@ -22,18 +22,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.codahale.metrics.annotation.Timed;
-import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.fs.Record;
-import com.takipi.oss.storage.resources.fs.base.HashFileSystemStorageResource;
+import com.takipi.oss.storage.fs.api.Filesystem;
 
 @Path("/storage/v1/binary/{serviceId}/{type}/{key:.+}")
 @Consumes(MediaType.APPLICATION_OCTET_STREAM)
 @Produces(MediaType.APPLICATION_OCTET_STREAM)
-public class BinaryStorageResource extends HashFileSystemStorageResource {
+public class BinaryStorageResource {
+
     private static final Logger logger = LoggerFactory.getLogger(BinaryStorageResource.class);
 
-    public BinaryStorageResource(TakipiStorageConfiguration configuration) {
-        super(configuration);
+    private final Filesystem<Record> filesystem;
+
+    public BinaryStorageResource(Filesystem<Record> filesystem) {
+        this.filesystem = filesystem;
     }
 
     @GET
@@ -103,7 +105,7 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
         }
 
         try {
-            fs.delete(Record.newRecord(serviceId, type, key));
+            filesystem.delete(Record.newRecord(serviceId, type, key));
             return Response.ok().build();
         } catch (FileNotFoundException e) {
             logger.warn("Key not found: {}", key);
@@ -115,21 +117,21 @@ public class BinaryStorageResource extends HashFileSystemStorageResource {
     }
 
     protected Response internalGet(Record record) throws IOException {
-        InputStream is = fs.get(record);
-        
-        long size = fs.size(record);
-        
+        InputStream is = filesystem.get(record);
+
+        long size = filesystem.size(record);
+
         return Response.ok(is).header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 
     protected Response internalHead(Record record) throws IOException {
-        long size = fs.size(record);
-        
+        long size = filesystem.size(record);
+
         return Response.ok().header(HttpHeaders.CONTENT_LENGTH, size).build();
     }
 
     protected Response internalPut(Record record, InputStream is) throws IOException {
-        fs.put(record, is);
+        filesystem.put(record, is);
 
         return Response.ok().build();
     }

@@ -44,7 +44,7 @@ public class StatusStorageResource {
 	protected final String folderPath;
 	
 	public StatusStorageResource(TakipiStorageConfiguration configuration) {
-		this.folderPath = configuration.getFolderPath();
+		this.folderPath = configuration.getFolderFs().getFolderPath();
 	}
 	
 	@POST

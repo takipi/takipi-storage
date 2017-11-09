@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.takipi.oss.storage.data.EncodingType;
+import com.takipi.oss.storage.fs.BaseRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
 
 public class FilesystemUtil {
@@ -23,7 +24,7 @@ public class FilesystemUtil {
         return path.replace("/", File.separator).replace("\\", File.separator);
     }
 
-    public static <T> String read(Filesystem<T> fs, T record, EncodingType encodingType) {
+    public static <T extends BaseRecord> String read(Filesystem<T> fs, T record, EncodingType encodingType) {
         InputStream is = null;
 
         try {
@@ -41,7 +42,7 @@ public class FilesystemUtil {
         }
     }
 
-    private static String encode(InputStream is, EncodingType type) throws IOException {
+    public static String encode(InputStream is, EncodingType type) throws IOException {
         switch (type) {
             case PLAIN:
             case JSON: {
