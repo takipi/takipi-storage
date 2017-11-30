@@ -2,7 +2,7 @@ package com.takipi.oss.storage.fs;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class Record implements BaseRecord {
     private String serviceId;
