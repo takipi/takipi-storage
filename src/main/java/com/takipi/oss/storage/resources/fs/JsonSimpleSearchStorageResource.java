@@ -88,12 +88,6 @@ public class JsonSimpleSearchStorageResource extends SimpleFileSystemStorageReso
         }
         
         @Override
-        public boolean test(File file)
-        {
-          return apply(file);
-        }
-        
-        @Override
         public boolean apply(File file)
         {
             if (!resourceName.equals(file.getName()))
