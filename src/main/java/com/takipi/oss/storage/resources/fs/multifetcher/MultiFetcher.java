@@ -98,9 +98,13 @@ public class MultiFetcher {
 
             for (RecordWithData recordWithData : recordsToFetch) {
                 String value = recordWithData.getData();
-                cache.put(recordWithData.getRecord().getKey(), value);
-                totalSize += value.length();
-                partSizeEstimator.updateStats(value.length());
+                
+                if (value != null)
+                {
+                    cache.put(recordWithData.getRecord().getKey(), value);
+                    totalSize += value.length();
+                    partSizeEstimator.updateStats(value.length());
+                }
             }
         }
 
