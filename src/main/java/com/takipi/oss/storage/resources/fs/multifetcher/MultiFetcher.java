@@ -99,8 +99,7 @@ public class MultiFetcher {
             for (RecordWithData recordWithData : recordsToFetch) {
                 String value = recordWithData.getData();
                 
-                if (value != null)
-                {
+                if (value != null) {
                     cache.put(recordWithData.getRecord().getKey(), value);
                     totalSize += value.length();
                     partSizeEstimator.updateStats(value.length());

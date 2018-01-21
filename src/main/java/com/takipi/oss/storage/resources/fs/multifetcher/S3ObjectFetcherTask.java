@@ -62,7 +62,6 @@ public class S3ObjectFetcherTask implements Runnable {
         if (value == null) {
             logger.error("Failed to load object for key: {}. Elapsed time = {} ms", key, elapsed);
             return null;
-            // throw new RuntimeException("Failed to load object for key: " + key);
         }
     
         logger.debug("{} loaded key {} in {} ms. {} bytes", Thread.currentThread().getName(), key, elapsed, value.length());
