@@ -55,7 +55,6 @@ public class TakipiStorageConfiguration extends Configuration {
         @NotEmpty
         private String bucket;
 
-        @NotEmpty
         private String pathPrefix;
     
         @NotNull

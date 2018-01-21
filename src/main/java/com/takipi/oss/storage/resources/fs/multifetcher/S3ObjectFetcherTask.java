@@ -26,7 +26,11 @@ public class S3ObjectFetcherTask implements Runnable {
     @Override
     public void run() {
         String result = load(filesystem, recordWithData.getRecord(), encodingType);
-        recordWithData.setData(result);
+        
+        if (result != null)
+        {
+            recordWithData.setData(result);
+        }
     }
     
     private static String load(Filesystem<Record> filesystem, Record record, EncodingType encodingType) {
@@ -57,7 +61,7 @@ public class S3ObjectFetcherTask implements Runnable {
         
         if (value == null) {
             logger.error("Failed to load object for key: {}. Elapsed time = {} ms", key, elapsed);
-            throw new RuntimeException("Failed to load object for key: " + key);
+            return null;
         }
     
         logger.debug("{} loaded key {} in {} ms. {} bytes", Thread.currentThread().getName(), key, elapsed, value.length());
