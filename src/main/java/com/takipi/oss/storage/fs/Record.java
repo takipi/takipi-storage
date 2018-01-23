@@ -2,8 +2,6 @@ package com.takipi.oss.storage.fs;
 
 import java.io.File;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class Record implements BaseRecord {
     private String serviceId;
     private String type;
@@ -63,8 +61,8 @@ public class Record implements BaseRecord {
 
         Record objRecord = (Record) obj;
 
-        return ((StringUtils.equals(serviceId, objRecord.serviceId)) &&
-                (StringUtils.equals(type, objRecord.type)) &&
-                (StringUtils.equals(key, objRecord.key)));
+        return ((serviceId.equals(objRecord.serviceId)) &&
+                (type.equals(objRecord.type)) &&
+                (key.equals(objRecord.key)));
     }
 }
