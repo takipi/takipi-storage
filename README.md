@@ -17,3 +17,6 @@ Deploy:
 - RHEL: `/sbin/chkconfig takipi-storage on`
 - Edit `/etc/init.d/takipi-storage` and point it to a valid Java installation
 - Run the service: `service takipi-storage start`
+
+Docker:
+- Follow the Dockerfile instructions in the docker subfolder

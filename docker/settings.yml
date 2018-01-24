@@ -1,0 +1,27 @@
+folderPath: /opt/takipi-storage/storage
+maxUsedStoragePercentage: 0.95
+enableCors: true
+corsOrigins: "*"
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+  requestLog:
+    appenders:
+      - type: file
+        currentLogFilename: ./storage/log/access.log
+        archivedLogFilenamePattern: ./storage/log/access.%d.log.gz
+        archivedFileCount: 14
+logging:
+  level: INFO
+  loggers:
+    com.takipi: DEBUG
+  appenders:
+    - type: file
+      currentLogFilename: ./storage/log/takipi-storage.log
+      archivedLogFilenamePattern: ./storage/log/takipi-storage.%d.log.gz
+      archivedFileCount: 14

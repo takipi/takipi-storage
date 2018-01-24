@@ -10,6 +10,8 @@ public class MachineStatus
 	private long sourceCodeSizeBytes;
 	private long cerebroCount;
 	private long cerebroSizeBytes;
+	private long overmindCount;
+	private long overmindSizeBytes;
 	private long freeSpaceLeftBytes;
 	private String machineName;
 	private String pid;
@@ -85,6 +87,22 @@ public class MachineStatus
 	
 	public long getCerebroSizeBytes() {
 		return cerebroSizeBytes;
+	}
+	
+	public void setOvermindCount(long overmindCount) {
+		this.overmindCount = overmindCount;
+	}
+	
+	public long getOvermindCount() {
+		return overmindCount;
+	}
+	
+	public void setOvermindSizeBytes(long overmindSizeBytes) {
+		this.overmindSizeBytes = overmindSizeBytes;
+	}
+	
+	public long getOvermindSizeBytes() {
+		return overmindSizeBytes;
 	}
 	
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
