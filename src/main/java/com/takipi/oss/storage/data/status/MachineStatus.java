@@ -12,6 +12,8 @@ public class MachineStatus
 	private long cerebroSizeBytes;
 	private long overmindCount;
 	private long overmindSizeBytes;
+	private long whiteNamersCount;
+	private long whiteNamersSizeBytes;
 	private long freeSpaceLeftBytes;
 	private String machineName;
 	private String pid;
@@ -103,6 +105,22 @@ public class MachineStatus
 	
 	public long getOvermindSizeBytes() {
 		return overmindSizeBytes;
+	}
+    
+    public void setWhiteNamersCount(long whiteNamersCount) {
+		this.whiteNamersCount = whiteNamersCount;
+	}
+	
+	public long getWhiteNamersCount() {
+		return whiteNamersCount;
+	}
+	
+	public void setWhiteNamersSizeBytes(long whiteNamersSizeBytes) {
+		this.whiteNamersSizeBytes = whiteNamersSizeBytes;
+	}
+	
+	public long getWhiteNamersSizeBytes() {
+		return whiteNamersSizeBytes;
 	}
 	
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
