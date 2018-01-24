@@ -165,13 +165,11 @@ public class StatusStorageResource {
 		machineStatus.setVersion(StatusUtil.getMachineVersion());
 	}
 	
-	private String getSizeName(String objectName)
-	{
+	private String getSizeName(String objectName) {
 		return objectName + " size";
 	}
 	
-	private String getCountName(String objectName)
-	{
+	private String getCountName(String objectName) {
 		return objectName + " count";
 	}
 }
