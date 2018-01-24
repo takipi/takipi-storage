@@ -20,29 +20,26 @@ import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.status.MachineStatus;
 import com.takipi.oss.storage.helper.StatusUtil;
 
+import java.util.Collections;
+import java.util.Hashtable;
+
 @Path("/storage/v1/diag/status")
 @Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.APPLICATION_JSON)
 public class StatusStorageResource {
+	private static Map<String, String> myMap;
+	static {
+		Map<String, String> aMap = new Hashtable<>();
+		aMap.put("hits","hits");
+		aMap.put("namers","silver-namer");
+		aMap.put("sources","source-code");
+		aMap.put("cerebro","cerebro");
+		aMap.put("overmind","overmind");
+		aMap.put("whitetigers","white-tiger");
+		myMap = Collections.unmodifiableMap(aMap);
+	}
+	
 	private static final Logger logger = LoggerFactory.getLogger(StatusStorageResource.class);
-	private static final String hitsSizeName 			= "hits size";
-	private static final String hitsCountName 			= "hits count";
-	private static final String hitsDirectoryName	 	= "hits";
-	private static final String namersSizeName 			= "namers size";
-	private static final String namersCountName 		= "namers count";
-	private static final String namersDirectoryName	 	= "silver-namer";
-	private static final String sourceCodesSizeName 	= "sources size";
-	private static final String sourceCodesCountName 	= "sources count";
-	private static final String sourceCodeDirectoryName	= "source-code";
-	private static final String cerebroSizeName 		= "cerebro size";
-	private static final String cerebroCountName 		= "cerebro count";
-	private static final String cerebroDirectoryName 	= "cerebro";
-	private static final String overmindSizeName 		= "overmind size";
-	private static final String overmindCountName 		= "overmind count";
-	private static final String overmindDirectoryName 	= "overmind";
-	private static final String whiteNamersSizeName 	= "whitenamers size";
-	private static final String whiteNamersCountName 		= "whitenamers count";
-	private static final String whiteNamersDirectoryName 	= "white-namer";
 	
 	protected final String folderPath;
 	
@@ -70,18 +67,12 @@ public class StatusStorageResource {
 		File directory = new File(folderPath);
 		Map<String, Long> mappedData = traverseTreeForData(directory);
 		
-		machineStatus.setHitsSizeBytes(mappedData.get(hitsSizeName));
-		machineStatus.setHitsCount(mappedData.get(hitsCountName));
-		machineStatus.setNamersSizeBytes(mappedData.get(namersSizeName));
-		machineStatus.setNamersCount(mappedData.get(namersCountName));
-		machineStatus.setSourceCodeSizeBytes(mappedData.get(sourceCodesSizeName));
-		machineStatus.setSourceCodeCount(mappedData.get(sourceCodesCountName));
-		machineStatus.setCerebroSizeBytes(mappedData.get(cerebroSizeName));
-		machineStatus.setCerebroCount(mappedData.get(cerebroCountName));
-		machineStatus.setOvermindSizeBytes(mappedData.get(overmindSizeName));
-		machineStatus.setOvermindCount(mappedData.get(overmindCountName));
-		machineStatus.setWhiteNamersSizeBytes(mappedData.get(whiteNamersSizeName));
-		machineStatus.setWhiteNamersCount(mappedData.get(whiteNamersCountName));
+		for (String key : myMap.keySet())
+		{
+			machineStatus.setObjectSizeBytes(key, mappedData.get(getSizeName(key)));
+			machineStatus.setObjectCount(key, mappedData.get(getCountName(key)));
+		}
+		
 		machineStatus.setFreeSpaceLeftBytes(directory.getFreeSpace());
 	}
 	
@@ -111,35 +102,16 @@ public class StatusStorageResource {
 	// Direct hits/namers/source-code directory to it's handler
 	// or keep traversing.
 	private void directoryHandler(Map<String, Long> map, File directory) {
-		switch (directory.getName()) {
-			case hitsDirectoryName : {
-				handleSpecialDirectory(directory, hitsSizeName, hitsCountName, map);
-				break;
-			} 
-			case namersDirectoryName : {
-				handleSpecialDirectory(directory, namersSizeName, namersCountName, map);
-				break;
-			} 
-			case sourceCodeDirectoryName : {
-				handleSpecialDirectory(directory, sourceCodesSizeName, sourceCodesCountName, map);
-				break;
-			}
-			case cerebroDirectoryName: {
-				handleSpecialDirectory(directory, cerebroSizeName, cerebroCountName, map);
-				break;
-			}
-			case overmindDirectoryName: {
-				handleSpecialDirectory(directory, overmindSizeName, overmindCountName, map);
-				break;
-			}
-			case whiteNamersDirectoryName: {
-				handleSpecialDirectory(directory, whiteNamersSizeName, whiteNamersCountName, map);
-				break;
-			}
-			default : {
-				traverseTreeForData(directory, map);
+		
+		for (String key : myMap.keySet())
+		{
+			if (myMap.get(key).equals(directory.getName()))
+			{
+				handleSpecialDirectory(directory, getSizeName(key), getCountName(key), map);
+				return;
 			}
 		}
+		traverseTreeForData(directory, map);
 	}
 	
 	// Extract data of visible files.
@@ -171,19 +143,10 @@ public class StatusStorageResource {
 	
 	private Map<String, Long> initializeMapForData() {
 		Map<String, Long> result = new HashMap<>();
-		
-		result.put(hitsSizeName, 0l);
-		result.put(hitsCountName, 0l);
-		result.put(namersSizeName, 0l);
-		result.put(namersCountName, 0l);
-		result.put(sourceCodesSizeName, 0l);
-		result.put(sourceCodesCountName, 0l);
-		result.put(cerebroSizeName, 0l);
-		result.put(cerebroCountName, 0l);
-		result.put(overmindSizeName, 0l);
-		result.put(overmindCountName, 0l);
-		result.put(whiteNamersSizeName, 0l);
-		result.put(whiteNamersCountName, 0l);
+		for (String key : myMap.keySet()) {
+			result.put(getSizeName(key), 0l);
+			result.put(getCountName(key), 0l);
+		}
 		
 		return result;
 	}
@@ -200,5 +163,15 @@ public class StatusStorageResource {
 		machineStatus.setHeapSizeBytes(StatusUtil.getHeapSizeInBytes());
 		machineStatus.setPermGenSizeBytes(StatusUtil.getPermGenSizeInBytes());
 		machineStatus.setVersion(StatusUtil.getMachineVersion());
+	}
+	
+	private String getSizeName(String objectName)
+	{
+		return objectName + " size";
+	}
+	
+	private String getCountName(String objectName)
+	{
+		return objectName + " count";
 	}
 }

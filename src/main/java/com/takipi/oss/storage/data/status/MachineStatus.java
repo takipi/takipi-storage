@@ -1,19 +1,13 @@
 package com.takipi.oss.storage.data.status;
 
+import java.util.Hashtable;
+import java.util.Map;
+
 public class MachineStatus
 {
-	private long hitsCount;
-	private long hitsSizeBytes;
-	private long namersCount;
-	private long namersSizeBytes;
-	private long sourceCodeCount;
-	private long sourceCodeSizeBytes;
-	private long cerebroCount;
-	private long cerebroSizeBytes;
-	private long overmindCount;
-	private long overmindSizeBytes;
-	private long whiteNamersCount;
-	private long whiteNamersSizeBytes;
+	private Map<String, Long> countMap = new Hashtable<>();
+	private Map<String, Long> sizeByBytesMap = new Hashtable<>();
+	
 	private long freeSpaceLeftBytes;
 	private String machineName;
 	private String pid;
@@ -27,100 +21,29 @@ public class MachineStatus
 	private long permGenSizeBytes;
 	private String version;
 	
-	public void setHitsCount(long hitsCount) {
-		this.hitsCount = hitsCount;
+	public void setObjectCount(String name, long count)
+	{
+		this.countMap.put(name, count);
 	}
 	
-	public long getHitsCount() {
-		return hitsCount;
+	public void setObjectSizeBytes(String name, long sizeBytes) {
+		this.sizeByBytesMap.put(name, sizeBytes);
 	}
 	
-	public void setHitsSizeBytes(long hitsSizeBytes) {
-		this.hitsSizeBytes = hitsSizeBytes;
+	public void setCountMap(Map<String, Long> map) {
+		this.countMap = map;
 	}
 	
-	public long getHitsSizeBytes() {
-		return hitsSizeBytes;
+	public Map<String, Long> getCountMap() {
+		return countMap;
 	}
 	
-	public void setNamersCount(long namersCount) {
-		this.namersCount = namersCount;
+	public void setSizeByBytesMap(Map<String, Long> map) {
+		this.sizeByBytesMap = map;
 	}
 	
-	public long getNamersCount() {
-		return namersCount;
-	}
-	
-	public void setNamersSizeBytes(long namersSizeBytes) {
-		this.namersSizeBytes = namersSizeBytes;
-	}
-	
-	public long getNamersSizeBytes() {
-		return namersSizeBytes;
-	}
-	
-	public void setSourceCodeCount(long sourceCodeCount) {
-		this.sourceCodeCount = sourceCodeCount;
-	}
-	
-	public long getSourceCodeCount() {
-		return sourceCodeCount;
-	}
-	
-	public void setSourceCodeSizeBytes(long sourceCodeSizeBytes) {
-		this.sourceCodeSizeBytes = sourceCodeSizeBytes;
-	}
-	
-	public long getSourceCodeSizeBytes() {
-		return sourceCodeSizeBytes;
-	}
-	
-	public void setCerebroCount(long cerebroCount) {
-		this.cerebroCount = cerebroCount;
-	}
-	
-	public long getCerebroCount() {
-		return cerebroCount;
-	}
-	
-	public void setCerebroSizeBytes(long cerebroSizeBytes) {
-		this.cerebroSizeBytes = cerebroSizeBytes;
-	}
-	
-	public long getCerebroSizeBytes() {
-		return cerebroSizeBytes;
-	}
-	
-	public void setOvermindCount(long overmindCount) {
-		this.overmindCount = overmindCount;
-	}
-	
-	public long getOvermindCount() {
-		return overmindCount;
-	}
-	
-	public void setOvermindSizeBytes(long overmindSizeBytes) {
-		this.overmindSizeBytes = overmindSizeBytes;
-	}
-	
-	public long getOvermindSizeBytes() {
-		return overmindSizeBytes;
-	}
-    
-    public void setWhiteNamersCount(long whiteNamersCount) {
-		this.whiteNamersCount = whiteNamersCount;
-	}
-	
-	public long getWhiteNamersCount() {
-		return whiteNamersCount;
-	}
-	
-	public void setWhiteNamersSizeBytes(long whiteNamersSizeBytes) {
-		this.whiteNamersSizeBytes = whiteNamersSizeBytes;
-	}
-	
-	public long getWhiteNamersSizeBytes() {
-		return whiteNamersSizeBytes;
+	public Map<String, Long> getSizeByBytesMap() {
+		return sizeByBytesMap;
 	}
 	
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
