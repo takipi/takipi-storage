@@ -133,7 +133,7 @@ public class StatusStorageResource {
 				break;
 			}
 			case whiteNamersDirectoryName: {
-				handleSpecialDirectory(directory, whiteNamersSizeName, whiteNamersDirectoryName, map);
+				handleSpecialDirectory(directory, whiteNamersSizeName, whiteNamersCountName, map);
 				break;
 			}
 			default : {
