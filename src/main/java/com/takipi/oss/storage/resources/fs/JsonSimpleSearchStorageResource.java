@@ -24,92 +24,98 @@ import com.takipi.oss.storage.resources.fs.base.SimpleFileSystemStorageResource;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonSimpleSearchStorageResource extends SimpleFileSystemStorageResource {
-    private static final Logger logger = LoggerFactory.getLogger(JsonSimpleSearchStorageResource.class);
+	private static final Logger logger = LoggerFactory.getLogger(JsonSimpleSearchStorageResource.class);
 
-    public JsonSimpleSearchStorageResource(TakipiStorageConfiguration configuration) {
-        super(configuration);
-    }
+	public JsonSimpleSearchStorageResource(TakipiStorageConfiguration configuration) {
+		super(configuration);
+	}
 
-    @POST
-    @Timed
-    public Response post(SimpleSearchRequest request) {
-        try {
-            return handleResponse(request);
-        } catch (Exception e) {
-            return Response.serverError().entity("Problem simple searching").build();
-        }
-    }
+	@POST
+	@Timed
+	public Response post(SimpleSearchRequest request) {
+		try {
+			return handleResponse(request);
+		} catch (Exception e) {
+			return Response.serverError().entity("Problem simple searching").build();
+		}
+	}
 
-    private Response handleResponse(SimpleSearchRequest request) {
-        try {
-            File searchRoot = new File(fs.getRoot(), FilesystemUtil.fixPath(request.baseSearchPath));
-            
-            ResourceFileCallback fileCallback = new ResourceFileCallback(request.name, request.preventDuplicates);
-            FilesystemUtil.listFilesRecursively(searchRoot, fileCallback);
-            File result = fileCallback.getFoundFile();
-            
-            if (result == null) {
-                return searchFailed(request.name);
-            }
-            
-            String relFSPath = result.getAbsolutePath().replace(fs.getRoot().getAbsolutePath(), "");
-            String data = FilesystemUtil.read(fs, relFSPath, request.encodingType);
-            
-            if (data == null) {
-                return searchFailed(request.name);
-            }
-            
-            return Response.ok(new SimpleSearchResponse(data, relFSPath.replace(request.name, ""))).build();
-            
-        } catch (Exception e) {
-            logger.error("Problem getting: " + request.name, e);
-            return Response.serverError().entity("Problem getting " + request.name).build();
-        }
-    }
-    
-    private Response searchFailed(String name) {
-        logger.warn("File not found: {}", name);
-        return Response.status(404).entity("File not found" + name).build();
-    }
-    
-    private static class ResourceFileCallback implements Predicate<File>
-    {
-        private final String resourceName;
-        private final boolean preventDuplicates;
-        
-        private File foundFile;
-        
-        protected ResourceFileCallback(String resourceName, boolean preventDuplicates)
-        {
-            this.resourceName = resourceName;
-            this.preventDuplicates = preventDuplicates;
-            
-            this.foundFile = null;
-        }
-        
-        @Override
-        public boolean apply(File file)
-        {
-            if (!resourceName.equals(file.getName()))
-            {
-                return false;
-            }
-            
-            if ((preventDuplicates) &&
-                (foundFile != null))
-            {
-                foundFile = null; // never find more than one result if preventing duplicates
-                return true;
-            }
-            
-            foundFile = file;
-            
-            return !preventDuplicates; // if we don't prevent duplicates, we stop right now
-        }
-        
-        public File getFoundFile()
-        {
-            return foundFile;
-        }
-    }
+	private Response handleResponse(SimpleSearchRequest request) {
+		try {
+			File searchRoot = new File(fs.getRoot(), FilesystemUtil.fixPath(request.baseSearchPath));
+			
+			ResourceFileCallback fileCallback = new ResourceFileCallback(request.name, request.preventDuplicates);
+			FilesystemUtil.listFilesRecursively(searchRoot, fileCallback);
+			File result = fileCallback.getFoundFile();
+			
+			if (result == null) {
+				return searchFailed(request.name);
+			}
+			
+			String relFSPath = result.getAbsolutePath().replace(fs.getRoot().getAbsolutePath(), "");
+			String data = FilesystemUtil.read(fs, relFSPath, request.encodingType);
+			
+			if (data == null) {
+				return searchFailed(request.name);
+			}
+			
+			return Response.ok(new SimpleSearchResponse(data, relFSPath.replace(request.name, ""))).build();
+			
+		} catch (Exception e) {
+			logger.error("Problem getting: " + request.name, e);
+			return Response.serverError().entity("Problem getting " + request.name).build();
+		}
+	}
+	
+	private Response searchFailed(String name) {
+		logger.warn("File not found: {}", name);
+		return Response.status(404).entity("File not found" + name).build();
+	}
+	
+	private static class ResourceFileCallback implements Predicate<File>
+	{
+		private final String resourceName;
+		private final boolean preventDuplicates;
+		
+		private File foundFile;
+		
+		protected ResourceFileCallback(String resourceName, boolean preventDuplicates)
+		{
+			this.resourceName = resourceName;
+			this.preventDuplicates = preventDuplicates;
+			
+			this.foundFile = null;
+		}
+		
+		@Override
+		public boolean apply(File file)
+		{
+			return test(file);
+		}
+		
+		@Override
+		public boolean test(File file)
+		{
+			if (!resourceName.equals(file.getName()))
+			{
+				return false;
+			}
+			
+			if ((preventDuplicates) &&
+				(foundFile != null))
+			{
+				foundFile = null; // never find more than one result if preventing duplicates
+				return true;
+			}
+			
+			foundFile = file;
+			
+			return !preventDuplicates; // if we don't prevent duplicates, we stop right now
+		}
+		
+		public File getFoundFile()
+		{
+			return foundFile;
+		}
+	}
 }

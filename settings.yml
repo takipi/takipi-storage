@@ -2,6 +2,7 @@ folderPath: /opt/takipi-storage/storage
 maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
+retentionPeriodDays: 15
 
 server:
 #  softNofileLimit: 1000
@@ -18,6 +19,9 @@ server:
   adminConnectors:
     - type: http
       port: 8081
+      
+jobs:
+  cleanup: 6h
 
 # Logging settings.
 logging:
