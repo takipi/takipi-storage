@@ -19,6 +19,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.status.MachineStatus;
 import com.takipi.oss.storage.helper.StatusUtil;
+import com.takipi.oss.storage.jobs.PeriodicCleanupJob;
 
 @Path("/storage/v1/diag/status")
 @Consumes(MediaType.TEXT_PLAIN)
@@ -55,6 +56,7 @@ public class StatusStorageResource {
 			
 			collectMachineInfo(machineStatus);
 			collectDataInfo(machineStatus);
+			collectLastCleanupInfo(machineStatus);
 			
 			return Response.ok(machineStatus).build();
 		} catch (Exception e) {
@@ -78,6 +80,14 @@ public class StatusStorageResource {
 		machineStatus.setOvermindSizeBytes(mappedData.get(overmindSizeName));
 		machineStatus.setOvermindCount(mappedData.get(overmindCountName));
 		machineStatus.setFreeSpaceLeftBytes(directory.getFreeSpace());
+	}
+	
+	private void collectLastCleanupInfo(MachineStatus machineStatus) {
+		PeriodicCleanupJob.CleanupStats cleanupStats = PeriodicCleanupJob.lastCleanupStats;
+		
+		machineStatus.setLastCleanupStartTime(cleanupStats.getFormattedStartTime());
+		machineStatus.setLastCleanupDurationMillis(cleanupStats.getDurationMillis());
+		machineStatus.setLastCleanupRemovedFiles(cleanupStats.getRemovedFiles());
 	}
 	
 	private Map<String, Long> traverseTreeForData(File directory) {

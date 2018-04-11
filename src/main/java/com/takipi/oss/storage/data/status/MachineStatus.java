@@ -1,5 +1,8 @@
 package com.takipi.oss.storage.data.status;
 
+import java.io.File;
+import java.util.List;
+
 public class MachineStatus
 {
 	private long hitsCount;
@@ -24,6 +27,9 @@ public class MachineStatus
 	private long heapSizeBytes;
 	private long permGenSizeBytes;
 	private String version;
+	private String lastCleanupStartTime;
+	private long lastCleanupDurationMillis;
+	private List<File> lastCleanupRemovedFiles;
 	
 	public void setHitsCount(long hitsCount) {
 		this.hitsCount = hitsCount;
@@ -199,5 +205,29 @@ public class MachineStatus
 	
 	public void setVersion(String version) {
 		this.version = version;
+	}
+	
+	public String getLastCleanupStartTime() {
+		return lastCleanupStartTime;
+	}
+	
+	public void setLastCleanupStartTime(String lastCleanupStartTime) {
+		this.lastCleanupStartTime = lastCleanupStartTime;
+	}
+	
+	public void setLastCleanupDurationMillis(long lastCleanupDurationMillis) {
+		this.lastCleanupDurationMillis = lastCleanupDurationMillis;
+	}
+	
+	public long getLastCleanupDurationMillis() {
+		return lastCleanupDurationMillis;
+	}
+	
+	public void setLastCleanupRemovedFiles(List<File> lastCleanupRemovedFiles) {
+		this.lastCleanupRemovedFiles = lastCleanupRemovedFiles;
+	}
+	
+	public List<File> getLastCleanupRemovedFiles() {
+		return lastCleanupRemovedFiles;
 	}
 }
