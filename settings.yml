@@ -1,4 +1,4 @@
-folderPath: /home/david/temp/temp/1523379396
+folderPath: /opt/takipi-storage/storage
 maxUsedStoragePercentage: 0.90
 enableCors: true
 corsOrigins: "*"
