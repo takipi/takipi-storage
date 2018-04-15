@@ -7,9 +7,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.jobs.PeriodicCleanupJob;
@@ -18,8 +15,6 @@ import com.takipi.oss.storage.jobs.PeriodicCleanupJob;
 @Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.TEXT_PLAIN)
 public class CleanupResource {
-	private static final Logger logger = LoggerFactory.getLogger(CleanupResource.class);
-	
 	private final TakipiStorageConfiguration configuration;
 	
 	public CleanupResource(TakipiStorageConfiguration configuration) {

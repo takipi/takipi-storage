@@ -1,40 +1,37 @@
 package com.takipi.oss.storage.jobs;
 
-import java.util.Date;
-import java.util.List;
-import java.util.LinkedList;
-import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.FileVisitor;
 import java.nio.file.FileVisitResult;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.io.FileUtils;
-
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import com.takipi.oss.storage.TakipiStorageConfiguration;
+import com.takipi.oss.storage.health.FilesystemHealthCheck;
 
 import de.spinscale.dropwizard.jobs.Job;
 import de.spinscale.dropwizard.jobs.annotations.Every;
-
-import com.takipi.oss.storage.health.FilesystemHealthCheck;
-import com.takipi.oss.storage.TakipiStorageConfiguration;
 
 @Every("${cleanup}")
 public class PeriodicCleanupJob extends Job {
 	private static final Logger logger = LoggerFactory.getLogger(PeriodicCleanupJob.class);
 	
-	private final String[] PREFIXES_SAFE_TO_REMOVE = new String[] {
+	protected final String[] PREFIXES_SAFE_TO_REMOVE = new String[] {
 		"HYB_HIT_", 
 		"HYB_CER_", 
 		"HYB_OM_", 
@@ -42,7 +39,7 @@ public class PeriodicCleanupJob extends Job {
 		"HYB_SAFE_"
 	};
 	
-	private static final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	protected static final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	public static volatile CleanupStats lastCleanupStats = null;
 	
@@ -76,7 +73,7 @@ public class PeriodicCleanupJob extends Job {
 		long retentionPeriodDaysInMillis = TimeUnit.MILLISECONDS.convert(retentionPeriodDays, TimeUnit.DAYS);
 		long minimumTimeMillis = System.currentTimeMillis() - retentionPeriodDaysInMillis;
 		long currentRetentionPeriodDays = retentionPeriodDays;
-		List<File> removedFiles = new LinkedList();
+		List<File> removedFiles = new LinkedList<>();
 		
 		while (true) {
 			logger.info("About to clean storage files. (folder: {}) (retentionPeriodDays: {}) " +
@@ -119,7 +116,7 @@ public class PeriodicCleanupJob extends Job {
 	}
 	
 	private List<File> cleanFiles(final long minimumTimeMillis) throws Exception {
-		final List<File> removedFiles = new LinkedList();
+		final List<File> removedFiles = new LinkedList<>();
 		
 		Files.walkFileTree(rootFolder, new SimpleFileVisitor<Path>() {
 			@Override

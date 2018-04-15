@@ -70,6 +70,7 @@ public class TakipiStorageConfiguration extends Configuration implements JobConf
 		this.folderPath = folderPath;
 	}
 	
+	@Override
 	@JsonProperty
 	public Map<String, String> getJobs() {
 		return jobs;
