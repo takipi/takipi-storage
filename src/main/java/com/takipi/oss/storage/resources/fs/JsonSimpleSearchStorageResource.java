@@ -59,6 +59,7 @@ public class JsonSimpleSearchStorageResource extends SimpleFileSystemStorageReso
 				return searchFailed(request.name);
 			}
 			
+			logger.info("File found: {}", request.name);
 			return Response.ok(new SimpleSearchResponse(data, relFSPath.replace(request.name, ""))).build();
 			
 		} catch (Exception e) {

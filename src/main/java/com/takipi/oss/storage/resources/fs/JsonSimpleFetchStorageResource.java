@@ -42,6 +42,7 @@ public class JsonSimpleFetchStorageResource extends SimpleFileSystemStorageResou
             String data = FilesystemUtil.read(fs, request.path, request.encodingType);
             
             if (data != null) {
+                logger.info("File found: {}", request.path);
                 return Response.ok(new SimpleFetchResponse(data)).build();
             } else {
                 logger.warn("File not found: {}", request.path);
