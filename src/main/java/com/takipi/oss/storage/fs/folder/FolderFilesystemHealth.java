@@ -35,8 +35,13 @@ public class FolderFilesystemHealth implements FilesystemHealth {
 	}
 
 	private boolean maxUsedStorageCheck() {
-		if ((maxUsedStoragePercentage < 0) && 
-			(maxUsedStoragePercentage > 1))
+		if (maxUsedStoragePercentage == 0)
+		{
+			return true;
+		}
+		
+		if ((maxUsedStoragePercentage > 1) ||
+			(maxUsedStoragePercentage < 0))
 		{
 			return false;
 		}
