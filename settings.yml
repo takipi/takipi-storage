@@ -35,4 +35,8 @@ logging:
     com.takipi: DEBUG
 
   appenders:
-    - type: console
+    - type: file
+      currentLogFilename: /opt/takipi-storage/log/takipi-storage.log
+      maxFileSize: 1GB
+      archivedLogFilenamePattern: /opt/takipi-storage/log/takipi-storage-%i.log.gz
+      archivedFileCount: 1
