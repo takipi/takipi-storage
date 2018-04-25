@@ -11,7 +11,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.jobs.PeriodicCleanupJob;
 
-@Path("/storage/v1/admin/clean")
+@Path("/storage/v1/admin/cleanup")
 @Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.TEXT_PLAIN)
 public class CleanupResource {
@@ -27,6 +27,6 @@ public class CleanupResource {
 		PeriodicCleanupJob periodicCleanupJob = new PeriodicCleanupJob();
 		periodicCleanupJob.configure(configuration);
 		periodicCleanupJob.run();
-		return Response.ok("cleaned").build();
+		return Response.ok("ok").build();
 	}
 }

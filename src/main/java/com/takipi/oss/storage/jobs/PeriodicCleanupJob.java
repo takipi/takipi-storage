@@ -31,7 +31,7 @@ import de.spinscale.dropwizard.jobs.annotations.Every;
 public class PeriodicCleanupJob extends Job {
 	private static final Logger logger = LoggerFactory.getLogger(PeriodicCleanupJob.class);
 	
-	protected final String[] PREFIXES_SAFE_TO_REMOVE = new String[] {
+	protected static final String[] PREFIXES_SAFE_TO_REMOVE = {
 		"HYB_HIT_", 
 		"HYB_CER_", 
 		"HYB_OM_", 
@@ -50,7 +50,8 @@ public class PeriodicCleanupJob extends Job {
 	public void configure(TakipiStorageConfiguration configuration) {
 		String rootFolderPath = configuration.getFolderPath();
 		
-		if (rootFolderPath == null || rootFolderPath.isEmpty()) {
+		if ((rootFolderPath == null) ||
+			(rootFolderPath.isEmpty())) {
 			return;
 		}
 		
@@ -65,13 +66,14 @@ public class PeriodicCleanupJob extends Job {
 	}
 	
 	public void run() {
-		if (rootFolder == null) {
+		if ((rootFolder == null) ||
+			(retentionPeriodDays == 0)) {
 			return;
 		}
 		
 		long startMillis = System.currentTimeMillis();
 		long retentionPeriodDaysInMillis = TimeUnit.MILLISECONDS.convert(retentionPeriodDays, TimeUnit.DAYS);
-		long minimumTimeMillis = System.currentTimeMillis() - retentionPeriodDaysInMillis;
+		long minimumTimeMillis = startMillis - retentionPeriodDaysInMillis;
 		long currentRetentionPeriodDays = retentionPeriodDays;
 		List<File> removedFiles = new LinkedList<>();
 		
@@ -81,32 +83,32 @@ public class PeriodicCleanupJob extends Job {
 				rootFolder, currentRetentionPeriodDays, 
 				fileSystemHealthCheck.getMaxUsedStoragePercentage(), minimumTimeMillis);
 			
+			if (currentRetentionPeriodDays < 1) {
+				logger.warn("Cleanup stopped, retention period too small");
+				break;
+			}
+
 			try {
 				removedFiles.addAll(cleanFiles(minimumTimeMillis));
 			} catch (Exception e) {
 				logger.error("An error occured during file cleanup", e);
 				break;
-			}	
-			
-			if (fileSystemHealthCheck.execute().isHealthy()) {
-				break;
 			}
 			
-			if (currentRetentionPeriodDays < 1) {
-				logger.warn("Clean stopped, no more files to clean");
+			if (fileSystemHealthCheck.execute().isHealthy()) {
 				break;
 			}
 			
 			// an optimization to save resources, if the initial retentionPeriodDays was big
 			//
 			if (currentRetentionPeriodDays > 20) {
-				currentRetentionPeriodDays = currentRetentionPeriodDays / 2;
+				currentRetentionPeriodDays = (long)(0.75 * currentRetentionPeriodDays);
 			} else {
 				currentRetentionPeriodDays--;
 			}
 			
 			retentionPeriodDaysInMillis = TimeUnit.MILLISECONDS.convert(currentRetentionPeriodDays, TimeUnit.DAYS);
-			minimumTimeMillis = System.currentTimeMillis() - retentionPeriodDaysInMillis;
+			minimumTimeMillis = startMillis - retentionPeriodDaysInMillis;
 		}
 		
 		long durationMillis = System.currentTimeMillis() - startMillis;
@@ -142,7 +144,7 @@ public class PeriodicCleanupJob extends Job {
 		return removedFiles;
 	}
 	
-	public class CleanupStats {
+	public static class CleanupStats {
 		private final long startEpochTime;
 		private final long durationMillis;
 		private final List<File> removedFiles;

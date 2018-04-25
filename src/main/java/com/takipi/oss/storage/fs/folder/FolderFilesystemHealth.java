@@ -35,21 +35,24 @@ public class FolderFilesystemHealth implements FilesystemHealth {
 	}
 
 	private boolean maxUsedStorageCheck() {
-		if (maxUsedStoragePercentage == 0)
-		{
+		if (maxUsedStoragePercentage == 0) {
 			return true;
 		}
 		
 		if ((maxUsedStoragePercentage > 1) ||
-			(maxUsedStoragePercentage < 0))
-		{
+			(maxUsedStoragePercentage < 0)) {
 			return false;
 		}
 		
 		long totalSpace = this.root.getTotalSpace();
+
+		if (totalSpace == 0) {
+			return true;
+		}
+
 		long usedSpace = totalSpace - this.root.getUsableSpace();
-		double freeSpacePercentage = (double)usedSpace / totalSpace;
+		double usedSpacePercentage = (double)usedSpace / totalSpace;
 		
-		return freeSpacePercentage <= maxUsedStoragePercentage;
+		return (usedSpacePercentage <= maxUsedStoragePercentage);
 	}
 }
