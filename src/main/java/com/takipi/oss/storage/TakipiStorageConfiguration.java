@@ -30,6 +30,8 @@ public class TakipiStorageConfiguration extends Configuration implements JobConf
 	@JsonProperty("jobs")
 	private Map<String, String> jobs;
 	
+	private boolean cleanupJobEnabled;
+	
 	@JsonProperty
 	public boolean isEnableCors() {
 		return enableCors;
@@ -39,7 +41,17 @@ public class TakipiStorageConfiguration extends Configuration implements JobConf
 	public void setEnableCors(boolean enableCors) {
 		this.enableCors = enableCors;
 	}
+	
+	@JsonProperty
+	public boolean isCleanupJobEnabled() {
+		return cleanupJobEnabled;
+	}
 
+	@JsonProperty
+	public void setCleanupJobEnabled(boolean cleanupJobEnabled) {
+		this.cleanupJobEnabled = cleanupJobEnabled;
+	}
+	
 	@JsonProperty
 	public double getMaxUsedStoragePercentage() {
 		return maxUsedStoragePercentage;
