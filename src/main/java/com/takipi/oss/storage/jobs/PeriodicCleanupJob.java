@@ -31,6 +31,8 @@ import de.spinscale.dropwizard.jobs.annotations.Every;
 public class PeriodicCleanupJob extends Job {
 	private static final Logger logger = LoggerFactory.getLogger(PeriodicCleanupJob.class);
 	
+	protected static final int MAX_FILES_FOR_CLEANUP_STATS = 10000;
+
 	protected static final String[] PREFIXES_SAFE_TO_REMOVE = {
 		"HYB_HIT_", 
 		"HYB_CER_", 
@@ -46,6 +48,7 @@ public class PeriodicCleanupJob extends Job {
 	private Path rootFolder;
 	private FilesystemHealthCheck fileSystemHealthCheck;
 	private int retentionPeriodDays;
+	private boolean cleanupJobEnabled;
 	
 	public void configure(TakipiStorageConfiguration configuration) {
 		String rootFolderPath = configuration.getFolderPath();
@@ -58,6 +61,15 @@ public class PeriodicCleanupJob extends Job {
 		rootFolder = Paths.get(rootFolderPath);
 		fileSystemHealthCheck = new FilesystemHealthCheck(configuration);
 		retentionPeriodDays = configuration.getRetentionPeriodDays();
+		cleanupJobEnabled = configuration.isCleanupJobEnabled();
+		
+		if (retentionPeriodDays <= 0) {
+			logger.info("Disabling cleanup job, retention period is {} days", retentionPeriodDays);
+		} else if (!cleanupJobEnabled) {
+			logger.info("Disabling cleanup job, job is disabled in config");
+		} else if (rootFolder == null) {
+			logger.info("Disabling cleanup job, null root directory");
+		}
 	}
 	
 	@Override
@@ -67,7 +79,8 @@ public class PeriodicCleanupJob extends Job {
 	
 	public void run() {
 		if ((rootFolder == null) ||
-			(retentionPeriodDays == 0)) {
+			(retentionPeriodDays <= 0) ||
+			(!cleanupJobEnabled)) {
 			return;
 		}
 		
@@ -87,9 +100,12 @@ public class PeriodicCleanupJob extends Job {
 				logger.warn("Cleanup stopped, retention period too small");
 				break;
 			}
-
+			
 			try {
-				removedFiles.addAll(cleanFiles(minimumTimeMillis));
+				List<File> removedFilesFromLastIteration = cleanFiles(minimumTimeMillis, 
+					MAX_FILES_FOR_CLEANUP_STATS - removedFiles.size());
+				
+				removedFiles.addAll(removedFilesFromLastIteration);
 			} catch (Exception e) {
 				logger.error("An error occured during file cleanup", e);
 				break;
@@ -117,7 +133,8 @@ public class PeriodicCleanupJob extends Job {
 		PeriodicCleanupJob.lastCleanupStats = new CleanupStats(startMillis, durationMillis, removedFiles);
 	}
 	
-	private List<File> cleanFiles(final long minimumTimeMillis) throws Exception {
+	private List<File> cleanFiles(final long minimumTimeMillis, 
+		final int maximumRemovedFiles) throws Exception {
 		final List<File> removedFiles = new LinkedList<>();
 		
 		Files.walkFileTree(rootFolder, new SimpleFileVisitor<Path>() {
@@ -134,7 +151,9 @@ public class PeriodicCleanupJob extends Job {
 				}
 				
 				if (FileUtils.deleteQuietly(file)) {
-					removedFiles.add(file);
+					if (removedFiles.size() < maximumRemovedFiles) {
+						removedFiles.add(file);
+					}
 				}
 				
 				return FileVisitResult.CONTINUE;
