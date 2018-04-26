@@ -32,6 +32,7 @@ public class PeriodicCleanupJob extends Job {
 	private static final Logger logger = LoggerFactory.getLogger(PeriodicCleanupJob.class);
 	
 	protected static final int MAX_FILES_FOR_CLEANUP_STATS = 10000;
+
 	protected static final String[] PREFIXES_SAFE_TO_REMOVE = {
 		"HYB_HIT_", 
 		"HYB_CER_", 
@@ -63,11 +64,11 @@ public class PeriodicCleanupJob extends Job {
 		cleanupJobEnabled = configuration.isCleanupJobEnabled();
 		
 		if (retentionPeriodDays <= 0) {
-			logger.info("Disabling cleanup job, retention period days is {}", retentionPeriodDays);
+			logger.info("Disabling cleanup job, retention period is {} days", retentionPeriodDays);
 		} else if (!cleanupJobEnabled) {
-			logger.info("Disabling cleanup job, cleanupJobEnabled flag is false");
+			logger.info("Disabling cleanup job, job is disabled in config");
 		} else if (rootFolder == null) {
-			logger.info("Disabling cleanup job, invalid root directory", rootFolder);
+			logger.info("Disabling cleanup job, null root directory");
 		}
 	}
 	

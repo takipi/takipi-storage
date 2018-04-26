@@ -3,6 +3,7 @@ maxUsedStoragePercentage: 0.95
 enableCors: true
 corsOrigins: "*"
 retentionPeriodDays: 92
+cleanupJobEnabled: false
 
 server:
   applicationConnectors:
