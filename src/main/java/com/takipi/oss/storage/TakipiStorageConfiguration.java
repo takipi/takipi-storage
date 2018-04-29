@@ -1,6 +1,7 @@
 package com.takipi.oss.storage;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -31,6 +32,11 @@ public class TakipiStorageConfiguration extends Configuration implements JobConf
 	private Map<String, String> jobs;
 	
 	private boolean cleanupJobEnabled;
+	
+	public TakipiStorageConfiguration() {
+		jobs = new HashMap();
+		jobs.put("cleanup", "6h");
+	}
 	
 	@JsonProperty
 	public boolean isEnableCors() {
