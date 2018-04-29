@@ -1,6 +1,6 @@
 package com.takipi.oss.storage.fs;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class Record {
     private String serviceId;
