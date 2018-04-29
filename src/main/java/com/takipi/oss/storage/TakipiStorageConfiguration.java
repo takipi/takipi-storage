@@ -34,7 +34,7 @@ public class TakipiStorageConfiguration extends Configuration implements JobConf
 	private boolean cleanupJobEnabled;
 	
 	public TakipiStorageConfiguration() {
-		jobs = new HashMap();
+		jobs = new HashMap<>();
 		jobs.put("cleanup", "6h");
 	}
 	
