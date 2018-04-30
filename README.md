@@ -8,7 +8,7 @@ Build and run:
 - `java -jar target/takipi-storage-1.7.0.jar server settings.yml`
 
 Deploy:
-- `wget https://s3.amazonaws.com/app-takipi-com/deploy/takipi-storage/takipi-storage-1.7.0.tar.gz`
+- `wget https://s3.amazonaws.com/app-takipi-com/deploy/takipi-storage/takipi-storage-2.0.tar.gz`
 - **Now with sudo**:
 - `cd /opt`
 - `tar zxvf <path-to-download>/takipi-storage-1.7.0.tar.gz` 
