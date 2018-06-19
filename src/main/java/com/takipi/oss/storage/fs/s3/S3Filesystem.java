@@ -12,7 +12,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.takipi.oss.storage.data.simple.SimpleSearchResponse;
 import com.takipi.oss.storage.fs.BaseRecord;
-import com.takipi.oss.storage.fs.SimplePathRecord;
+import com.takipi.oss.storage.fs.Record;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.api.SearchRequest;
 import com.takipi.oss.storage.fs.api.SearchResult;
@@ -96,7 +96,11 @@ public class S3Filesystem<T extends BaseRecord> implements Filesystem<T> {
 
     @Override
     public BaseRecord pathToRecord(String path) {
-        return SimplePathRecord.newRecord(path);
+        String[] strs = path.trim().split(File.separator,3);
+    	if (strs.length == 3)
+    		return Record.newRecord(strs[0], strs[1], strs[2]);
+    	else
+    		return null;
     }
     
     private String keyOf(T record) {
