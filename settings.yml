@@ -3,7 +3,7 @@ maxUsedStoragePercentage: 0.90
 enableCors: true
 corsOrigins: "*"
 retentionPeriodDays: 92
-cleanupJobEnabled: false
+cleanupJobEnabled: true
 
 server:
 #  softNofileLimit: 1000
