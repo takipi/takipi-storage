@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +44,7 @@ public class PeriodicCleanupJob extends Job {
 	
 	protected static final SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
-	public static volatile CleanupStats lastCleanupStats = null;
+	public static volatile CleanupStats lastCleanupStats = CleanupStats.EMPTY_INSTANCE;
 	
 	private Path rootFolder;
 	private FilesystemHealthCheck fileSystemHealthCheck;
@@ -164,6 +165,8 @@ public class PeriodicCleanupJob extends Job {
 	}
 	
 	public static class CleanupStats {
+		public static final CleanupStats EMPTY_INSTANCE = new CleanupStats(-1l, -1l, Collections.emptyList());
+
 		private final long startEpochTime;
 		private final long durationMillis;
 		private final List<File> removedFiles;
