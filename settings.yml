@@ -20,14 +20,7 @@ server:
   adminConnectors:
     - type: http
       port: 8081
-  requestLog:
-    appenders:
-      - type: file
-        currentLogFilename: /opt/takipi-storage/log/access.log
-        maxFileSize: 1GB
-        archivedLogFilenamePattern: /opt/takipi-storage/log/access-%i.log.gz
-        archivedFileCount: 1
-        
+
 jobs:
   cleanup: 6h
 
