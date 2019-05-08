@@ -46,6 +46,10 @@ public class StatusStorageResource {
 	private static final String overmindSizeName 		= "overmind size";
 	private static final String overmindCountName 		= "overmind count";
 	private static final String overmindDirectoryName 	= "overmind";
+
+	private static final String tigersSizeName 			= "tigers size";
+	private static final String tigersCountName 		= "tigers count";
+	private static final String tigersDirectoryName 	= "white-tiger";
 	
 	protected final String folderPath;
 	
@@ -88,6 +92,10 @@ public class StatusStorageResource {
 
 		machineStatus.setOvermindSizeBytes(mappedData.get(overmindSizeName));
 		machineStatus.setOvermindCount(mappedData.get(overmindCountName));
+
+		machineStatus.setTigersSizeBytes(mappedData.get(tigersSizeName));
+		machineStatus.setTigersCount(mappedData.get(tigersCountName));
+
 		machineStatus.setFreeSpaceLeftBytes(directory.getFreeSpace());
 	}
 	
@@ -146,6 +154,10 @@ public class StatusStorageResource {
 				handleSpecialDirectory(directory, overmindSizeName, overmindCountName, map);
 				break;
 			}
+			case tigersDirectoryName: {
+				handleSpecialDirectory(directory, tigersSizeName, tigersCountName, map);
+				break;
+			}
 			default: {
 				traverseTreeForData(directory, map);
 			}
@@ -192,6 +204,8 @@ public class StatusStorageResource {
 		result.put(cerebroCountName, 0l);
 		result.put(overmindSizeName, 0l);
 		result.put(overmindCountName, 0l);
+		result.put(tigersSizeName, 0l);
+		result.put(tigersCountName, 0l);
 		
 		return result;
 	}

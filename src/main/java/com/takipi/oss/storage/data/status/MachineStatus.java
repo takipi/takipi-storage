@@ -15,6 +15,8 @@ public class MachineStatus
 	private long cerebroSizeBytes;
 	private long overmindCount;
 	private long overmindSizeBytes;
+	private long tigersCount;
+	private long tigersSizeBytes;
 	private long freeSpaceLeftBytes;
 	private String machineName;
 	private String pid;
@@ -110,7 +112,23 @@ public class MachineStatus
 	public long getOvermindSizeBytes() {
 		return overmindSizeBytes;
 	}
+
+	public void setTigersCount(long tigersCount) {
+		this.tigersCount = tigersCount;
+	}
 	
+	public long getTigersCount() {
+		return tigersCount;
+	}
+	
+	public void setTigersSizeBytes(long tigersSizeBytes) {
+		this.tigersSizeBytes = tigersSizeBytes;
+	}
+	
+	public long getTigersSizeBytes() {
+		return tigersSizeBytes;
+	}
+
 	public void setFreeSpaceLeftBytes(long freeSpaceLeftBytes) {
 		this.freeSpaceLeftBytes = freeSpaceLeftBytes;
 	}
