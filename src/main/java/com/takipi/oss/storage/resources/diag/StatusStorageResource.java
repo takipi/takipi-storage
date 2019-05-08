@@ -26,18 +26,23 @@ import com.takipi.oss.storage.jobs.PeriodicCleanupJob;
 @Produces(MediaType.APPLICATION_JSON)
 public class StatusStorageResource {
 	private static final Logger logger = LoggerFactory.getLogger(StatusStorageResource.class);
+
 	private static final String hitsSizeName 			= "hits size";
 	private static final String hitsCountName 			= "hits count";
 	private static final String hitsDirectoryName	 	= "hits";
+
 	private static final String namersSizeName 			= "namers size";
 	private static final String namersCountName 		= "namers count";
 	private static final String namersDirectoryName	 	= "silver-namer";
+
 	private static final String sourceCodesSizeName 	= "sources size";
 	private static final String sourceCodesCountName 	= "sources count";
 	private static final String sourceCodeDirectoryName	= "source-code";
+
 	private static final String cerebroSizeName 		= "cerebro size";
 	private static final String cerebroCountName 		= "cerebro count";
 	private static final String cerebroDirectoryName 	= "cerebro";
+
 	private static final String overmindSizeName 		= "overmind size";
 	private static final String overmindCountName 		= "overmind count";
 	private static final String overmindDirectoryName 	= "overmind";
@@ -71,12 +76,16 @@ public class StatusStorageResource {
 		
 		machineStatus.setHitsSizeBytes(mappedData.get(hitsSizeName));
 		machineStatus.setHitsCount(mappedData.get(hitsCountName));
+
 		machineStatus.setNamersSizeBytes(mappedData.get(namersSizeName));
 		machineStatus.setNamersCount(mappedData.get(namersCountName));
+
 		machineStatus.setSourceCodeSizeBytes(mappedData.get(sourceCodesSizeName));
 		machineStatus.setSourceCodeCount(mappedData.get(sourceCodesCountName));
+
 		machineStatus.setCerebroSizeBytes(mappedData.get(cerebroSizeName));
 		machineStatus.setCerebroCount(mappedData.get(cerebroCountName));
+
 		machineStatus.setOvermindSizeBytes(mappedData.get(overmindSizeName));
 		machineStatus.setOvermindCount(mappedData.get(overmindCountName));
 		machineStatus.setFreeSpaceLeftBytes(directory.getFreeSpace());
@@ -137,7 +146,7 @@ public class StatusStorageResource {
 				handleSpecialDirectory(directory, overmindSizeName, overmindCountName, map);
 				break;
 			}
-			default : {
+			default: {
 				traverseTreeForData(directory, map);
 			}
 		}
