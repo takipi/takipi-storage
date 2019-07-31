@@ -64,7 +64,7 @@ public class StatusStorageResource {
 			MachineStatus machineStatus = new MachineStatus();
 			
 			collectMachineInfo(machineStatus);
-			collectDataInfo(machineStatus);
+			collectStorageInfo(machineStatus);
 			collectLastCleanupInfo(machineStatus);
 			
 			return Response.ok(machineStatus).build();
@@ -74,7 +74,7 @@ public class StatusStorageResource {
 		}
 	}
 	
-	private void collectDataInfo(MachineStatus machineStatus) {
+	private void collectStorageInfo(MachineStatus machineStatus) {
 		File directory = new File(folderPath);
 		Map<String, Long> mappedData = traverseTreeForData(directory);
 		
@@ -117,32 +117,32 @@ public class StatusStorageResource {
 		return map;
 	}
 	
-	// Traverse into the directory and it's subdirectories,
+	// Traverse into the directory and its subdirectories,
 	// avoiding any hidden or visible files until finding
 	// the suitable directory (hits/namers/source-code).
 	private void traverseTreeForData(File directory, Map<String, Long> map) {
-		for(File file : directory.listFiles()) {
+		for (File file : directory.listFiles()) {
 			if (file.isHidden() || !file.isDirectory()) {
 				continue;
 			}
 			
-			directoryHandler(map, file);
+			handleDirectory(map, file);
 		}
 	}
 	
-	// Direct hits/namers/source-code directory to it's handler
+	// Direct hits/namers/source-code directory to its handler
 	// or keep traversing.
-	private void directoryHandler(Map<String, Long> map, File directory) {
+	private void handleDirectory(Map<String, Long> map, File directory) {
 		switch (directory.getName()) {
-			case hitsDirectoryName : {
+			case hitsDirectoryName: {
 				handleSpecialDirectory(directory, hitsSizeName, hitsCountName, map);
 				break;
 			} 
-			case namersDirectoryName : {
+			case namersDirectoryName: {
 				handleSpecialDirectory(directory, namersSizeName, namersCountName, map);
 				break;
 			} 
-			case sourceCodeDirectoryName : {
+			case sourceCodeDirectoryName: {
 				handleSpecialDirectory(directory, sourceCodesSizeName, sourceCodesCountName, map);
 				break;
 			}
@@ -160,13 +160,14 @@ public class StatusStorageResource {
 			}
 			default: {
 				traverseTreeForData(directory, map);
+				break;
 			}
 		}
 	}
 	
 	// Extract data of visible files.
 	private void handleSpecialDirectory(File directory, String sizeName, String countName, Map<String, Long> map) {
-		for(File file : directory.listFiles()) {
+		for (File file : directory.listFiles()) {
 			if (file.isHidden()) {
 				continue;
 			}
