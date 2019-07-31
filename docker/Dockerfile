@@ -4,7 +4,7 @@
 FROM java:8
 MAINTAINER Chen harel "https://github.com/chook"
 
-ENV VERSION 1.7.0
+ENV VERSION 2.3.0
 ENV TAR_FILENAME takipi-storage-$VERSION.tar.gz
 ENV JAR_FILENAME takipi-storage-$VERSION.jar
 ENV STORAGE_PORT 8080
