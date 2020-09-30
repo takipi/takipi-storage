@@ -1,9 +1,9 @@
 package com.takipi.oss.storage.fs.api;
 
+import com.takipi.oss.storage.fs.BaseRecord;
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.takipi.oss.storage.fs.BaseRecord;
+import java.util.List;
 
 public interface Filesystem<T extends BaseRecord> extends FilesystemHealth {
     /**
@@ -38,6 +38,8 @@ public interface Filesystem<T extends BaseRecord> extends FilesystemHealth {
      *             - if there's an error
      */
     void delete(T record) throws IOException;
+
+    <U extends T> void deleteMulti(List<U> paramList) throws Exception;
 
     /**
      * True if record exists in filesystem

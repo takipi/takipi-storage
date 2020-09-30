@@ -1,10 +1,9 @@
 package com.takipi.oss.storage.resources.fs;
 
-import com.codahale.metrics.annotation.Timed;
 import com.takipi.oss.storage.TakipiStorageConfiguration;
 import com.takipi.oss.storage.data.fetch.MultiFetchRequest;
 import com.takipi.oss.storage.data.fetch.MultiFetchResponse;
-import com.takipi.oss.storage.fs.Record;
+import com.takipi.oss.storage.fs.BaseRecord;
 import com.takipi.oss.storage.fs.api.Filesystem;
 import com.takipi.oss.storage.fs.s3.S3Filesystem;
 import com.takipi.oss.storage.resources.fs.multifetcher.MultiFetcher;
@@ -24,10 +23,10 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class JsonMultiFetchStorageResource {
 
-    private final Filesystem<Record> filesystem;
+    private final Filesystem<BaseRecord> filesystem;
     private final MultiFetcher multiFetcher;
 
-    public JsonMultiFetchStorageResource(Filesystem<Record> filesystem,
+    public JsonMultiFetchStorageResource(Filesystem<BaseRecord> filesystem,
                                          TakipiStorageConfiguration.Multifetch multifetchConfig) {
 
         this.filesystem = filesystem;
@@ -51,7 +50,6 @@ public class JsonMultiFetchStorageResource {
     }
 
     @POST
-    @Timed
     public Response post(MultiFetchRequest request) {
 
         try {
