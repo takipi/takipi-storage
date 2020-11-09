@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Takipi Storage API - com.takipi::storage
+Globals:
+  Api:
+    # enable CORS; to make more specific, change the origin wildcard
+    # to a particular domain name, e.g. "'www.example.com'"
+    Cors:
+      AllowMethods: "'*'"
+      AllowHeaders: "'*'"
+      AllowOrigin: "'*'"
+      MaxAge: 600
+
+Parameters:
+    S3BUCKET:
+        Description: 'Required. The S3 bucket for overops hybrid storage'
+        Type: String
+        Default: 'overops-storage' 
+    S3PREFIX:
+        Description: 'Required. The S3 bucket prefix setting'
+        Type: String
+        Default: 'overops' 
+
+Resources:
+  StorageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.takipi.oss.storage.StreamLambdaHandler::handleRequest
+      Runtime: java8
+      CodeUri: storage-s3-lambda-1.0.jar
+      MemorySize: 512
+      Policies:
+        - AWSLambdaExecute
+        - S3FullAccessPolicy:
+            BucketName: !Ref S3BUCKET
+      Environment:
+        Variables:
+          TAKIPI_ENABLE_CORS: 'true'
+          TAKIPI_CORS_ORIGIN: '*'
+          TAKIPI_MULTIFETCH_MAX_BATCH_SIZE: '4194304'
+          TAKIPI_MULTIFETCH_CONCURRENCY_LEVEL: '100'
+          TAKIPI_S3_BUCKET: !Ref S3BUCKET
+          TAKIPI_S3_PATH_PREFIX: !Ref S3PREFIX
+      Timeout: 15
+      Events:
+        GetResource:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+      Tags:
+        AppNameTag: TakipiStorageApi
+        AppVersionTag: 1.0
+Outputs:
+  StorageApi:
+    Description: URL for application
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+    Export:
+      Name: StorageApi
