@@ -1,0 +1,72 @@
+def imageName = 'docker-local/overops-storage-server'
+def dockerHubImage = 'overops/storage-server'
+
+pipeline {
+    
+    environment {
+        registryCred = 'container-registry-build-guy'
+        dockerhubCred = 'docker-hub'
+        gitCred = 'build-guy'
+    }
+
+    parameters {
+        string(name: 'VERSION', defaultValue: 'latest', description:'Application version')
+        string(name: 'TAG', defaultValue: 'latest', description:'Image Tag to be used')
+        booleanParam(name: 'PUBLISH_TO_DOCKERHUB', defaultValue: false, description:'Flag to publish to docker-hub')
+    }    
+
+    agent any
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git([url: 'https://github.com/takipi/takipi-storage', branch: 'develop', credentialsId: gitCred])
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('docker') {
+                    script {
+                        if (params.PUBLISH_TO_DOCKERHUB) {
+                            imageName = dockerHubImage
+                        }
+
+                        dockerOptions = ('--label=storage-server-pipeline  --build-arg APP_VERSION=' + params.VERSION + ' .')
+                        dockerImage = docker.build(imageName, dockerOptions)
+                    }
+                }
+            }
+        }
+
+        stage('Publish Docker Image') {
+            steps {
+                script {
+                    if (params.PUBLISH_TO_DOCKERHUB) {
+                        reg = ''
+                        cred = dockerhubCred
+                    } else {
+                        reg = env.LOCAL_DOCKER_REGISTRY_URL
+                        cred = registryCred                        
+                    }
+
+                    docker.withRegistry(reg, cred) {
+                        dockerImage.push()
+
+                        if (params.TAG != 'latest') {
+                            dockerImage.push(params.TAG)
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh(script:"docker rmi -f \$(docker images -f label=storage-server-pipeline -q)")
+                }
+                cleanWs()
+            }
+        }
+    }
+}
