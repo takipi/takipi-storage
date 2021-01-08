@@ -3,13 +3,23 @@ corsOrigins: "*"
 
 # If using attaching IAM Role to instance leave accessKey and secretKey empty.
 s3Fs:
-    bucket: <bucket>
-    pathPrefix: <path_prefix>
+    bucket: <BUCKET_NAME>
+    pathPrefix: <FOLDER_IN_BUCKET>
     credentials:
-      accessKey: <key> 
-      secretKey: <secret> 
+      accessKey: <AWS_ACCESS_KEY>
+      secretKey: <AWS_SECRET_KEY>
+
+multifetch:
+  # maximum number of threads for concurrent multi-fetch. Set to zero to disable concurrent fetching.
+  concurrencyLevel: 100
+  # Recommended size >= 16777216. Set to zero to disable caching.
+  maxCacheSize: 67108864
+  enableCacheLogger: false
+  maxBatchSize: 4194304      
 
 server:
+  gzip:
+    includedMethods: [POST, GET]  
   applicationConnectors:
     - type: http
       port: 8080
@@ -25,13 +35,10 @@ server:
 
 # Logging settings.
 logging:
-
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
-
   # Logger-specific levels.
   loggers:
-
     com.takipi: DEBUG
 
   appenders:
