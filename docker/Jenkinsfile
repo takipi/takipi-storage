@@ -1,4 +1,4 @@
-def imageName = 'docker-local/overops-storage-server-s3'
+def imageName = 'docker/overops-storage-server-s3'
 def dockerHubImage = 'overops/storage-server-s3'
 
 pipeline {
