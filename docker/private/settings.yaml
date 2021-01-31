@@ -1,0 +1,35 @@
+folderPath: /opt/takipi-storage/storage
+maxUsedStoragePercentage: 0.90
+enableCors: true
+corsOrigins: "*"
+retentionPeriodDays: 92
+cleanupJobEnabled: true
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+  #requestLog:
+  #  appenders:
+  #    - type: file
+  #      currentLogFilename: /opt/takipi-storage/log/access.log
+  #      maxFileSize: 1GB        
+  #      archivedLogFilenamePattern: /opt/takipi-storage/log/access.%i.log.gz
+  #      archivedFileCount: 3
+        
+jobs:
+  cleanup: 6h
+  
+logging:
+  level: INFO
+  loggers:
+    com.takipi: DEBUG
+  appenders:
+    - type: file
+      currentLogFilename: /opt/takipi-storage/log/takipi-storage.log
+      maxFileSize: 1GB
+      archivedLogFilenamePattern: ./storage/log/takipi-storage.%i.log.gz
+      archivedFileCount: 3
